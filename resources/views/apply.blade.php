@@ -35,18 +35,6 @@
 
                     <div>
 
-                        <div class="mb-3 flex items-center gap-3">
-
-                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-lg text-white shadow-sm">
-                                ✉
-                            </div>
-
-                            <span class="text-sm font-semibold text-indigo-600">
-                                Auto Apply Mailer
-                            </span>
-
-                        </div>
-
 
                         <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                             Buat Lamaran Baru
@@ -739,16 +727,14 @@
                                         class="block w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">
 
                                         @forelse($pdfTemplates as $template)
-
                                         <option
                                             value="{{ $template->id }}"
-                                            data-body="{{ e($template->body) }}">
+                                            data-body-base64="{{ base64_encode($template->body ?? '') }}">
                                             {{ $template->name }}
                                             @if($template->is_default)
                                             — Default
                                             @endif
                                         </option>
-
                                         @empty
 
                                         <option value="">
@@ -1883,6 +1869,38 @@
                 };
             }
 
+            /*
+|--------------------------------------------------------------------------
+| DECODE PDF TEMPLATE
+|--------------------------------------------------------------------------
+| Template HTML dikirim dari Blade menggunakan Base64.
+| Ini mencegah HTML seperti <table>, <div>, <p>, dll
+| berubah menjadi teks di Summernote.
+*/
+            function decodeBase64Utf8(base64) {
+                if (!base64) {
+                    return '';
+                }
+
+                try {
+                    const binary = atob(base64);
+
+                    const bytes = Uint8Array.from(
+                        binary,
+                        char => char.charCodeAt(0)
+                    );
+
+                    return new TextDecoder('utf-8').decode(bytes);
+
+                } catch (error) {
+                    console.error(
+                        'Gagal decode template PDF:',
+                        error
+                    );
+
+                    return '';
+                }
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -2024,10 +2042,10 @@
 
 
             /*
-            |--------------------------------------------------------------------------
-            | LOAD PDF TEMPLATE
-            |--------------------------------------------------------------------------
-            */
+|--------------------------------------------------------------------------
+| LOAD PDF TEMPLATE
+|--------------------------------------------------------------------------
+*/
 
             function loadPdfTemplate() {
 
@@ -2038,29 +2056,41 @@
                     return;
                 }
 
-
                 const option =
                     getSelectedPdfOption();
-
 
                 if (!option) {
                     return;
                 }
 
+                /*
+                 * Ambil template dari Base64.
+                 */
+                const encodedBody =
+                    option.getAttribute(
+                        'data-body-base64'
+                    ) || '';
 
+                /*
+                 * Decode kembali menjadi HTML asli.
+                 */
                 const rawBody =
-                    option.getAttribute('data-body') || '';
+                    decodeBase64Utf8(encodedBody);
 
-
+                /*
+                 * Ganti placeholder.
+                 */
                 const rendered =
                     renderTemplate(rawBody);
 
-
+                /*
+                 * Masukkan HTML sebagai HTML,
+                 * bukan sebagai text.
+                 */
                 $('#body_pdf').summernote(
                     'code',
                     rendered
                 );
-
             }
 
 

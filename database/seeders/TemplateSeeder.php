@@ -303,336 +303,59 @@ HTML,
             'category' => 'professional',
             'subject' => null,
             'body' => <<<'HTML'
-<div style="
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 11.5pt;
-    line-height: 1.65;
-    color: #222;
-">
+<div style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.65;">
 
-    {{-- Tanggal --}}
-    <div style="
-        text-align: right;
-        margin-bottom: 28px;
-    ">
+    <div style="text-align: right; margin-bottom: 25px;">
         {{kota}}, {{tanggal}}
     </div>
 
-
-    {{-- Tujuan --}}
-    <div style="
-        margin-bottom: 22px;
-    ">
-        <p style="margin: 0;">
-            Kepada Yth.
-        </p>
-
-        <p style="
-            margin: 2px 0 0 0;
-            font-weight: bold;
-        ">
-            HRD {{perusahaan}}
-        </p>
-    </div>
-
-
-    {{-- Salam --}}
-    <p style="
-        margin-top: 0;
-        margin-bottom: 18px;
-    ">
-        Dengan hormat,
+    <p>
+        Kepada Yth.<br>
+        <strong>HRD {{perusahaan}}</strong>
     </p>
 
-
-    {{-- Pembuka --}}
-    <p style="
-        text-align: justify;
-        margin-top: 0;
-        margin-bottom: 14px;
-    ">
-        Saya yang bertanda tangan di bawah ini:
+    <p>
+        Dengan Hormat,
     </p>
 
-
-    {{-- Biodata --}}
-    <table style="
-        border-collapse: collapse;
-        margin: 0 0 20px 28px;
-        width: auto;
-    ">
-
-        <tr>
-            <td style="
-                width: 165px;
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                Nama
-            </td>
-
-            <td style="
-                width: 18px;
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                :
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                {{nama}}
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                Tempat, Tanggal Lahir
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                :
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                {{tempat_lahir}}, {{tanggal_lahir}}
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                Pendidikan
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                :
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                {{pendidikan}}
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                Alamat
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                :
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                {{alamat}}
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                No. HP
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                :
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                {{phone}}
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                Email
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                :
-            </td>
-
-            <td style="
-                padding: 2px 0;
-                vertical-align: top;
-            ">
-                {{email}}
-            </td>
-        </tr>
-
-    </table>
-
-
-    {{-- Isi surat --}}
-    <p style="
-        text-align: justify;
-        margin-top: 0;
-        margin-bottom: 14px;
-    ">
-        Dengan surat ini, saya bermaksud mengajukan lamaran pekerjaan
-        untuk posisi <strong>{{posisi}}</strong> di perusahaan
-        {{perusahaan}}. Saya memiliki latar belakang pendidikan
-        <strong>{{pendidikan}}</strong> serta memiliki motivasi untuk
-        mengembangkan kemampuan dan memberikan kontribusi terbaik bagi
-        perusahaan.
+    <p style="text-align: justify;">
+        Perkenalkan, saya <strong>{{nama}}</strong>,
+        lulusan <strong>{{pendidikan}}</strong>.
+        Melalui surat ini saya ingin mengajukan lamaran untuk posisi
+        <strong>{{posisi}}</strong> di perusahaan Bapak/Ibu.
     </p>
 
-
-    <p style="
-        text-align: justify;
-        margin-top: 0;
-        margin-bottom: 14px;
-    ">
-        Saya memiliki semangat belajar, mampu beradaptasi dengan
-        lingkungan kerja baru, serta siap mengikuti seluruh tahapan
-        seleksi yang ditetapkan oleh perusahaan. Saya berharap dapat
-        diberikan kesempatan untuk mengikuti proses seleksi lebih lanjut
-        dan menjelaskan kemampuan yang saya miliki secara langsung.
+    <p style="text-align: justify;">
+        Saya memiliki semangat belajar, kemampuan beradaptasi,
+        serta motivasi untuk berkembang dan memberikan kontribusi
+        positif terhadap perusahaan.
     </p>
 
-
-    <p style="
-        text-align: justify;
-        margin-top: 0;
-        margin-bottom: 14px;
-    ">
-        Sebagai bahan pertimbangan, bersama surat lamaran ini saya
-        melampirkan beberapa dokumen pendukung sebagai berikut:
+    <p style="text-align: justify;">
+        Bersama surat ini saya melampirkan CV dan dokumen pendukung
+        sebagai bahan pertimbangan.
     </p>
 
-
-    {{-- Lampiran --}}
-    <ol style="
-        margin-top: 6px;
-        margin-bottom: 18px;
-        padding-left: 30px;
-    ">
-        <li style="margin-bottom: 3px;">
-            Curriculum Vitae (CV)
-        </li>
-
-        <li style="margin-bottom: 3px;">
-            Pas Foto
-        </li>
-
-        <li style="margin-bottom: 3px;">
-            Kartu Tanda Penduduk (KTP)
-        </li>
-
-        <li style="margin-bottom: 3px;">
-            Kartu Keluarga (KK)
-        </li>
-
-        <li style="margin-bottom: 3px;">
-            SKCK
-        </li>
-
-        <li style="margin-bottom: 3px;">
-            Fotokopi Ijazah
-        </li>
-
-        <li style="margin-bottom: 3px;">
-            Fotokopi Transkrip Nilai
-        </li>
-    </ol>
-
-
-    {{-- Penutup --}}
-    <p style="
-        text-align: justify;
-        margin-top: 0;
-        margin-bottom: 14px;
-    ">
-        Demikian surat lamaran ini saya sampaikan. Besar harapan saya
-        untuk dapat diberikan kesempatan bergabung dan berkontribusi
-        di perusahaan {{perusahaan}}. Atas perhatian dan pertimbangan
-        Bapak/Ibu, saya ucapkan terima kasih.
+    <p style="text-align: justify;">
+        Saya berharap dapat diberikan kesempatan untuk mengikuti
+        proses seleksi lebih lanjut.
     </p>
 
+    <p style="text-align: justify;">
+        Demikian surat lamaran ini saya sampaikan.
+        Terima kasih atas perhatian Bapak/Ibu.
+    </p>
 
-    {{-- Tanda tangan --}}
-    <table style="
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 38px;
-    ">
-
+    <table style="width: 100%; margin-top: 45px;">
         <tr>
+            <td style="width: 65%;"></td>
 
-            <td style="
-                width: 62%;
-            ">
-            </td>
-
-
-            <td style="
-                width: 38%;
-                text-align: center;
-                vertical-align: top;
-            ">
-
+            <td style="width: 35%; text-align: center;">
                 Hormat saya,
-
-                <br>
-                <br>
-                <br>
-                <br>
-
-                <strong>
-                    {{nama}}
-                </strong>
-
+                <br><br><br><br><br>
+                <strong>{{nama}}</strong>
             </td>
-
         </tr>
-
     </table>
 
 </div>
@@ -736,6 +459,321 @@ HTML,
                 <strong>{{nama}}</strong>
             </td>
         </tr>
+    </table>
+
+</div>
+HTML,
+            'is_default' => false,
+        ]);
+
+        /*
+|--------------------------------------------------------------------------
+| PDF TEMPLATE 4
+|--------------------------------------------------------------------------
+*/
+        Template::create([
+            'name' => 'Surat Lamaran Lengkap',
+            'type' => 'pdf',
+            'category' => 'formal_lengkap',
+            'subject' => null,
+            'body' => <<<'HTML'
+<div style="
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    line-height: 1.4;
+    color: #111;
+">
+
+    <!-- TANGGAL -->
+    <div style="
+        text-align: right;
+        margin-top: 0;
+        margin-bottom: 10px;
+    ">
+        {{kota}}, {{tanggal}}
+    </div>
+
+    <!-- PERIHAL -->
+    <table style="
+        border-collapse: collapse;
+        margin-top: 0;
+        margin-bottom: 10px;
+    ">
+        <tr>
+            <td style="width: 80px; padding: 0;">
+                Hal
+            </td>
+
+            <td style="width: 15px; padding: 0;">
+                :
+            </td>
+
+            <td style="padding: 0;">
+                Lamaran Pekerjaan
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 0;">
+                Lampiran
+            </td>
+
+            <td style="padding: 0;">
+                :
+            </td>
+
+            <td style="padding: 0;">
+                -
+            </td>
+        </tr>
+    </table>
+
+    <!-- TUJUAN -->
+    <p style="
+        margin-top: 0;
+        margin-bottom: 10px;
+    ">
+        Yth. HRD <strong>{{perusahaan}}</strong>
+    </p>
+
+    <!-- SALAM -->
+    <p style="
+        margin-top: 0;
+        margin-bottom: 0px;
+    ">
+        Dengan Hormat,
+    </p>
+
+    <!-- PEMBUKA -->
+    <p style="
+        margin-top: 0;
+        margin-bottom: 10px;
+        text-align: justify;
+    ">
+        Saya yang bertanda tangan di bawah ini:
+    </p>
+
+    <!-- BIODATA -->
+    <table style="
+        border-collapse: collapse;
+        margin-top: 0;
+        margin-left: 30px;
+        margin-bottom: 10px;
+    ">
+
+        <tr>
+            <td style="
+                width: 170px;
+                padding: 0;
+            ">
+                Nama
+            </td>
+
+            <td style="
+                width: 15px;
+                padding: 0;
+            ">
+                :
+            </td>
+
+            <td style="padding: 0;">
+                {{nama}}
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 0;">
+                Tempat, Tanggal Lahir
+            </td>
+
+            <td style="padding: 0;">
+                :
+            </td>
+
+            <td style="padding: 0;">
+                {{tempat_lahir}}, {{tanggal_lahir}}
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 0;">
+                Pendidikan
+            </td>
+
+            <td style="padding: 0;">
+                :
+            </td>
+
+            <td style="padding: 0;">
+                {{pendidikan}}
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 0;">
+                Alamat
+            </td>
+
+            <td style="padding: 0;">
+                :
+            </td>
+
+            <td style="padding: 0;">
+                {{alamat}}
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 0;">
+                No. HP
+            </td>
+
+            <td style="padding: 0;">
+                :
+            </td>
+
+            <td style="padding: 0;">
+                {{phone}}
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 0;">
+                Email
+            </td>
+
+            <td style="padding: 0;">
+                :
+            </td>
+
+            <td style="padding: 0;">
+                {{email}}
+            </td>
+        </tr>
+
+    </table>
+
+    <!-- PARAGRAF 1 -->
+    <p style="
+        margin-top: 0;
+        margin-bottom: 10px;
+        text-align: justify;
+    ">
+        Dengan segala hormat, saya ingin mengajukan lamaran pekerjaan
+        di perusahaan yang dipimpin oleh Bapak/Ibu sebagai
+        <strong>{{posisi}}</strong>.
+        Saya sangat antusias untuk bergabung dengan tim
+        <strong>{{perusahaan}}</strong> dan berkontribusi dalam mencapai
+        visi dan misi yang telah ditetapkan.
+    </p>
+
+    <!-- PARAGRAF 2 -->
+    <p style="
+        margin-top: 0;
+        margin-bottom: 10px;
+        text-align: justify;
+    ">
+        Bersama dengan surat lamaran ini, saya melampirkan semua
+        dokumen yang relevan dan berharap agar diberikan kesempatan
+        untuk mengikuti proses seleksi lebih lanjut.
+    </p>
+
+    <!-- PARAGRAF 3 -->
+    <p style="
+        margin-top: 0;
+        margin-bottom: 10px;
+        text-align: justify;
+    ">
+        Terima kasih atas perhatian Bapak/Ibu, sebagai bahan
+        pertimbangan bersama ini saya lampirkan:
+    </p>
+
+    <!-- LAMPIRAN -->
+    <ol style="
+        margin-top: 0;
+        margin-bottom: 10px;
+        padding-left: 28px;
+        line-height: 1.35;
+    ">
+
+        <li style="margin: 0; padding: 0;">
+            Riwayat Hidup
+        </li>
+
+        <li style="margin: 0; padding: 0;">
+            Pas Foto
+        </li>
+
+        <li style="margin: 0; padding: 0;">
+            KTP
+        </li>
+
+        <li style="margin: 0; padding: 0;">
+            KK
+        </li>
+
+        <li style="margin: 0; padding: 0;">
+            SKCK
+        </li>
+
+        <li style="margin: 0; padding: 0;">
+            Fotokopi Ijazah
+        </li>
+
+        <li style="margin: 0; padding: 0;">
+            Fotokopi Transkrip Nilai
+        </li>
+
+    </ol>
+
+    <!-- PENUTUP -->
+    <p style="
+        margin-top: 0;
+        margin-bottom: 6px;
+        text-align: justify;
+    ">
+        Demikian surat lamaran ini saya buat.
+        Atas perhatian dan pertimbangan Ibu/Bapak,
+        saya ucapkan terima kasih.
+    </p>
+
+    <!-- TANDA TANGAN -->
+    <table style="
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 25px;
+    ">
+
+        <tr>
+
+            <td style="
+                width: 65%;
+                padding: 0;
+            ">
+            </td>
+
+            <td style="
+                width: 35%;
+                padding: 0;
+                text-align: center;
+                vertical-align: top;
+            ">
+
+                Hormat saya,
+
+                <br>
+                <br>
+                <br>
+                <br>
+
+                <strong>
+                    {{nama}}
+                </strong>
+
+            </td>
+
+        </tr>
+
     </table>
 
 </div>
