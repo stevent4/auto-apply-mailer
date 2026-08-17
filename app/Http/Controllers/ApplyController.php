@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\ApplicationHistory; // Panggil model riwayat
+use App\Models\ApplicationHistory;
 use App\Models\Template;
+use App\Services\GmailService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class ApplyController extends Controller
 {
@@ -16,11 +18,9 @@ class ApplyController extends Controller
         $files = [];
 
         if (Storage::disk('public')->exists('berkas')) {
-
             $paths = Storage::disk('public')->files('berkas');
 
             foreach ($paths as $path) {
-
                 $name = basename($path);
 
                 if (
@@ -32,9 +32,7 @@ class ApplyController extends Controller
             }
         }
 
-
         $histories = ApplicationHistory::latest()->get();
-
 
         $emailTemplates = Template::query()
             ->where('type', 'email')
@@ -46,7 +44,6 @@ class ApplyController extends Controller
             ->orderBy('name')
             ->get();
 
-
         $pdfTemplates = Template::query()
             ->where('type', 'pdf')
             ->where(function ($query) {
@@ -57,7 +54,6 @@ class ApplyController extends Controller
             ->orderBy('name')
             ->get();
 
-
         return view('apply', compact(
             'files',
             'histories',
@@ -66,29 +62,123 @@ class ApplyController extends Controller
         ));
     }
 
-    public function send(Request $request)
-    {
-        $namaPelamar = "Ahmad Stevent Andreuw";
+    public function send(
+        Request $request,
+        GmailService $gmailService
+    ) {
+        /*
+         * User yang sedang login.
+         */
+        $user = Auth::user();
 
+        /*
+         * Pastikan Gmail sudah terhubung.
+         */
+        $googleAccount = $user->googleAccount;
+
+        if (!$googleAccount) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'google' => 'Silakan hubungkan akun Gmail terlebih dahulu melalui Profile.',
+                ]);
+        }
+
+        /*
+         * Ambil nama pelamar dari Profile,
+         * bukan lagi hardcode Ahmad.
+         */
+        $namaPelamar = $user->name;
+
+        /*
+         * Subject.
+         */
         $subject = $request->tipe_subjek === 'auto'
             ? "{$request->posisi} - {$namaPelamar} - Jombang"
             : $request->subjek_custom;
 
+        /*
+         * Data perusahaan dan posisi.
+         */
         $namaPt = $request->nama_pt;
         $posisiUpper = strtoupper($request->posisi);
 
-        $bodyEmailFinal = str_replace(['[NAMA_PT]', '[POSISI]'], [$namaPt, $posisiUpper], $request->body_email);
-        $bodyPdfFinal = str_replace(['[NAMA_PT]', '[POSISI]'], [$namaPt, $posisiUpper], $request->body_pdf);
-
-        $pdf = Pdf::loadView('pdf.lamaran', ['content' => $bodyPdfFinal]);
-        $pdfContent = $pdf->output();
-
-        // Kirim email
-        \Illuminate\Support\Facades\Mail::to($request->email_hrd)->send(
-            new \App\Mail\JobApplicationMail($subject, $bodyEmailFinal, $request->lampiran, $pdfContent)
+        /*
+         * Replace variable template.
+         */
+        $bodyEmailFinal = str_replace(
+            ['[NAMA_PT]', '[POSISI]'],
+            [$namaPt, $posisiUpper],
+            $request->body_email
         );
 
-        // SIMPAN KE DATABASE RIWAYAT
+        $bodyPdfFinal = str_replace(
+            ['[NAMA_PT]', '[POSISI]'],
+            [$namaPt, $posisiUpper],
+            $request->body_pdf
+        );
+
+        /*
+         * Generate PDF surat lamaran.
+         */
+        $pdf = Pdf::loadView(
+            'pdf.lamaran',
+            [
+                'content' => $bodyPdfFinal,
+            ]
+        );
+
+        $pdfContent = $pdf->output();
+
+        /*
+         * Nama file PDF dibuat dinamis berdasarkan nama user.
+         */
+        $safeName = preg_replace(
+            '/[^A-Za-z0-9_-]+/',
+            '_',
+            $namaPelamar
+        );
+
+        $pdfFilename = 'Surat_Lamaran_' .
+            trim($safeName, '_') .
+            '.pdf';
+
+        try {
+            /*
+             * KIRIM MELALUI GMAIL API.
+             *
+             * Bukan lagi:
+             *
+             * Mail::to(...)
+             *
+             * Gmail API akan mengirim dari akun Gmail
+             * yang sedang terhubung dengan user.
+             */
+            $gmailResult = $gmailService->send(
+                googleAccount: $googleAccount,
+                to: $request->email_hrd,
+                subject: $subject,
+                htmlBody: nl2br(
+                    e($bodyEmailFinal)
+                ),
+                pdfContent: $pdfContent,
+                pdfFilename: $pdfFilename,
+                lampiranFiles: $request->lampiran ?? []
+            );
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'email' => 'Email gagal dikirim melalui Gmail: ' .
+                        $e->getMessage(),
+                ]);
+        }
+
+        /*
+         * SIMPAN KE DATABASE RIWAYAT.
+         */
         ApplicationHistory::create([
             'email_hrd' => $request->email_hrd,
             'nama_pt' => $namaPt,
@@ -96,39 +186,56 @@ class ApplyController extends Controller
             'subjek' => $subject,
         ]);
 
-        return back()->with('success', "Email lamaran dan PDF Surat Lamaran berhasil dikirim ke {$namaPt}!");
+        return back()->with(
+            'success',
+            "Email lamaran berhasil dikirim dari {$googleAccount->google_email} ke {$namaPt}!"
+        );
     }
 
     public function updateStatus(Request $request, int $id)
     {
-        $history = \App\Models\ApplicationHistory::findOrFail($id);
+        $history = ApplicationHistory::findOrFail($id);
+
         $history->status = $request->status;
         $history->save();
 
-        return back()->with('success', "Status lamaran untuk {$history->nama_pt} berhasil diperbarui!");
+        return back()->with(
+            'success',
+            "Status lamaran untuk {$history->nama_pt} berhasil diperbarui!"
+        );
     }
 
     public function destroyHistory(int $id)
     {
-        // Cari data riwayat berdasarkan ID, lalu hapus
         $history = ApplicationHistory::findOrFail($id);
+
         $history->delete();
 
-        return back()->with('success', 'Riwayat lamaran berhasil dihapus!');
+        return back()->with(
+            'success',
+            'Riwayat lamaran berhasil dihapus!'
+        );
     }
 
     public function resendHistory(int $id)
     {
-        // Ambil data riwayat yang ingin di-resend
         $selectedHistory = ApplicationHistory::findOrFail($id);
 
         $files = [];
+
         if (Storage::disk('public')->exists('berkas')) {
             $filesPath = Storage::disk('public')->files('berkas');
 
             foreach ($filesPath as $path) {
                 $namaFile = basename($path);
-                if (!str_contains($namaFile, 'Zone.Identifier') && !str_starts_with($namaFile, '.')) {
+
+                if (
+                    !str_contains(
+                        $namaFile,
+                        'Zone.Identifier'
+                    ) &&
+                    !str_starts_with($namaFile, '.')
+                ) {
                     $files[] = $namaFile;
                 }
             }
@@ -136,7 +243,13 @@ class ApplyController extends Controller
 
         $histories = ApplicationHistory::latest()->get();
 
-        // Kirim data riwayat terpilih kembali ke view agar form otomatis terisi
-        return view('apply', compact('files', 'histories', 'selectedHistory'));
+        return view(
+            'apply',
+            compact(
+                'files',
+                'histories',
+                'selectedHistory'
+            )
+        );
     }
 }
