@@ -3,23 +3,71 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplyController;
+use App\Http\Controllers\FileController;
+
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
+
+
+    // Apply
+    Route::get('/', [ApplyController::class, 'index'])
+        ->name('apply.index');
+
+    Route::post('/send', [ApplyController::class, 'send'])
+        ->name('apply.send');
+
+
+    // History
+    Route::patch('/history/{id}/status', [ApplyController::class, 'updateStatus'])
+        ->name('history.update-status');
+
+    Route::delete('/history/{id}', [ApplyController::class, 'destroyHistory'])
+        ->name('history.destroy');
+
+    Route::get('/history/resend/{id}', [ApplyController::class, 'resendHistory'])
+        ->name('history.resend');
+
+
+    // Files
+    Route::get('/files', [FileController::class, 'index'])
+        ->name('files.index');
+
+    Route::post('/files', [FileController::class, 'store'])
+        ->name('files.store');
+
+    Route::get('/files/download/{filename}', [FileController::class, 'download'])
+        ->name('files.download');
+
+    Route::delete('/files/{filename}', [FileController::class, 'destroy'])
+        ->name('files.destroy');
 });
 
-Route::get('/', [ApplyController::class, 'index'])->name('apply.index');
-Route::post('/send', [ApplyController::class, 'send'])->name('apply.send');
-Route::patch('/history/{id}/status', [ApplyController::class, 'updateStatus'])->name('history.update-status');
-// Tambahkan Route Hapus di sini:
-Route::delete('/history/{id}', [ApplyController::class, 'destroyHistory'])->name('history.destroy');
-// Tambahkan Route Kirim Ulang di sini:
-Route::get('/history/resend/{id}', [ApplyController::class, 'resendHistory'])->name('history.resend');
 
 require __DIR__ . '/auth.php';

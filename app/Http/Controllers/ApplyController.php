@@ -62,7 +62,7 @@ class ApplyController extends Controller
         return back()->with('success', "Email lamaran dan PDF Surat Lamaran berhasil dikirim ke {$namaPt}!");
     }
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, int $id)
     {
         $history = \App\Models\ApplicationHistory::findOrFail($id);
         $history->status = $request->status;
@@ -71,7 +71,7 @@ class ApplyController extends Controller
         return back()->with('success', "Status lamaran untuk {$history->nama_pt} berhasil diperbarui!");
     }
 
-    public function destroyHistory($id)
+    public function destroyHistory(int $id)
     {
         // Cari data riwayat berdasarkan ID, lalu hapus
         $history = ApplicationHistory::findOrFail($id);
@@ -80,7 +80,7 @@ class ApplyController extends Controller
         return back()->with('success', 'Riwayat lamaran berhasil dihapus!');
     }
 
-    public function resendHistory($id)
+    public function resendHistory(int $id)
     {
         // Ambil data riwayat yang ingin di-resend
         $selectedHistory = ApplicationHistory::findOrFail($id);
