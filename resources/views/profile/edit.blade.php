@@ -386,8 +386,91 @@
 
             </form>
 
+            {{-- Gmail Connection --}}
+            <div class="mt-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+
+                <div class="flex items-start justify-between gap-4">
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            Gmail Pengiriman
+                        </h3>
+
+                        <p class="mt-1 text-sm text-gray-500">
+                            Hubungkan akun Gmail untuk mengirim surat lamaran
+                            menggunakan alamat email kamu sendiri.
+                        </p>
+                    </div>
+
+                </div>
+
+                @if (auth()->user()->googleAccount)
+
+                {{-- Gmail sudah terhubung --}}
+                <div class="mt-5 rounded-lg border border-green-200 bg-green-50 p-4">
+
+                    <div class="flex items-center gap-2">
+
+                        <span class="text-green-600">
+                            ✓
+                        </span>
+
+                        <span class="font-medium text-green-800">
+                            Gmail Terhubung
+                        </span>
+
+                    </div>
+
+                    <p class="mt-2 text-sm text-green-700">
+                        {{ auth()->user()->googleAccount->google_email }}
+                    </p>
+
+                </div>
+
+                <form
+                    method="POST"
+                    action="{{ route('google.disconnect') }}"
+                    class="mt-4">
+                    @csrf
+                    @method('DELETE')
+
+                    <button
+                        type="submit"
+                        class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
+                        Putuskan Gmail
+                    </button>
+                </form>
+
+                @else
+
+                {{-- Gmail belum terhubung --}}
+                <div class="mt-5">
+
+                    <a
+                        href="{{ route('google.connect') }}"
+                        class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
+                        <span>
+                            Connect Gmail
+                        </span>
+                    </a>
+
+                    <p class="mt-2 text-xs text-gray-500">
+                        Kamu akan diarahkan ke Google untuk memberikan izin
+                        pengiriman email melalui Gmail.
+                    </p>
+
+                </div>
+
+                @endif
+
+            </div>
+
         </div>
 
+
+
     </div>
+
+
 
 </x-app-layout>

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplyController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\GoogleAuthController;
 
 
 /*
@@ -67,6 +68,16 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/files/{filename}', [FileController::class, 'destroy'])
         ->name('files.destroy');
+
+    // Google
+    Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])
+        ->name('google.connect');
+
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
+        ->name('google.callback');
+
+    Route::delete('/auth/google', [GoogleAuthController::class, 'disconnect'])
+        ->name('google.disconnect');
 });
 
 
