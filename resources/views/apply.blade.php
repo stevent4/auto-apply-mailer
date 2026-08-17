@@ -1,8 +1,10 @@
 <x-app-layout>
 
     {{-- =========================================================
-        DATA USER YANG SEDANG LOGIN
-        Tidak menggunakan @json() di dalam JavaScript.
+        DATA PROFILE USER YANG SEDANG LOGIN
+
+        Sengaja menggunakan data-* attribute agar tidak memakai
+        @json() di dalam JavaScript.
     ========================================================== --}}
     <div
         id="profile-data"
@@ -16,9 +18,13 @@
         data-phone="{{ Auth::user()->phone ?? '' }}"></div>
 
 
+    {{-- =========================================================
+        PAGE
+    ========================================================== --}}
     <div class="min-h-[calc(100vh-5rem)] bg-gray-50">
 
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
 
             {{-- =====================================================
                 HEADER
@@ -48,8 +54,8 @@
 
 
                         <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base">
-                            Isi informasi perusahaan, siapkan email lamaran,
-                            pilih dokumen yang ingin dilampirkan, lalu kirim.
+                            Isi informasi perusahaan, pilih template,
+                            sesuaikan isi lamaran, lalu kirim.
                         </p>
 
                     </div>
@@ -95,7 +101,7 @@
 
                 <div class="flex items-start gap-3">
 
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 font-bold text-amber-600">
                         !
                     </div>
 
@@ -103,13 +109,13 @@
                     <div class="min-w-0 flex-1">
 
                         <p class="text-sm font-semibold text-amber-800">
-                            Lengkapi biodata profil
+                            Biodata belum lengkap
                         </p>
 
+
                         <p class="mt-1 text-sm leading-5 text-amber-700">
-                            Beberapa data profil belum diisi.
-                            Lengkapi profil agar template surat lamaran
-                            dapat terisi secara otomatis.
+                            Lengkapi biodata profil agar template email
+                            dan surat lamaran dapat terisi otomatis.
                         </p>
 
 
@@ -195,6 +201,7 @@
                             Lamaran berhasil dikirim
                         </p>
 
+
                         <p class="mt-1 text-sm text-emerald-700">
                             {{ session('success') }}
                         </p>
@@ -252,6 +259,7 @@
                             Lamaran gagal dikirim
                         </p>
 
+
                         <p class="mt-1 text-sm text-red-700">
                             {{ session('error') }}
                         </p>
@@ -290,12 +298,14 @@
             ====================================================== --}}
             <form
                 action="{{ route('apply.send') }}"
-                method="POST">
+                method="POST"
+                id="apply-form">
 
                 @csrf
 
 
                 <div class="grid gap-6 lg:grid-cols-3">
+
 
                     {{-- =================================================
                         LEFT COLUMN
@@ -322,6 +332,7 @@
                                         <h2 class="text-base font-bold text-gray-900">
                                             Informasi Lowongan
                                         </h2>
+
 
                                         <p class="mt-1 text-xs text-gray-500">
                                             Masukkan informasi perusahaan dan posisi yang dilamar.
@@ -359,7 +370,7 @@
                                                     stroke-linecap="round"
                                                     stroke-linejoin="round"
                                                     stroke-width="2"
-                                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2v10a2 2 0 002 2z" />
+                                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2v10a2 2 0 002 2z" />
                                             </svg>
 
                                         </div>
@@ -431,6 +442,133 @@
 
 
                         {{-- =================================================
+                            TEMPLATE EMAIL
+                        ================================================== --}}
+                        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+
+                            <div class="border-b border-gray-100 px-6 py-5">
+
+                                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+                                    <div class="flex items-center gap-3">
+
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-lg">
+                                            📝
+                                        </div>
+
+
+                                        <div>
+
+                                            <h2 class="text-base font-bold text-gray-900">
+                                                Isi Email
+                                            </h2>
+
+
+                                            <p class="mt-1 text-xs text-gray-500">
+                                                Pilih template lalu sesuaikan isinya sebelum dikirim.
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <button
+                                        type="button"
+                                        onclick="updateTemplate()"
+                                        class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50">
+
+                                        ↻
+                                        Reset Template
+
+                                    </button>
+
+                                </div>
+
+
+                                {{-- Template selector --}}
+                                <div class="mt-5">
+
+                                    <label
+                                        for="email_template"
+                                        class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-500">
+                                        Template Email
+                                    </label>
+
+
+                                    <select
+                                        id="email_template"
+                                        class="block w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">
+
+                                        @forelse($emailTemplates as $template)
+
+                                        <option
+                                            value="{{ $template->id }}"
+                                            data-body="{{ e($template->body) }}"
+                                            data-subject="{{ e($template->subject ?? '') }}">
+                                            {{ $template->name }}
+                                            @if($template->is_default)
+                                            — Default
+                                            @endif
+                                        </option>
+
+                                        @empty
+
+                                        <option value="">
+                                            Belum ada template email
+                                        </option>
+
+                                        @endforelse
+
+                                    </select>
+
+                                </div>
+
+
+                                {{-- Subject template preview --}}
+                                <div class="mt-4">
+
+                                    <label
+                                        for="template_subject_preview"
+                                        class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-500">
+                                        Subjek Template
+                                    </label>
+
+
+                                    <input
+                                        type="text"
+                                        id="template_subject_preview"
+                                        readonly
+                                        placeholder="Subjek akan mengikuti template"
+                                        class="block w-full rounded-xl border-gray-200 bg-gray-100 px-4 py-3 text-sm text-gray-600">
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="p-6">
+
+                                <textarea
+                                    name="body_email"
+                                    id="body_email"
+                                    rows="17"
+                                    required
+                                    placeholder="Isi email lamaran..."
+                                    class="block w-full resize-y rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm leading-6 text-gray-900 placeholder-gray-400 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">{{ old('body_email') }}</textarea>
+
+
+                                <p class="mt-2 text-xs leading-5 text-gray-400">
+                                    Placeholder template akan otomatis diganti dengan
+                                    biodata akun dan informasi lowongan.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- =================================================
                             SUBJEK EMAIL
                         ================================================== --}}
                         <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
@@ -447,11 +585,12 @@
                                     <div>
 
                                         <h2 class="text-base font-bold text-gray-900">
-                                            Subjek Email
+                                            Pengaturan Subjek
                                         </h2>
 
+
                                         <p class="mt-1 text-xs text-gray-500">
-                                            Gunakan subjek otomatis atau tentukan sendiri.
+                                            Gunakan subjek template atau tentukan sendiri.
                                         </p>
 
                                     </div>
@@ -463,7 +602,7 @@
 
                             <div class="space-y-4 p-6">
 
-                                {{-- Automatic --}}
+                                {{-- Auto --}}
                                 <label
                                     for="subjek_auto"
                                     class="flex cursor-pointer items-start gap-3 rounded-xl border border-indigo-200 bg-indigo-50/60 p-4 transition hover:bg-indigo-50">
@@ -481,12 +620,12 @@
                                     <span>
 
                                         <span class="block text-sm font-semibold text-gray-900">
-                                            Otomatis
+                                            Gunakan Subjek Template
                                         </span>
 
 
                                         <span class="mt-1 block text-xs leading-5 text-gray-500">
-                                            Subjek akan dibuat berdasarkan posisi dan nama pelamar.
+                                            Subjek akan mengikuti template email yang dipilih.
                                         </span>
 
                                     </span>
@@ -516,7 +655,7 @@
 
 
                                         <span class="mt-1 block text-xs leading-5 text-gray-500">
-                                            Tentukan sendiri subjek email yang akan digunakan.
+                                            Tentukan sendiri subjek email.
                                         </span>
 
                                     </span>
@@ -524,7 +663,7 @@
                                 </label>
 
 
-                                {{-- Manual input --}}
+                                {{-- Manual Input --}}
                                 <div
                                     id="manual_subject_wrapper"
                                     class="hidden">
@@ -552,98 +691,73 @@
 
 
                         {{-- =================================================
-                            EMAIL
+                            SURAT LAMARAN PDF
                         ================================================== --}}
                         <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
                             <div class="border-b border-gray-100 px-6 py-5">
 
-                                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
                                     <div class="flex items-center gap-3">
 
-                                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-lg">
-                                            📝
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-lg">
+                                            📄
                                         </div>
 
 
                                         <div>
 
                                             <h2 class="text-base font-bold text-gray-900">
-                                                Isi Email
+                                                Surat Lamaran PDF
                                             </h2>
 
 
                                             <p class="mt-1 text-xs text-gray-500">
-                                                Template menggunakan biodata akun yang sedang login.
+                                                Pilih template surat dan sesuaikan sebelum dikirim.
                                             </p>
 
                                         </div>
 
                                     </div>
 
-
-                                    <button
-                                        type="button"
-                                        onclick="updateTemplate()"
-                                        class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50">
-
-                                        ↻
-                                        Reset Template
-
-                                    </button>
-
                                 </div>
 
-                            </div>
+
+                                {{-- PDF Template Selector --}}
+                                <div class="mt-5">
+
+                                    <label
+                                        for="pdf_template"
+                                        class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-500">
+                                        Template Surat
+                                    </label>
 
 
-                            <div class="p-6">
+                                    <select
+                                        id="pdf_template"
+                                        class="block w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">
 
-                                <textarea
-                                    name="body_email"
-                                    id="body_email"
-                                    rows="15"
-                                    required
-                                    placeholder="Isi email lamaran..."
-                                    class="block w-full resize-y rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm leading-6 text-gray-900 placeholder-gray-400 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">{{ old('body_email') }}</textarea>
+                                        @forelse($pdfTemplates as $template)
 
+                                        <option
+                                            value="{{ $template->id }}"
+                                            data-body="{{ e($template->body) }}">
+                                            {{ $template->name }}
+                                            @if($template->is_default)
+                                            — Default
+                                            @endif
+                                        </option>
 
-                                <p class="mt-2 text-xs text-gray-400">
-                                    Data nama, pendidikan, nomor HP, dan email akan mengikuti profil akun.
-                                </p>
+                                        @empty
 
-                            </div>
+                                        <option value="">
+                                            Belum ada template surat
+                                        </option>
 
-                        </div>
+                                        @endforelse
 
-
-                        {{-- =================================================
-                            PDF LETTER
-                        ================================================== --}}
-                        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-
-                            <div class="border-b border-gray-100 px-6 py-5">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-lg">
-                                        📄
-                                    </div>
-
-
-                                    <div>
-
-                                        <h2 class="text-base font-bold text-gray-900">
-                                            Surat Lamaran PDF
-                                        </h2>
-
-
-                                        <p class="mt-1 text-xs text-gray-500">
-                                            Data biodata diambil dari profil akun yang sedang login.
-                                        </p>
-
-                                    </div>
+                                    </select>
 
                                 </div>
 
@@ -657,8 +771,9 @@
                                     id="body_pdf">{{ old('body_pdf') }}</textarea>
 
 
-                                <p class="mt-3 text-xs text-gray-400">
-                                    Surat dapat diedit sebelum dikirim.
+                                <p class="mt-3 text-xs leading-5 text-gray-400">
+                                    Data biodata dan informasi lowongan akan otomatis
+                                    mengikuti profil serta form Apply.
                                 </p>
 
                             </div>
@@ -730,7 +845,9 @@
                                         </div>
 
 
-                                        <span class="truncate text-sm font-medium text-gray-700">
+                                        <span
+                                            class="truncate text-sm font-medium text-gray-700"
+                                            title="{{ $file }}">
                                             {{ $file }}
                                         </span>
 
@@ -757,7 +874,8 @@
 
 
                                             <p class="mt-1 text-xs leading-5 text-amber-700">
-                                                Upload CV atau dokumen pendukung melalui menu Berkas.
+                                                Upload CV atau dokumen pendukung
+                                                melalui menu Berkas.
                                             </p>
 
                                         </div>
@@ -776,11 +894,101 @@
                                 <a
                                     href="{{ route('files.index') }}"
                                     class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-semibold text-gray-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
-
                                     📁
                                     Kelola Berkas
-
                                 </a>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- =================================================
+                            PROFILE SUMMARY
+                        ================================================== --}}
+                        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+
+                            <div class="flex items-start justify-between gap-3">
+
+                                <div>
+
+                                    <h3 class="text-sm font-bold text-gray-900">
+                                        Profil Pelamar
+                                    </h3>
+
+
+                                    <p class="mt-1 text-xs text-gray-500">
+                                        Data yang digunakan oleh template.
+                                    </p>
+
+                                </div>
+
+
+                                <a
+                                    href="{{ route('profile.edit') }}"
+                                    class="text-xs font-semibold text-indigo-600 transition hover:text-indigo-700">
+                                    Edit
+                                </a>
+
+                            </div>
+
+
+                            <div class="mt-5 space-y-4">
+
+                                <div>
+
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                        Nama
+                                    </p>
+
+
+                                    <p class="mt-1 text-sm font-semibold text-gray-800">
+                                        {{ Auth::user()->name }}
+                                    </p>
+
+                                </div>
+
+
+                                <div>
+
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                        Pendidikan
+                                    </p>
+
+
+                                    <p class="mt-1 text-sm text-gray-600">
+                                        {{ Auth::user()->education ?: 'Belum diisi' }}
+                                    </p>
+
+                                </div>
+
+
+                                <div>
+
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                        Email
+                                    </p>
+
+
+                                    <p class="mt-1 truncate text-sm text-gray-600">
+                                        {{ Auth::user()->email }}
+                                    </p>
+
+                                </div>
+
+
+                                <div>
+
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                        Nomor HP
+                                    </p>
+
+
+                                    <p class="mt-1 text-sm text-gray-600">
+                                        {{ Auth::user()->phone ?: 'Belum diisi' }}
+                                    </p>
+
+                                </div>
 
                             </div>
 
@@ -807,8 +1015,9 @@
 
 
                                     <p class="mt-2 text-sm leading-6 text-gray-400">
-                                        Pastikan informasi HRD, posisi, isi email,
-                                        surat, dan lampiran sudah benar.
+                                        Pastikan informasi HRD, posisi,
+                                        template, isi email, surat,
+                                        dan lampiran sudah benar.
                                     </p>
 
 
@@ -844,70 +1053,82 @@
 
 
                         {{-- =================================================
-                            PROFILE INFO
+                            TIPS
                         ================================================== --}}
                         <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
 
-                            <div class="flex items-center justify-between gap-3">
-
-                                <div>
-
-                                    <h3 class="text-sm font-bold text-gray-900">
-                                        Profil Pelamar
-                                    </h3>
-
-                                    <p class="mt-1 text-xs text-gray-500">
-                                        Data yang digunakan template.
-                                    </p>
-
-                                </div>
-
-
-                                <a
-                                    href="{{ route('profile.edit') }}"
-                                    class="text-xs font-semibold text-indigo-600 hover:text-indigo-700">
-                                    Edit
-                                </a>
-
-                            </div>
+                            <h3 class="text-sm font-bold text-gray-900">
+                                Tips sebelum mengirim
+                            </h3>
 
 
                             <div class="mt-4 space-y-3">
 
-                                <div>
+                                <div class="flex gap-3">
 
-                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-                                        Nama
-                                    </p>
-
-                                    <p class="mt-1 text-sm font-medium text-gray-800">
-                                        {{ Auth::user()->name }}
-                                    </p>
-
-                                </div>
+                                    <span class="text-sm text-emerald-600">
+                                        ✓
+                                    </span>
 
 
-                                <div>
-
-                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-                                        Pendidikan
-                                    </p>
-
-                                    <p class="mt-1 text-sm text-gray-600">
-                                        {{ Auth::user()->education ?: 'Belum diisi' }}
+                                    <p class="text-xs leading-5 text-gray-500">
+                                        Pastikan email HRD sudah benar.
                                     </p>
 
                                 </div>
 
 
-                                <div>
+                                <div class="flex gap-3">
 
-                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-                                        Email
+                                    <span class="text-sm text-emerald-600">
+                                        ✓
+                                    </span>
+
+
+                                    <p class="text-xs leading-5 text-gray-500">
+                                        Pilih template yang paling sesuai.
                                     </p>
 
-                                    <p class="mt-1 truncate text-sm text-gray-600">
-                                        {{ Auth::user()->email }}
+                                </div>
+
+
+                                <div class="flex gap-3">
+
+                                    <span class="text-sm text-emerald-600">
+                                        ✓
+                                    </span>
+
+
+                                    <p class="text-xs leading-5 text-gray-500">
+                                        Pastikan biodata profil sudah lengkap.
+                                    </p>
+
+                                </div>
+
+
+                                <div class="flex gap-3">
+
+                                    <span class="text-sm text-emerald-600">
+                                        ✓
+                                    </span>
+
+
+                                    <p class="text-xs leading-5 text-gray-500">
+                                        Periksa kembali CV dan dokumen pendukung.
+                                    </p>
+
+                                </div>
+
+
+                                <div class="flex gap-3">
+
+                                    <span class="text-sm text-emerald-600">
+                                        ✓
+                                    </span>
+
+
+                                    <p class="text-xs leading-5 text-gray-500">
+                                        Baca kembali isi email sebelum dikirim.
                                     </p>
 
                                 </div>
@@ -924,7 +1145,7 @@
 
 
             {{-- =====================================================
-                HISTORY
+                RIWAYAT LAMARAN
             ====================================================== --}}
             <div class="mt-10">
 
@@ -953,6 +1174,7 @@
 
                 <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
+
                     {{-- =================================================
                         DESKTOP TABLE
                     ================================================== --}}
@@ -968,33 +1190,41 @@
                                         No
                                     </th>
 
+
                                     <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                                         Waktu
                                     </th>
+
 
                                     <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                                         Perusahaan
                                     </th>
 
+
                                     <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                                         Posisi
                                     </th>
+
 
                                     <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                                         Email HRD
                                     </th>
 
+
                                     <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                                         Status
                                     </th>
+
 
                                     <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                                         Subjek
                                     </th>
 
+
                                     <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                                         Waktu Berlalu
                                     </th>
+
 
                                     <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
                                         Aksi
@@ -1026,6 +1256,7 @@
                                         <p class="text-sm font-medium text-gray-900">
                                             {{ $history->created_at->format('d/m/Y') }}
                                         </p>
+
 
                                         <p class="text-xs text-gray-400">
                                             {{ $history->created_at->format('H:i') }}
@@ -1123,13 +1354,13 @@
 
                                     <td class="whitespace-nowrap px-5 py-4">
 
-                                        @if ($days === 0)
+                                        @if($days === 0)
 
                                         <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
                                             Hari ini
                                         </span>
 
-                                        @elseif ($days === 1)
+                                        @elseif($days === 1)
 
                                         <span class="inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
                                             1 hari lalu
@@ -1250,13 +1481,13 @@
                                 </div>
 
 
-                                @if ($days === 0)
+                                @if($days === 0)
 
                                 <span class="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
                                     Hari ini
                                 </span>
 
-                                @elseif ($days === 1)
+                                @elseif($days === 1)
 
                                 <span class="shrink-0 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-sky-700">
                                     1 hari lalu
@@ -1505,9 +1736,10 @@
 
 
         /*
-         * Tailwind menghilangkan numbering default.
-         * Kita kembalikan numbering di Summernote.
+         * Tailwind Preflight menghilangkan marker list.
+         * Kembalikan numbering dan bullet di Summernote.
          */
+
         .note-editable ol {
             list-style-type: decimal !important;
             padding-left: 2rem !important;
@@ -1542,7 +1774,6 @@
 
     {{-- =========================================================
         JAVASCRIPT
-        Tidak menggunakan @json()
     ========================================================== --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1565,13 +1796,22 @@
             const posisi =
                 document.getElementById('posisi');
 
+            const emailTemplateSelect =
+                document.getElementById('email_template');
+
+            const pdfTemplateSelect =
+                document.getElementById('pdf_template');
+
+            const subjectPreview =
+                document.getElementById('template_subject_preview');
+
             const profileElement =
                 document.getElementById('profile-data');
 
 
             /*
             |--------------------------------------------------------------------------
-            | PROFILE DATA
+            | PROFILE
             |--------------------------------------------------------------------------
             */
 
@@ -1596,449 +1836,291 @@
 
             /*
             |--------------------------------------------------------------------------
-            | CURRENT DATE
+            | TEMPLATE VALUES
             |--------------------------------------------------------------------------
             */
 
-            const tanggalSekarang =
-                "{{ now()->translatedFormat('d F Y') }}";
+            function getTemplateValues() {
+
+                const perusahaan =
+                    namaPt?.value?.trim() || '[NAMA_PT]';
+
+                const posisiLamaran =
+                    posisi?.value?.trim() || '[POSISI]';
+
+                const tanggal =
+                    new Intl.DateTimeFormat(
+                        'id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                        }
+                    ).format(new Date());
+
+                return {
+
+                    ['{' + '{nama}' + '}']: profile.name || 'Nama Lengkap',
+
+                    ['{' + '{email}' + '}']: profile.email || 'Email',
+
+                    ['{' + '{phone}' + '}']: profile.phone || 'Nomor HP',
+
+                    ['{' + '{pendidikan}' + '}']: profile.education || 'Pendidikan',
+
+                    ['{' + '{alamat}' + '}']: profile.address || 'Alamat',
+
+                    ['{' + '{tempat_lahir}' + '}']: profile.birthPlace || 'Tempat Lahir',
+
+                    ['{' + '{tanggal_lahir}' + '}']: profile.birthDate || 'Tanggal Lahir',
+
+                    ['{' + '{perusahaan}' + '}']: perusahaan,
+
+                    ['{' + '{posisi}' + '}']: posisiLamaran,
+
+                    ['{' + '{tanggal}' + '}']: tanggal,
+
+                    ['{' + '{kota}' + '}']: 'Jombang'
+                };
+            }
 
 
             /*
             |--------------------------------------------------------------------------
-            | HELPER
+            | RENDER TEMPLATE
             |--------------------------------------------------------------------------
             */
 
-            function valueOrFallback(value, fallback = '-') {
+            function renderTemplate(template) {
 
-                if (
-                    value === undefined ||
-                    value === null ||
-                    String(value).trim() === ''
-                ) {
-                    return fallback;
+                let result =
+                    template || '';
+
+
+                const values =
+                    getTemplateValues();
+
+
+                Object.entries(values).forEach(
+                    function([placeholder, value]) {
+
+                        result =
+                            result
+                            .split(placeholder)
+                            .join(value);
+
+                    }
+                );
+
+
+                return result;
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | GET SELECTED EMAIL TEMPLATE
+            |--------------------------------------------------------------------------
+            */
+
+            function getSelectedEmailOption() {
+
+                if (!emailTemplateSelect) {
+                    return null;
                 }
 
-                return value;
+
+                return emailTemplateSelect.options[
+                    emailTemplateSelect.selectedIndex
+                ] || null;
 
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | TEMPLATE EMAIL
+            | GET SELECTED PDF TEMPLATE
             |--------------------------------------------------------------------------
             */
 
-            function getEmailTemplate() {
+            function getSelectedPdfOption() {
 
-                const perusahaan =
-                    namaPt && namaPt.value.trim() ?
-                    namaPt.value.trim() :
-                    '[NAMA_PT]';
-
-
-                const posisiLamaran =
-                    posisi && posisi.value.trim() ?
-                    posisi.value.trim() :
-                    '[POSISI]';
+                if (!pdfTemplateSelect) {
+                    return null;
+                }
 
 
-                const nama =
-                    valueOrFallback(
-                        profile.name,
-                        'Nama Lengkap'
-                    );
-
-
-                const pendidikan =
-                    valueOrFallback(
-                        profile.education,
-                        'pendidikan terakhir'
-                    );
-
-
-                const phone =
-                    valueOrFallback(
-                        profile.phone,
-                        'Nomor HP'
-                    );
-
-
-                const email =
-                    valueOrFallback(
-                        profile.email,
-                        'Email'
-                    );
-
-
-                return `Yth. HRD / Tim Rekrutmen ${perusahaan},
-
-Perkenalkan nama saya ${nama}. Menanggapi lowongan pekerjaan yang Bapak/Ibu terbitkan, saya bermaksud ingin mengajukan lamaran pekerjaan di perusahaan yang Bapak/Ibu pimpin sebagai ${posisiLamaran}.
-
-Saya memiliki latar belakang pendidikan ${pendidikan} dan tertarik untuk mengembangkan kemampuan saya melalui posisi tersebut.
-
-Saya memiliki kemampuan pengolahan data menggunakan Microsoft Excel dan berbagai fungsi seperti Sum, If, Average, Hlookup, Vlookup, Mid, Right, Left, Index, Match, Pivot, dan lain-lain.
-
-Saya juga siap jika nantinya terdapat test atau tahapan seleksi sebagai bagian dari proses rekrutmen pada posisi tersebut.
-
-Sebagai bahan pertimbangan Bapak/Ibu, saya telah melampirkan Curriculum Vitae (CV) beserta dokumen pendukung lainnya pada email ini.
-
-Saya sangat menantikan kesempatan untuk mengikuti tahapan wawancara agar dapat mendiskusikan lebih rinci mengenai potensi yang saya miliki.
-
-Terima kasih atas waktu dan perhatian Bapak/Ibu.
-
-Hormat saya,
-${nama}
-${phone}
-${email}`;
+                return pdfTemplateSelect.options[
+                    pdfTemplateSelect.selectedIndex
+                ] || null;
 
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | TEMPLATE PDF
+            | LOAD EMAIL TEMPLATE
             |--------------------------------------------------------------------------
             */
 
-            function getPdfTemplate() {
+            function loadEmailTemplate() {
 
-                const perusahaan =
-                    namaPt && namaPt.value.trim() ?
-                    namaPt.value.trim() :
-                    '[NAMA_PT]';
-
-
-                const posisiLamaran =
-                    posisi && posisi.value.trim() ?
-                    posisi.value.trim() :
-                    '[POSISI]';
+                if (!bodyEmail) {
+                    return;
+                }
 
 
-                const nama =
-                    valueOrFallback(
-                        profile.name,
-                        'Nama Lengkap'
+                const option =
+                    getSelectedEmailOption();
+
+
+                if (!option) {
+                    return;
+                }
+
+
+                const rawBody =
+                    option.getAttribute('data-body') || '';
+
+
+                const rawSubject =
+                    option.getAttribute('data-subject') || '';
+
+
+                bodyEmail.value =
+                    renderTemplate(rawBody);
+
+
+                if (subjectPreview) {
+
+                    subjectPreview.value =
+                        renderTemplate(rawSubject);
+
+                }
+
+
+                /*
+                 * Jika mode subject menggunakan template,
+                 * kita tampilkan hasil subject di input manual
+                 * tanpa mengubah nama field backend.
+                 */
+                const manualSubject =
+                    document.getElementById(
+                        'input_subjek_manual'
                     );
 
 
-                const tempatLahir =
-                    valueOrFallback(
-                        profile.birthPlace
-                    );
-
-
-                const tanggalLahir =
-                    valueOrFallback(
-                        profile.birthDate
-                    );
-
-
-                const pendidikan =
-                    valueOrFallback(
-                        profile.education
-                    );
-
-
-                const alamat =
-                    valueOrFallback(
-                        profile.address
-                    );
-
-
-                const phone =
-                    valueOrFallback(
-                        profile.phone
-                    );
-
-
-                const email =
-                    valueOrFallback(
-                        profile.email
-                    );
-
-
-                return `
-<div style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.6;">
-
-    <div style="text-align: right; margin-bottom: 20px;">
-        Jombang, ${tanggalSekarang}
-    </div>
-
-
-    <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
-
-        <tr>
-            <td style="width: 80px; vertical-align: top;">
-                Hal
-            </td>
-
-            <td style="width: 15px; vertical-align: top;">
-                :
-            </td>
-
-            <td>
-                Lamaran Pekerjaan
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="vertical-align: top;">
-                Lampiran
-            </td>
-
-            <td style="vertical-align: top;">
-                :
-            </td>
-
-            <td>
-                -
-            </td>
-        </tr>
-
-    </table>
-
-
-    <p>
-        Yth. HRD <strong>${perusahaan}</strong>.
-    </p>
-
-
-    <p>
-        Dengan Hormat.
-    </p>
-
-
-    <p>
-        Saya yang bertanda tangan di bawah ini:
-    </p>
-
-
-    <table
-        style="
-            margin-left: 30px;
-            margin-bottom: 20px;
-            margin-top: 15px;
-            border-collapse: collapse;
-        "
-    >
-
-        <tr>
-            <td style="width: 170px; vertical-align: top;">
-                Nama
-            </td>
-
-            <td style="width: 15px; vertical-align: top;">
-                :
-            </td>
-
-            <td>
-                ${nama}
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="vertical-align: top;">
-                Tempat, Tanggal Lahir
-            </td>
-
-            <td style="vertical-align: top;">
-                :
-            </td>
-
-            <td>
-                ${tempatLahir}, ${tanggalLahir}
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="vertical-align: top;">
-                Pendidikan
-            </td>
-
-            <td style="vertical-align: top;">
-                :
-            </td>
-
-            <td>
-                ${pendidikan}
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="vertical-align: top;">
-                Alamat
-            </td>
-
-            <td style="vertical-align: top;">
-                :
-            </td>
-
-            <td>
-                ${alamat}
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="vertical-align: top;">
-                No. HP
-            </td>
-
-            <td style="vertical-align: top;">
-                :
-            </td>
-
-            <td>
-                ${phone}
-            </td>
-        </tr>
-
-
-        <tr>
-            <td style="vertical-align: top;">
-                Email
-            </td>
-
-            <td style="vertical-align: top;">
-                :
-            </td>
-
-            <td>
-                ${email}
-            </td>
-        </tr>
-
-    </table>
-
-
-    <p style="text-align: justify;">
-
-        Dengan segala hormat, saya ingin mengajukan lamaran pekerjaan
-        di perusahaan yang dipimpin oleh Bapak/Ibu sebagai
-        <strong>${posisiLamaran}</strong>.
-
-        Saya sangat antusias untuk bergabung dengan perusahaan ini
-        dan memberikan kontribusi terbaik sesuai dengan kemampuan
-        yang saya miliki.
-
-    </p>
-
-
-    <p style="text-align: justify;">
-
-        Saya memiliki latar belakang pendidikan
-        <strong>${pendidikan}</strong>
-        dan siap mengikuti seluruh proses seleksi yang ditetapkan
-        oleh perusahaan.
-
-    </p>
-
-
-    <p style="text-align: justify;">
-
-        Terima kasih atas perhatian Bapak/Ibu.
-
-        Sebagai bahan pertimbangan, bersama surat ini saya lampirkan
-        dokumen pendukung yang diperlukan.
-
-    </p>
-
-
-    <ol style="
-        margin-top: 8px;
-        margin-bottom: 16px;
-        padding-left: 24px;
-        list-style-type: decimal;
-    ">
-
-        <li>Riwayat Hidup</li>
-        <li>Pas Foto</li>
-        <li>KTP</li>
-        <li>KK</li>
-        <li>SKCK</li>
-        <li>Fotokopi Ijazah</li>
-        <li>Fotokopi Transkrip Nilai</li>
-
-    </ol>
-
-
-    <p style="text-align: justify;">
-
-        Demikian surat lamaran ini saya buat.
-
-        Atas perhatian dan pertimbangan Ibu/Bapak,
-        saya ucapkan terima kasih.
-
-    </p>
-
-
-    <table
-        style="
-            width: 100%;
-            margin-top: 40px;
-            border-collapse: collapse;
-        "
-    >
-
-        <tr>
-
-            <td style="width: 65%;"></td>
-
-
-            <td
-                style="
-                    width: 35%;
-                    text-align: center;
-                "
-            >
-
-                Hormat saya,
-
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-
-                (${nama})
-
-            </td>
-
-        </tr>
-
-    </table>
-
-</div>
-`;
+                if (
+                    manualSubject &&
+                    document.getElementById('subjek_auto')?.checked
+                ) {
+
+                    manualSubject.value =
+                        renderTemplate(rawSubject);
+
+                }
 
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | INITIALIZE SUMMERNOTE
+            | LOAD PDF TEMPLATE
             |--------------------------------------------------------------------------
             */
 
-            if (window.jQuery && bodyPdf) {
+            function loadPdfTemplate() {
+
+                if (
+                    !bodyPdf ||
+                    !window.jQuery
+                ) {
+                    return;
+                }
+
+
+                const option =
+                    getSelectedPdfOption();
+
+
+                if (!option) {
+                    return;
+                }
+
+
+                const rawBody =
+                    option.getAttribute('data-body') || '';
+
+
+                const rendered =
+                    renderTemplate(rawBody);
+
+
+                $('#body_pdf').summernote(
+                    'code',
+                    rendered
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SUMMERNOTE INITIALIZATION
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                window.jQuery &&
+                bodyPdf
+            ) {
 
                 $('#body_pdf').summernote({
 
                     height: 400,
 
                     toolbar: [
-                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['font', ['strikethrough']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['table', ['table']],
-                        ['view', ['fullscreen', 'codeview']]
+                        [
+                            'style',
+                            [
+                                'bold',
+                                'italic',
+                                'underline',
+                                'clear'
+                            ]
+                        ],
+
+                        [
+                            'font',
+                            [
+                                'strikethrough'
+                            ]
+                        ],
+
+                        [
+                            'para',
+                            [
+                                'ul',
+                                'ol',
+                                'paragraph'
+                            ]
+                        ],
+
+                        [
+                            'table',
+                            [
+                                'table'
+                            ]
+                        ],
+
+                        [
+                            'view',
+                            [
+                                'fullscreen',
+                                'codeview'
+                            ]
+                        ]
+
                     ]
 
                 });
@@ -2058,10 +2140,13 @@ ${email}`;
                     bodyEmail.value.trim();
 
 
+                /*
+                 * Kalau datang dari validation error,
+                 * jangan menimpa input lama.
+                 */
                 if (!existingEmail) {
 
-                    bodyEmail.value =
-                        getEmailTemplate();
+                    loadEmailTemplate();
 
                 }
 
@@ -2074,12 +2159,19 @@ ${email}`;
             |--------------------------------------------------------------------------
             */
 
-            if (bodyPdf && window.jQuery) {
+            if (
+                bodyPdf &&
+                window.jQuery
+            ) {
 
                 const existingPdf =
                     bodyPdf.value.trim();
 
 
+                /*
+                 * Kalau datang dari validation error,
+                 * pertahankan data lama.
+                 */
                 if (existingPdf) {
 
                     $('#body_pdf').summernote(
@@ -2089,12 +2181,133 @@ ${email}`;
 
                 } else {
 
-                    $('#body_pdf').summernote(
-                        'code',
-                        getPdfTemplate()
-                    );
+                    loadPdfTemplate();
 
                 }
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | EMAIL TEMPLATE CHANGE
+            |--------------------------------------------------------------------------
+            */
+
+            if (emailTemplateSelect) {
+
+                emailTemplateSelect.addEventListener(
+                    'change',
+                    function() {
+
+                        loadEmailTemplate();
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PDF TEMPLATE CHANGE
+            |--------------------------------------------------------------------------
+            */
+
+            if (pdfTemplateSelect) {
+
+                pdfTemplateSelect.addEventListener(
+                    'change',
+                    function() {
+
+                        loadPdfTemplate();
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE TEMPLATE WHEN COMPANY CHANGES
+            |--------------------------------------------------------------------------
+            */
+
+            if (namaPt) {
+
+                namaPt.addEventListener(
+                    'input',
+                    function() {
+
+                        const option =
+                            getSelectedEmailOption();
+
+
+                        if (!option) {
+                            return;
+                        }
+
+
+                        const rawSubject =
+                            option.getAttribute(
+                                'data-subject'
+                            ) || '';
+
+
+                        if (subjectPreview) {
+
+                            subjectPreview.value =
+                                renderTemplate(
+                                    rawSubject
+                                );
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE TEMPLATE WHEN POSITION CHANGES
+            |--------------------------------------------------------------------------
+            */
+
+            if (posisi) {
+
+                posisi.addEventListener(
+                    'input',
+                    function() {
+
+                        const option =
+                            getSelectedEmailOption();
+
+
+                        if (!option) {
+                            return;
+                        }
+
+
+                        const rawSubject =
+                            option.getAttribute(
+                                'data-subject'
+                            ) || '';
+
+
+                        if (subjectPreview) {
+
+                            subjectPreview.value =
+                                renderTemplate(
+                                    rawSubject
+                                );
+
+                        }
+
+                    }
+                );
 
             }
 
@@ -2108,13 +2321,21 @@ ${email}`;
             window.toggleSubject = function() {
 
                 const manualRadio =
-                    document.getElementById('subjek_manual');
+                    document.getElementById(
+                        'subjek_manual'
+                    );
+
 
                 const inputManual =
-                    document.getElementById('input_subjek_manual');
+                    document.getElementById(
+                        'input_subjek_manual'
+                    );
+
 
                 const wrapper =
-                    document.getElementById('manual_subject_wrapper');
+                    document.getElementById(
+                        'manual_subject_wrapper'
+                    );
 
 
                 if (
@@ -2128,15 +2349,50 @@ ${email}`;
 
                 if (manualRadio.checked) {
 
-                    wrapper.classList.remove('hidden');
+                    wrapper.classList.remove(
+                        'hidden'
+                    );
 
-                    inputManual.required = true;
+                    inputManual.required =
+                        true;
+
+
+                    /*
+                     * Saat pindah ke manual,
+                     * isi dengan subject template
+                     * sebagai titik awal agar user
+                     * tinggal mengedit.
+                     */
+
+                    if (
+                        !inputManual.value.trim()
+                    ) {
+
+                        const option =
+                            getSelectedEmailOption();
+
+
+                        const rawSubject =
+                            option?.getAttribute(
+                                'data-subject'
+                            ) || '';
+
+
+                        inputManual.value =
+                            renderTemplate(
+                                rawSubject
+                            );
+
+                    }
 
                 } else {
 
-                    wrapper.classList.add('hidden');
+                    wrapper.classList.add(
+                        'hidden'
+                    );
 
-                    inputManual.required = false;
+                    inputManual.required =
+                        false;
 
                 }
 
@@ -2151,25 +2407,9 @@ ${email}`;
 
             window.updateTemplate = function() {
 
-                if (bodyEmail) {
+                loadEmailTemplate();
 
-                    bodyEmail.value =
-                        getEmailTemplate();
-
-                }
-
-
-                if (
-                    bodyPdf &&
-                    window.jQuery
-                ) {
-
-                    $('#body_pdf').summernote(
-                        'code',
-                        getPdfTemplate()
-                    );
-
-                }
+                loadPdfTemplate();
 
             };
 

@@ -6,27 +6,64 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\ApplicationHistory; // Panggil model riwayat
+use App\Models\Template;
+use Illuminate\Support\Facades\Auth;
 
 class ApplyController extends Controller
 {
     public function index()
     {
         $files = [];
-        if (Storage::disk('public')->exists('berkas')) {
-            $filesPath = Storage::disk('public')->files('berkas');
 
-            foreach ($filesPath as $path) {
-                $namaFile = basename($path);
-                if (!str_contains($namaFile, 'Zone.Identifier') && !str_starts_with($namaFile, '.')) {
-                    $files[] = $namaFile;
+        if (Storage::disk('public')->exists('berkas')) {
+
+            $paths = Storage::disk('public')->files('berkas');
+
+            foreach ($paths as $path) {
+
+                $name = basename($path);
+
+                if (
+                    !str_contains($name, 'Zone.Identifier') &&
+                    !str_starts_with($name, '.')
+                ) {
+                    $files[] = $name;
                 }
             }
         }
 
-        // Ambil data riwayat (diurutkan dari yang paling baru)
+
         $histories = ApplicationHistory::latest()->get();
 
-        return view('apply', compact('files', 'histories'));
+
+        $emailTemplates = Template::query()
+            ->where('type', 'email')
+            ->where(function ($query) {
+                $query->whereNull('user_id')
+                    ->orWhere('user_id', Auth::id());
+            })
+            ->orderByDesc('is_default')
+            ->orderBy('name')
+            ->get();
+
+
+        $pdfTemplates = Template::query()
+            ->where('type', 'pdf')
+            ->where(function ($query) {
+                $query->whereNull('user_id')
+                    ->orWhere('user_id', Auth::id());
+            })
+            ->orderByDesc('is_default')
+            ->orderBy('name')
+            ->get();
+
+
+        return view('apply', compact(
+            'files',
+            'histories',
+            'emailTemplates',
+            'pdfTemplates'
+        ));
     }
 
     public function send(Request $request)
