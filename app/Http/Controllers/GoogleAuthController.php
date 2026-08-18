@@ -120,12 +120,41 @@ class GoogleAuthController extends Controller
 
         // If the User model does not define a googleAccount relationship,
         // use the GoogleAccount model directly to create or update the record.
-        GoogleAccount::updateOrCreate(
-            [
+        $existingGoogleAccount = GoogleAccount::where(
+            'google_id',
+            $googleUser['id']
+        )->first();
+
+        if (
+            $existingGoogleAccount &&
+            $existingGoogleAccount->user_id !== $user->id
+        ) {
+            return redirect()
+                ->route('profile.edit')
+                ->withErrors([
+                    'google' => 'Gmail ini sudah terhubung dengan akun pengguna lain.',
+                ]);
+        }
+
+        $data = [
+            'google_id' => $googleUser['id'],
+            'google_email' => $googleUser['email'],
+            'access_token' => $token['access_token'],
+            'token_expires_at' => now()->addSeconds($token['expires_in']),
+        ];
+
+        if (!empty($token['refresh_token'])) {
+            $data['refresh_token'] = $token['refresh_token'];
+        }
+
+        if ($existingGoogleAccount) {
+            $existingGoogleAccount->update($data);
+        } else {
+            GoogleAccount::create([
                 'user_id' => $user->id,
-            ],
-            $data
-        );
+                ...$data,
+            ]);
+        }
 
         return redirect()
             ->route('profile.edit')

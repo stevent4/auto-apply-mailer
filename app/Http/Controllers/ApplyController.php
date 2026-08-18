@@ -32,7 +32,10 @@ class ApplyController extends Controller
             }
         }
 
-        $histories = ApplicationHistory::latest()->get();
+        $histories = ApplicationHistory::query()
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
         $emailTemplates = Template::query()
             ->where('type', 'email')

@@ -35,6 +35,30 @@
 
             </div>
 
+            @if ($errors->has('google'))
+            <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4">
+
+                <div class="flex items-start gap-3">
+
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100 font-bold text-red-600">
+                        !
+                    </div>
+
+                    <div>
+                        <p class="text-sm font-semibold text-red-800">
+                            Gagal menghubungkan Gmail
+                        </p>
+
+                        <p class="mt-1 text-sm text-red-700">
+                            {{ $errors->first('google') }}
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+            @endif
+
 
             {{-- =====================================================
                 SUCCESS
