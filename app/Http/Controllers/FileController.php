@@ -3,20 +3,41 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
     /**
+     * Disk penyimpanan berkas user.
+     */
+    private function disk()
+    {
+        return Storage::disk('public');
+    }
+
+    /**
+     * Folder berkas milik user yang sedang login.
+     */
+    private function userFolder(): string
+    {
+        return 'berkas/' . Auth::id();
+    }
+
+    /**
      * Menampilkan halaman kelola berkas.
      */
     public function index()
     {
+        $disk = $this->disk();
+
+        $folder = $this->userFolder();
+
         $files = [];
 
-        if (Storage::disk('public')->exists('berkas')) {
+        if ($disk->exists($folder)) {
 
-            $paths = Storage::disk('public')->files('berkas');
+            $paths = $disk->files($folder);
 
             foreach ($paths as $path) {
 
@@ -32,8 +53,8 @@ class FileController extends Controller
 
                 $files[] = [
                     'name' => $name,
-                    'size' => Storage::disk('public')->size($path),
-                    'last_modified' => Storage::disk('public')->lastModified($path),
+                    'size' => $disk->size($path),
+                    'last_modified' => $disk->lastModified($path),
                 ];
             }
         }
@@ -73,6 +94,14 @@ class FileController extends Controller
             'files.*.max' => 'Ukuran setiap file maksimal 10 MB.',
         ]);
 
+        $disk = $this->disk();
+
+        $folder = $this->userFolder();
+
+        /*
+         * Pastikan folder user tersedia.
+         */
+        $disk->makeDirectory($folder);
 
         foreach ($request->file('files') as $file) {
 
@@ -89,7 +118,6 @@ class FileController extends Controller
 
             $cleanName = trim($cleanName);
 
-
             /*
              * Jika nama file kosong,
              * buat nama otomatis.
@@ -99,21 +127,23 @@ class FileController extends Controller
                 $cleanName =
                     'berkas-' .
                     time() .
+                    '-' .
+                    uniqid() .
                     '.' .
                     $file->extension();
             }
 
-
             /*
-             * Hindari nama file yang sama.
+             * Hindari nama file yang sama
+             * khusus di folder user ini.
              */
             $finalName = $cleanName;
 
             $counter = 1;
 
             while (
-                Storage::disk('public')->exists(
-                    'berkas/' . $finalName
+                $disk->exists(
+                    $folder . '/' . $finalName
                 )
             ) {
 
@@ -136,19 +166,17 @@ class FileController extends Controller
                 $counter++;
             }
 
-
             /*
-             * Simpan file:
+             * Simpan file ke:
              *
-             * storage/app/public/berkas/
+             * storage/app/public/berkas/{user_id}/
              */
             $file->storeAs(
-                'berkas',
+                $folder,
                 $finalName,
                 'public'
             );
         }
-
 
         return redirect()
             ->route('files.index')
@@ -169,22 +197,24 @@ class FileController extends Controller
          */
         $filename = basename($filename);
 
+        $disk = $this->disk();
+
         $path =
-            'berkas/' . $filename;
+            $this->userFolder() .
+            '/' .
+            $filename;
 
-
-        if (!Storage::disk('public')->exists($path)) {
-
+        /*
+         * Hanya file milik user yang boleh diakses.
+         */
+        if (!$disk->exists($path)) {
             abort(404);
         }
-
 
         /*
          * Ambil path fisik file dari disk public.
          */
-        $fullPath =
-            Storage::disk('public')->path($path);
-
+        $fullPath = $disk->path($path);
 
         return response()->download(
             $fullPath,
@@ -203,15 +233,20 @@ class FileController extends Controller
          */
         $filename = basename($filename);
 
+        $disk = $this->disk();
+
         $path =
-            'berkas/' . $filename;
+            $this->userFolder() .
+            '/' .
+            $filename;
 
+        /*
+         * Hanya file milik user yang boleh dihapus.
+         */
+        if ($disk->exists($path)) {
 
-        if (Storage::disk('public')->exists($path)) {
-
-            Storage::disk('public')->delete($path);
+            $disk->delete($path);
         }
-
 
         return redirect()
             ->route('files.index')

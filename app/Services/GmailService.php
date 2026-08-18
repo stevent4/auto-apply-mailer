@@ -38,7 +38,7 @@ class GmailService
         $gmail = new Gmail($client);
 
         $rawMessage = $this->buildRawMessage(
-            from: $googleAccount->google_email,
+            googleAccount: $googleAccount,
             to: $to,
             subject: $subject,
             htmlBody: $htmlBody,
@@ -149,7 +149,7 @@ class GmailService
      * sesuai format yang dibutuhkan Gmail API.
      */
     private function buildRawMessage(
-        string $from,
+        GoogleAccount $googleAccount,
         string $to,
         string $subject,
         string $htmlBody,
@@ -160,7 +160,7 @@ class GmailService
         $boundary = '=_AutoApplyMailer_' . bin2hex(random_bytes(16));
 
         $headers = [
-            'From: ' . $from,
+            'From: ' . $googleAccount->google_email,
             'To: ' . $to,
             'Subject: ' . $this->encodeHeader($subject),
             'MIME-Version: 1.0',
@@ -200,22 +200,64 @@ class GmailService
 
         /*
          * Attachment CV / dokumen pendukung.
+         *
+         * File hanya boleh diambil dari folder
+         * milik user yang memiliki GoogleAccount ini.
+         *
+         * Struktur:
+         *
+         * storage/app/public/berkas/{user_id}/
          */
-        foreach ($lampiranFiles as $file) {
-            $path = storage_path(
-                'app/public/berkas/' . $file
-            );
+        $disk = Storage::disk('public');
 
-            if (!is_file($path)) {
+        $userFolder = 'berkas/' . $googleAccount->user_id;
+
+        foreach ($lampiranFiles as $file) {
+
+            /*
+             * Ambil hanya nama file.
+             *
+             * Ini mencegah request mencoba mengirim:
+             *
+             * ../1/CV.pdf
+             * /berkas/1/CV.pdf
+             * atau path lain di luar folder user.
+             */
+            $filename = basename($file);
+
+            if (
+                $filename === '' ||
+                $filename === '.' ||
+                $filename === '..'
+            ) {
+                continue;
+            }
+
+            $path = $userFolder . '/' . $filename;
+
+            /*
+             * Pastikan file benar-benar berada di folder
+             * milik user yang sedang mengirim email.
+             */
+            if (!$disk->exists($path)) {
                 throw new RuntimeException(
-                    "File lampiran tidak ditemukan: {$file}"
+                    "File lampiran tidak ditemukan atau bukan milik user: {$filename}"
                 );
             }
 
-            $mimeType = mime_content_type($path)
-                ?: 'application/octet-stream';
+            /*
+             * Ambil path fisik dari Storage.
+             */
+            $fullPath = $disk->path($path);
 
-            $filename = basename($path);
+            if (!is_file($fullPath)) {
+                throw new RuntimeException(
+                    "File lampiran tidak valid: {$filename}"
+                );
+            }
+
+            $mimeType = mime_content_type($fullPath)
+                ?: 'application/octet-stream';
 
             $message .= '--' . $boundary . "\r\n";
             $message .= 'Content-Type: ' . $mimeType .
@@ -229,7 +271,7 @@ class GmailService
             $message .= "\r\n";
             $message .= chunk_split(
                 base64_encode(
-                    file_get_contents($path)
+                    file_get_contents($fullPath)
                 ),
                 76,
                 "\r\n"

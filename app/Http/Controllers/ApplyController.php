@@ -13,24 +13,39 @@ use Throwable;
 
 class ApplyController extends Controller
 {
-    public function index()
+    private function userFiles(): array
     {
+        $disk = Storage::disk('public');
+
+        $folder = 'berkas/' . Auth::id();
+
         $files = [];
 
-        if (Storage::disk('public')->exists('berkas')) {
-            $paths = Storage::disk('public')->files('berkas');
-
-            foreach ($paths as $path) {
-                $name = basename($path);
-
-                if (
-                    !str_contains($name, 'Zone.Identifier') &&
-                    !str_starts_with($name, '.')
-                ) {
-                    $files[] = $name;
-                }
-            }
+        if (!$disk->exists($folder)) {
+            return $files;
         }
+
+        foreach ($disk->files($folder) as $path) {
+            $name = basename($path);
+
+            if (
+                str_contains($name, 'Zone.Identifier') ||
+                str_starts_with($name, '.')
+            ) {
+                continue;
+            }
+
+            $files[] = $name;
+        }
+
+        sort($files, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return $files;
+    }
+
+    public function index()
+    {
+        $files = $this->userFiles();
 
         $histories = ApplicationHistory::query()
             ->where('user_id', Auth::id())
@@ -231,25 +246,7 @@ class ApplyController extends Controller
             ->where('user_id', Auth::id())
             ->findOrFail($id);
 
-        $files = [];
-
-        if (Storage::disk('public')->exists('berkas')) {
-            $filesPath = Storage::disk('public')->files('berkas');
-
-            foreach ($filesPath as $path) {
-                $namaFile = basename($path);
-
-                if (
-                    !str_contains(
-                        $namaFile,
-                        'Zone.Identifier'
-                    ) &&
-                    !str_starts_with($namaFile, '.')
-                ) {
-                    $files[] = $namaFile;
-                }
-            }
-        }
+        $files = $this->userFiles();
 
         $histories = ApplicationHistory::query()
             ->where('user_id', Auth::id())
