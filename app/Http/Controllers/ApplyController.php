@@ -253,12 +253,34 @@ class ApplyController extends Controller
             ->latest()
             ->get();
 
+        $emailTemplates = Template::query()
+            ->where('type', 'email')
+            ->where(function ($query) {
+                $query->whereNull('user_id')
+                    ->orWhere('user_id', Auth::id());
+            })
+            ->orderByDesc('is_default')
+            ->orderBy('name')
+            ->get();
+
+        $pdfTemplates = Template::query()
+            ->where('type', 'pdf')
+            ->where(function ($query) {
+                $query->whereNull('user_id')
+                    ->orWhere('user_id', Auth::id());
+            })
+            ->orderByDesc('is_default')
+            ->orderBy('name')
+            ->get();
+
         return view(
             'apply',
             compact(
                 'files',
                 'histories',
-                'selectedHistory'
+                'selectedHistory',
+                'emailTemplates',
+                'pdfTemplates'
             )
         );
     }
