@@ -57,4 +57,36 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    /**
+     * Display the profile completion form.
+     */
+    public function complete(Request $request): View
+    {
+        return view('profile.complete', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    /**
+     * Save the profile completion form.
+     */
+    public function completeUpdate(
+        ProfileUpdateRequest $request
+    ): RedirectResponse {
+        $user = $request->user();
+
+        $user->fill($request->validated());
+
+        $user->profile_completed = true;
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        return Redirect::route('dashboard')
+            ->with('status', 'profile-completed');
+    }
 }

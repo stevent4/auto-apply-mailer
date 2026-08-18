@@ -37,6 +37,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'birth_date' => 'date',
             'password' => 'hashed',
+            'profile_completed' => 'boolean',
         ];
     }
 
@@ -48,5 +49,10 @@ class User extends Authenticatable
     public function googleAccount(): HasOne
     {
         return $this->hasOne(GoogleAccount::class);
+    }
+
+    public function applicationHistories(): HasMany
+    {
+        return $this->hasMany(ApplicationHistory::class);
     }
 }

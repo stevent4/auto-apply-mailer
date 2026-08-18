@@ -28,34 +28,11 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
 
-            'birth_place' => [
-                'nullable',
-                'string',
-                'max:100',
-            ],
-
-            'birth_date' => [
-                'nullable',
-                'date',
-            ],
-
-            'education' => [
-                'nullable',
-                'string',
-                'max:255',
-            ],
-
-            'address' => [
-                'nullable',
-                'string',
-                'max:1000',
-            ],
-
-            'phone' => [
-                'nullable',
-                'string',
-                'max:30',
-            ],
+            'birth_place' => ['required', 'string', 'max:100'],
+            'birth_date'  => ['required', 'date'],
+            'education'   => ['required', 'string', 'max:255'],
+            'address'     => ['required', 'string', 'max:1000'],
+            'phone'       => ['required', 'string', 'max:30'],
 
         ];
     }

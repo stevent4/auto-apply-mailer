@@ -180,6 +180,7 @@ class ApplyController extends Controller
          * SIMPAN KE DATABASE RIWAYAT.
          */
         ApplicationHistory::create([
+            'user_id' => $user->id,
             'email_hrd' => $request->email_hrd,
             'nama_pt' => $namaPt,
             'posisi' => $posisiUpper,
@@ -194,7 +195,9 @@ class ApplyController extends Controller
 
     public function updateStatus(Request $request, int $id)
     {
-        $history = ApplicationHistory::findOrFail($id);
+        $history = ApplicationHistory::query()
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
 
         $history->status = $request->status;
         $history->save();
@@ -207,7 +210,9 @@ class ApplyController extends Controller
 
     public function destroyHistory(int $id)
     {
-        $history = ApplicationHistory::findOrFail($id);
+        $history = ApplicationHistory::query()
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
 
         $history->delete();
 
@@ -219,7 +224,9 @@ class ApplyController extends Controller
 
     public function resendHistory(int $id)
     {
-        $selectedHistory = ApplicationHistory::findOrFail($id);
+        $selectedHistory = ApplicationHistory::query()
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
 
         $files = [];
 
@@ -241,7 +248,10 @@ class ApplyController extends Controller
             }
         }
 
-        $histories = ApplicationHistory::latest()->get();
+        $histories = ApplicationHistory::query()
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
         return view(
             'apply',

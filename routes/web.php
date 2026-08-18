@@ -23,6 +23,17 @@ Route::get('/dashboard', function () {
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
+Route::middleware([
+    'auth',
+    'profile.completed',
+])->group(function () {
+
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // route apply lainnya...
+});
 
 Route::middleware('auth')->group(function () {
 
@@ -35,6 +46,16 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+
+    Route::get('/profile/complete', [
+        ProfileController::class,
+        'complete',
+    ])->name('profile.complete');
+
+    Route::patch('/profile/complete', [
+        ProfileController::class,
+        'completeUpdate',
+    ])->name('profile.complete.update');
 
 
     // Apply
