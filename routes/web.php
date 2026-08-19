@@ -149,7 +149,17 @@ Route::middleware([
     )->name('google.disconnect');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Legal Pages
+|--------------------------------------------------------------------------
+*/
 
+Route::view('/privacy-policy', 'legal.privacy-policy')
+    ->name('privacy-policy');
+
+Route::view('/terms', 'legal.terms')
+    ->name('terms');
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
