@@ -52,6 +52,10 @@ Route::middleware('auth')->group(function () {
 | user menyelesaikan biodata.
 |
 */
+ Route::get('/', function () {
+    return view('welcome');
+})->name('home');
+
 
 Route::middleware([
     'auth',
@@ -75,8 +79,10 @@ Route::middleware([
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/', [ApplyController::class, 'index'])
-        ->name('apply.index');
+   
+Route::get('/apply', [ApplyController::class, 'index'])
+    ->middleware('auth')
+    ->name('apply.index');
 
     Route::post('/send', [ApplyController::class, 'send'])
         ->name('apply.send');
