@@ -79,5 +79,16 @@ Route::middleware('auth')->group(function () {
         ->name('files.destroy');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Legal Pages
+|--------------------------------------------------------------------------
+*/
+
+Route::view('/privacy-policy', 'legal.privacy-policy')
+    ->name('privacy-policy');
+
+Route::view('/terms', 'legal.terms')
+    ->name('terms');
 
 require __DIR__ . '/auth.php';
