@@ -1,20 +1,36 @@
 <?php
 
-use App\Http\Controllers\ApplyController;
-use App\Http\Controllers\FileController;
-use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApplyController;
+use App\Http\Controllers\FileController;
+
+/*
+|--------------------------------------------------------------------------
+| Public Homepage
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 
 
 /*
 |--------------------------------------------------------------------------
-| Profile & Profile Completion
+| Dashboard
 |--------------------------------------------------------------------------
-|
-| Route profile tetap dapat diakses oleh user yang belum
-| menyelesaikan biodata.
-|
+*/
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
 */
 
 Route::middleware('auth')->group(function () {
@@ -30,146 +46,38 @@ Route::middleware('auth')->group(function () {
         ->name('profile.destroy');
 
 
-    // Profile Completion
-    Route::get('/profile/complete', [
-        ProfileController::class,
-        'complete',
-    ])->name('profile.complete');
-
-    Route::patch('/profile/complete', [
-        ProfileController::class,
-        'completeUpdate',
-    ])->name('profile.complete.update');
-});
-
-
-/*
-|--------------------------------------------------------------------------
-| Authenticated + Profile Completed Routes
-|--------------------------------------------------------------------------
-|
-| Semua fitur utama aplikasi hanya dapat digunakan setelah
-| user menyelesaikan biodata.
-|
-*/
- Route::get('/', function () {
-    return view('welcome');
-})->name('home');
-
-
-Route::middleware([
-    'auth',
-    'profile.completed',
-])->group(function () {
-
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Apply
-    |--------------------------------------------------------------------------
-    */
-
-   
-Route::get('/apply', [ApplyController::class, 'index'])
-    ->middleware('auth')
-    ->name('apply.index');
+    // Apply
+    Route::get('/apply', [ApplyController::class, 'index'])
+        ->name('apply.index');
 
     Route::post('/send', [ApplyController::class, 'send'])
         ->name('apply.send');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | History
-    |--------------------------------------------------------------------------
-    */
+    // History
+    Route::patch('/history/{id}/status', [ApplyController::class, 'updateStatus'])
+        ->name('history.update-status');
 
-    Route::patch(
-        '/history/{id}/status',
-        [ApplyController::class, 'updateStatus']
-    )->name('history.update-status');
+    Route::delete('/history/{id}', [ApplyController::class, 'destroyHistory'])
+        ->name('history.destroy');
 
-    Route::delete(
-        '/history/{id}',
-        [ApplyController::class, 'destroyHistory']
-    )->name('history.destroy');
-
-    Route::get(
-        '/history/resend/{id}',
-        [ApplyController::class, 'resendHistory']
-    )->name('history.resend');
+    Route::get('/history/resend/{id}', [ApplyController::class, 'resendHistory'])
+        ->name('history.resend');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Files
-    |--------------------------------------------------------------------------
-    */
-
+    // Files
     Route::get('/files', [FileController::class, 'index'])
         ->name('files.index');
 
     Route::post('/files', [FileController::class, 'store'])
         ->name('files.store');
 
-    Route::get(
-        '/files/download/{filename}',
-        [FileController::class, 'download']
-    )->name('files.download');
+    Route::get('/files/download/{filename}', [FileController::class, 'download'])
+        ->name('files.download');
 
-    Route::delete(
-        '/files/{filename}',
-        [FileController::class, 'destroy']
-    )->name('files.destroy');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Google OAuth
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get(
-        '/auth/google',
-        [GoogleAuthController::class, 'redirect']
-    )->name('google.connect');
-
-    Route::get(
-        '/auth/google/callback',
-        [GoogleAuthController::class, 'callback']
-    )->name('google.callback');
-
-    Route::delete(
-        '/auth/google',
-        [GoogleAuthController::class, 'disconnect']
-    )->name('google.disconnect');
+    Route::delete('/files/{filename}', [FileController::class, 'destroy'])
+        ->name('files.destroy');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Legal Pages
-|--------------------------------------------------------------------------
-*/
-
-Route::view('/privacy-policy', 'legal.privacy-policy')
-    ->name('privacy-policy');
-
-Route::view('/terms', 'legal.terms')
-    ->name('terms');
-/*
-|--------------------------------------------------------------------------
-| Authentication Routes
-|--------------------------------------------------------------------------
-*/
 
 require __DIR__ . '/auth.php';
