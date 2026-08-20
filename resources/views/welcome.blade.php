@@ -5,449 +5,729 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Auto Apply Mailer</title>
+    <title>Auto Apply Mailer — Manajemen Lamaran Kerja</title>
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link
-        href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800"
-        rel="stylesheet"
-    />
+    <meta
+        name="description"
+        content="Auto Apply Mailer adalah aplikasi web untuk membantu pengguna mengelola lamaran kerja, menyiapkan dokumen lamaran, membuat email lamaran yang dipersonalisasi, dan mengirim lamaran melalui email.">
 
-    @vite([
-        'resources/css/app.css',
-        'resources/js/app.js'
-    ])
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: #f8fafc;
+            color: #0f172a;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .container {
+            width: min(1100px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .nav {
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-weight: 750;
+            font-size: 18px;
+        }
+
+        .brand-mark {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: #2563eb;
+            color: white;
+            font-weight: 800;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            font-size: 14px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #475569;
+        }
+
+        .nav-links a:hover {
+            color: #0f172a;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 18px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-weight: 650;
+            font-size: 14px;
+            border: 1px solid transparent;
+        }
+
+        .button-primary {
+            background: #2563eb;
+            color: white !important;
+        }
+
+        .button-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .button-secondary {
+            background: white;
+            color: #1e293b !important;
+            border-color: #cbd5e1;
+        }
+
+        .hero {
+            padding: 86px 0 72px;
+            background:
+                radial-gradient(circle at top right, #dbeafe 0, transparent 36%),
+                linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .hero-content {
+            max-width: 820px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 11px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            margin: 0;
+            max-width: 850px;
+            font-size: clamp(40px, 6vw, 66px);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+        }
+
+        .hero-description {
+            max-width: 760px;
+            margin: 24px 0 0;
+            font-size: 19px;
+            color: #475569;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .trust-note {
+            margin-top: 18px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        section {
+            padding: 72px 0;
+        }
+
+        .section-title {
+            max-width: 720px;
+            margin-bottom: 36px;
+        }
+
+        .section-title h2 {
+            margin: 0 0 12px;
+            font-size: 32px;
+            line-height: 1.2;
+            letter-spacing: -0.025em;
+        }
+
+        .section-title p {
+            margin: 0;
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 26px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
+        }
+
+        .card-number {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .card h3 {
+            margin: 0 0 9px;
+            font-size: 18px;
+        }
+
+        .card p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .google-section {
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-box {
+            max-width: 850px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 28px;
+        }
+
+        .info-box h3 {
+            margin: 0 0 12px;
+            font-size: 20px;
+        }
+
+        .info-box p {
+            margin: 0 0 12px;
+            color: #475569;
+            font-size: 15px;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .cta {
+            text-align: center;
+            padding: 78px 0;
+        }
+
+        .cta h2 {
+            margin: 0 0 14px;
+            font-size: 34px;
+            letter-spacing: -0.025em;
+        }
+
+        .cta p {
+            max-width: 650px;
+            margin: 0 auto;
+            color: #64748b;
+        }
+
+        footer {
+            border-top: 1px solid #e2e8f0;
+            background: white;
+            padding: 28px 0;
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .footer-copy {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            font-size: 13px;
+        }
+
+        .footer-links a {
+            color: #475569;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: #0f172a;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 760px) {
+            .container {
+                width: min(100% - 28px, 1100px);
+            }
+
+            .nav {
+                min-height: 64px;
+            }
+
+            .nav-links a:not(.button) {
+                display: none;
+            }
+
+            .hero {
+                padding: 60px 0 52px;
+            }
+
+            .hero-description {
+                font-size: 17px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 56px 0;
+            }
+
+            .footer-inner {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 
-<body class="font-sans antialiased bg-gray-50 text-gray-900">
+<body>
 
-    <div class="min-h-screen flex flex-col">
+    <header>
+        <div class="container nav">
 
-        {{-- =========================================================
-             HEADER
-        ========================================================== --}}
-        <header class="bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="h-16 sm:h-20 flex items-center justify-between gap-4">
+            <a href="{{ url('/') }}" class="brand">
+                <span class="brand-mark">A</span>
+                <span>Auto Apply Mailer</span>
+            </a>
 
-                    {{-- Brand --}}
-                    <a
-                        href="{{ url('/') }}"
-                        class="flex items-center gap-2.5 sm:gap-3 min-w-0"
-                    >
-                        <div
-                            class="w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 rounded-xl bg-indigo-100 flex items-center justify-center"
-                        >
-                            <svg
-                                class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                />
-                            </svg>
-                        </div>
+            <nav class="nav-links"> @auth <a href="{{ route('dashboard') }}" class="button button-primary"> Masuk </a> @else <a href="{{ route('login') }}"> Masuk </a> @if (Route::has('register')) <a href="{{ route('register') }}" class="button button-primary"> Daftar </a> @endif @endauth </nav>
+        </div>
+    </header>
 
-                        <div class="min-w-0">
-                            <div class="text-sm sm:text-lg font-bold text-gray-900 truncate">
-                                Auto Apply Mailer
-                            </div>
+    <main>
 
-                            <div class="text-xs sm:text-sm text-gray-500">
-                                Mailer
-                            </div>
-                        </div>
-                    </a>
+        {{-- PENJELASAN UTAMA UNTUK GOOGLE BRANDING --}}
+        <section class="hero">
 
-                    {{-- Navigation --}}
-                    <div class="flex items-center gap-2 sm:gap-3">
+            <div class="container">
+
+                <div class="hero-content">
+
+                    <div class="eyebrow">
+                        Manajemen Lamaran Kerja
+                    </div>
+
+                    <h1>
+                        Kelola dan kirim lamaran kerja yang dipersonalisasi dari satu tempat.
+                    </h1>
+
+                    <p class="hero-description">
+                        <strong>Auto Apply Mailer</strong> adalah aplikasi web untuk
+                        pencari kerja yang membantu mengelola informasi lowongan,
+                        menyiapkan dokumen lamaran, membuat email lamaran yang
+                        dipersonalisasi, dan mengirim lamaran melalui akun email
+                        milik pengguna.
+                    </p>
+
+                    <div class="hero-actions">
 
                         @auth
 
-                            <a
-                                href="{{ route('dashboard') }}"
-                                class="inline-flex items-center justify-center px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-indigo-600 text-white text-xs sm:text-sm font-semibold hover:bg-indigo-700 transition whitespace-nowrap"
-                            >
-                                Dashboard
-                            </a>
+                        <a href="{{ route('dashboard') }}" class="button button-primary">
+                            Buka Dasbor
+                        </a>
 
                         @else
 
-                            <a
-                                href="{{ route('login') }}"
-                                class="inline-flex items-center justify-center px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-gray-300 bg-white text-gray-700 text-xs sm:text-sm font-semibold hover:bg-gray-50 transition whitespace-nowrap"
-                            >
-                                Masuk
-                            </a>
+                        <a href="{{ route('login') }}" class="button button-primary">
+                            Masuk ke Auto Apply Mailer
+                        </a>
 
-                            @if (Route::has('register'))
-                                <a
-                                    href="{{ route('register') }}"
-                                    class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition whitespace-nowrap"
-                                >
-                                    Daftar
-                                </a>
-                            @endif
+                        @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="button button-secondary">
+                            Buat Akun
+                        </a>
+                        @endif
 
                         @endauth
 
                     </div>
+
+                    <p class="trust-note">
+                        Auto Apply Mailer adalah aplikasi independen dan tidak
+                        berafiliasi, disponsori, atau didukung oleh Google.
+                    </p>
+
                 </div>
+
             </div>
-        </header>
+
+        </section>
 
 
-        {{-- =========================================================
-             MAIN
-        ========================================================== --}}
-        <main class="flex-1">
+        {{-- FUNGSI UTAMA APLIKASI --}}
+        <section id="cara-kerja">
 
-            {{-- =====================================================
-                 HERO
-            ====================================================== --}}
-            <section class="bg-white">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="py-12 sm:py-20 lg:py-28">
+            <div class="container">
 
-                        <div class="max-w-3xl">
+                <div class="section-title">
 
-                            {{-- Badge --}}
-                            <div
-                                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs sm:text-sm font-semibold"
-                            >
-                                <span
-                                    class="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0"
-                                ></span>
+                    <h2>
+                        Apa yang dilakukan Auto Apply Mailer?
+                    </h2>
 
-                                Platform Lamaran Kerja
-                            </div>
+                    <p>
+                        Auto Apply Mailer membantu pengguna mengelola proses
+                        lamaran kerja secara lebih terorganisir, mulai dari
+                        mencatat lowongan hingga menyiapkan dan mengirim email
+                        lamaran.
+                    </p>
 
-
-                            {{-- Heading --}}
-                            <h1
-                                class="mt-5 sm:mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[1.08]"
-                            >
-                                Kelola dan kirim
-
-                                <span class="text-indigo-600">
-                                    lamaran kerja
-                                </span>
-
-                                dengan lebih mudah.
-                            </h1>
-
-
-                            {{-- Description --}}
-                            <p
-                                class="mt-5 sm:mt-6 text-base sm:text-lg leading-7 sm:leading-8 text-gray-600 max-w-2xl"
-                            >
-                                Auto Apply Mailer membantu pencari kerja
-                                menyiapkan informasi perusahaan, posisi yang
-                                dilamar, template surat lamaran, dan mengirim
-                                lamaran melalui email dengan lebih praktis.
-                            </p>
-
-
-                            {{-- Buttons --}}
-                            <div
-                                class="mt-7 sm:mt-8 flex flex-col sm:flex-row gap-3"
-                            >
-
-                                @auth
-
-                                    <a
-                                        href="{{ route('dashboard') }}"
-                                        class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm sm:text-base hover:bg-indigo-700 transition"
-                                    >
-                                        Buka Dashboard
-                                    </a>
-
-                                @else
-
-                                    <a
-                                        href="{{ route('login') }}"
-                                        class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm sm:text-base hover:bg-indigo-700 transition"
-                                    >
-                                        Mulai Menggunakan
-                                    </a>
-
-                                    @if (Route::has('register'))
-
-                                        <a
-                                            href="{{ route('register') }}"
-                                            class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl border border-gray-300 bg-white text-gray-700 font-semibold text-sm sm:text-base hover:bg-gray-50 transition"
-                                        >
-                                            Buat Akun
-                                        </a>
-
-                                    @endif
-
-                                @endauth
-
-                            </div>
-
-                        </div>
-                    </div>
                 </div>
-            </section>
 
 
-            {{-- =====================================================
-                 FEATURES
-            ====================================================== --}}
-            <section class="py-12 sm:py-16 lg:py-20">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid">
 
-                    {{-- Section Header --}}
-                    <div class="max-w-2xl mx-auto text-center">
+                    <div class="card">
 
-                        <h2
-                            class="text-2xl sm:text-3xl font-bold text-gray-900"
-                        >
-                            Semua kebutuhan lamaran dalam satu tempat
-                        </h2>
+                        <div class="card-number">
+                            1
+                        </div>
 
-                        <p
-                            class="mt-3 text-sm sm:text-base leading-6 text-gray-600"
-                        >
-                            Dirancang untuk membuat proses menyiapkan dan
-                            mengirim lamaran menjadi lebih sederhana.
+                        <h3>
+                            Mengelola informasi lowongan
+                        </h3>
+
+                        <p>
+                            Pengguna dapat menyimpan informasi perusahaan,
+                            posisi pekerjaan, status lamaran, alamat email
+                            perekrut, dan informasi lain yang diperlukan
+                            untuk mengelola proses pencarian kerja.
                         </p>
 
                     </div>
 
 
-                    {{-- Feature Cards --}}
-                    <div
-                        class="mt-10 sm:mt-12 grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6"
-                    >
+                    <div class="card">
 
-                        {{-- Card 1 --}}
-                        <div
-                            class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6"
-                        >
-
-                            <div
-                                class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-indigo-100 flex items-center justify-center"
-                            >
-                                <svg
-                                    class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M21 10.5V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2v-4.5M16 13l3 3m0 0l3-3m-3 3V9"
-                                    />
-                                </svg>
-                            </div>
-
-                            <h3
-                                class="mt-5 text-lg font-bold text-gray-900"
-                            >
-                                Kirim Lamaran
-                            </h3>
-
-                            <p
-                                class="mt-2 text-sm sm:text-base leading-6 text-gray-600"
-                            >
-                                Siapkan dan kirim surat lamaran ke email HRD
-                                dengan lebih cepat dan terorganisir.
-                            </p>
-
+                        <div class="card-number">
+                            2
                         </div>
 
+                        <h3>
+                            Menyiapkan dokumen lamaran
+                        </h3>
 
-                        {{-- Card 2 --}}
-                        <div
-                            class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6"
-                        >
-
-                            <div
-                                class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-indigo-100 flex items-center justify-center"
-                            >
-                                <svg
-                                    class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h6l5 5v11a2 2 0 01-2 2z"
-                                    />
-                                </svg>
-                            </div>
-
-                            <h3
-                                class="mt-5 text-lg font-bold text-gray-900"
-                            >
-                                Template Lamaran
-                            </h3>
-
-                            <p
-                                class="mt-2 text-sm sm:text-base leading-6 text-gray-600"
-                            >
-                                Gunakan template untuk membantu menyiapkan
-                                isi surat lamaran secara konsisten.
-                            </p>
-
-                        </div>
-
-
-                        {{-- Card 3 --}}
-                        <div
-                            class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6"
-                        >
-
-                            <div
-                                class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-indigo-100 flex items-center justify-center"
-                            >
-                                <svg
-                                    class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z"
-                                    />
-                                </svg>
-                            </div>
-
-                            <h3
-                                class="mt-5 text-lg font-bold text-gray-900"
-                            >
-                                Lebih Terorganisir
-                            </h3>
-
-                            <p
-                                class="mt-2 text-sm sm:text-base leading-6 text-gray-600"
-                            >
-                                Kelola informasi lowongan dan proses lamaran
-                                dalam satu aplikasi.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            </section>
-
-
-            {{-- =====================================================
-                 CTA
-            ====================================================== --}}
-            <section class="pb-12 sm:pb-16 lg:pb-20">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                    <div
-                        class="rounded-2xl sm:rounded-3xl bg-indigo-600 px-5 py-10 sm:px-10 sm:py-12 lg:px-12 text-center"
-                    >
-
-                        <h2
-                            class="text-2xl sm:text-3xl font-bold text-white"
-                        >
-                            Siap membuat proses lamaran lebih sederhana?
-                        </h2>
-
-                        <p
-                            class="mt-3 text-sm sm:text-base leading-6 text-indigo-100 max-w-2xl mx-auto"
-                        >
-                            Gunakan Auto Apply Mailer untuk membantu
-                            menyiapkan dan mengirim lamaran kerja.
+                        <p>
+                            Pengguna dapat mengelola informasi dan materi
+                            yang digunakan dalam proses lamaran, termasuk
+                            resume, surat lamaran, dan template email.
                         </p>
 
-                        <div class="mt-7">
+                    </div>
 
-                            @auth
 
-                                <a
-                                    href="{{ route('dashboard') }}"
-                                    class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white text-indigo-700 font-semibold text-sm sm:text-base hover:bg-gray-100 transition"
-                                >
-                                    Masuk ke Dashboard
-                                </a>
+                    <div class="card">
 
-                            @else
-
-                                <a
-                                    href="{{ route('login') }}"
-                                    class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white text-indigo-700 font-semibold text-sm sm:text-base hover:bg-gray-100 transition"
-                                >
-                                    Mulai Sekarang
-                                </a>
-
-                            @endauth
-
+                        <div class="card-number">
+                            3
                         </div>
+
+                        <h3>
+                            Mengirim lamaran melalui email
+                        </h3>
+
+                        <p>
+                            Pengguna dapat menyiapkan email lamaran yang
+                            dipersonalisasi dan mengirimkannya kepada
+                            perusahaan menggunakan akun email yang telah
+                            mereka hubungkan.
+                        </p>
 
                     </div>
 
                 </div>
-            </section>
 
-        </main>
+            </div>
+
+        </section>
 
 
-        {{-- =========================================================
-             FOOTER
-        ========================================================== --}}
-        <footer class="border-t border-gray-200 bg-white">
+        {{-- GOOGLE / GMAIL --}}
+        <section class="google-section" id="google">
 
-            <div
-                class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-8"
-            >
+            <div class="container">
+
+                <div class="section-title">
+
+                    <h2>
+                        Integrasi Google dan Gmail
+                    </h2>
+
+                    <p>
+                        Auto Apply Mailer menggunakan layanan Google hanya
+                        ketika pengguna memilih untuk menghubungkan akun
+                        Google mereka dengan aplikasi.
+                    </p>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <h3>
+                        Bagaimana koneksi Google digunakan?
+                    </h3>
+
+                    <p>
+                        Auto Apply Mailer dapat menggunakan autentikasi Google
+                        agar pengguna dapat masuk ke aplikasi menggunakan
+                        akun Google mereka.
+                    </p>
+
+                    <p>
+                        Ketika pengguna mengaktifkan fitur email, aplikasi
+                        dapat menggunakan izin yang diberikan oleh pengguna
+                        untuk mengirim email lamaran kerja melalui akun
+                        Gmail yang telah mereka hubungkan.
+                    </p>
+
+                    <p>
+                        Koneksi ke akun Google dikendalikan oleh pengguna.
+                        Pengguna dapat meninjau atau mencabut akses aplikasi
+                        melalui pengaturan Akun Google mereka.
+                    </p>
+
+                    <p>
+                        Auto Apply Mailer bukan produk Google dan tidak
+                        berafiliasi dengan Google.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {{-- PENJELASAN TAMBAHAN --}}
+        <section>
+
+            <div class="container">
+
+                <div class="section-title">
+
+                    <h2>
+                        Dibuat untuk membantu pencari kerja
+                    </h2>
+
+                    <p>
+                        Auto Apply Mailer dirancang untuk mengurangi pekerjaan
+                        berulang selama proses pencarian kerja sekaligus tetap
+                        memberikan kendali kepada pengguna atas informasi dan
+                        lamaran yang mereka kirim.
+                    </p>
+
+                </div>
+
+
+                <div class="grid">
+
+                    <div class="card">
+
+                        <h3>
+                            Satu tempat untuk mengelola lamaran
+                        </h3>
+
+                        <p>
+                            Simpan informasi lowongan, data perusahaan,
+                            status lamaran, dan materi lamaran dalam satu
+                            tempat yang terorganisir.
+                        </p>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <h3>
+                            Komunikasi yang dipersonalisasi
+                        </h3>
+
+                        <p>
+                            Gunakan template email sebagai dasar sambil
+                            menyesuaikan isi lamaran berdasarkan perusahaan
+                            dan posisi pekerjaan yang dituju.
+                        </p>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <h3>
+                            Email dikendalikan pengguna
+                        </h3>
+
+                        <p>
+                            Fitur pengiriman email menggunakan akun email
+                            yang dihubungkan dan diotorisasi oleh pengguna,
+                            bukan alamat email milik Auto Apply Mailer.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {{-- CTA --}}
+        <section class="cta">
+
+            <div class="container">
+
+                <h2>
+                    Mulai kelola lamaran kerja Anda
+                </h2>
+
+                <p>
+                    Buat akun atau masuk untuk menggunakan Auto Apply Mailer.
+                    Anda juga dapat membaca Kebijakan Privasi dan Ketentuan
+                    Layanan sebelum menggunakan aplikasi.
+                </p>
 
                 <div
-                    class="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left"
-                >
+                    class="hero-actions"
+                    style="justify-content:center;">
 
-                    <div class="text-xs sm:text-sm text-gray-500">
-                        © {{ date('Y') }} Auto Apply Mailer.
-                    </div>
+                    @auth
 
+                    <a href="{{ route('dashboard') }}" class="button button-primary">
+                        Buka Dasbor
+                    </a>
 
-                    <div class="flex items-center gap-5 text-xs sm:text-sm">
+                    @else
 
-                        @if (Route::has('privacy-policy'))
+                    <a href="{{ route('login') }}" class="button button-primary">
+                        Masuk
+                    </a>
 
-                            <a
-                                href="{{ route('privacy-policy') }}"
-                                class="text-gray-500 hover:text-gray-900 transition"
-                            >
-                                Privacy Policy
-                            </a>
+                    @if (Route::has('register'))
 
-                        @endif
+                    <a href="{{ route('register') }}" class="button button-secondary">
+                        Buat Akun
+                    </a>
 
-                    </div>
+                    @endif
+
+                    @endauth
 
                 </div>
 
             </div>
 
-        </footer>
+        </section>
 
-    </div>
+    </main>
+
+
+    <footer>
+
+        <div class="container footer-inner">
+
+            <div class="footer-copy">
+                © {{ date('Y') }} Auto Apply Mailer
+            </div>
+
+            <div class="footer-links">
+
+                @if (Route::has('privacy-policy'))
+
+                <a href="{{ route('privacy-policy') }}">
+                    Kebijakan Privasi
+                </a>
+
+                @endif
+
+
+                @if (Route::has('terms'))
+
+                <a href="{{ route('terms') }}">
+                    Ketentuan Layanan
+                </a>
+
+                @endif
+
+            </div>
+
+        </div>
+
+    </footer>
 
 </body>
 
