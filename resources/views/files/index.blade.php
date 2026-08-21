@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout title="Berkas — Auto Apply Mailer">
 
     <div class="min-h-[calc(100vh-5rem)] bg-gray-50">
 

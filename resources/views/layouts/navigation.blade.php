@@ -14,9 +14,10 @@
                     class="flex items-center gap-3">
 
                     {{-- Logo --}}
-                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-xl text-white shadow-sm">
-                        ✉
-                    </div>
+                    <img
+                        src="{{ asset('favicon.png') }}"
+                        alt="Auto Apply Mailer Logo"
+                        class="h-8 w-8" />
 
                     {{-- Brand name --}}
                     <div class="hidden sm:block">

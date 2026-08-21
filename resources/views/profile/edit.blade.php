@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout title="Profile — Auto Apply Mailer">
 
     <div class="min-h-[calc(100vh-5rem)] bg-gray-50">
 
@@ -11,7 +11,7 @@
 
                 <div class="flex items-center gap-3">
 
-                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 text-lg text-white shadow-sm">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-transparant border-2 border-indigo-600 text-lg text-white shadow-sm">
                         👤
                     </div>
 

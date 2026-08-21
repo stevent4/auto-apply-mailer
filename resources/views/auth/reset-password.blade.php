@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Reset Password — Auto Apply Mailer">
     <div class="space-y-6">
         {{-- Branding --}}
         <div class="text-center">

@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout title="Dashboard — Auto Apply Mailer">
 
     <div class="min-h-[calc(100vh-4rem)]">
 

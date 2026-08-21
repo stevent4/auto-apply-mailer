@@ -7,9 +7,36 @@
 
     <title>Auto Apply Mailer — Manajemen Lamaran Kerja</title>
 
-    <meta
-        name="description"
-        content="Auto Apply Mailer adalah aplikasi web untuk membantu pengguna mengelola lamaran kerja, menyiapkan dokumen lamaran, membuat email lamaran yang dipersonalisasi, dan mengirim lamaran melalui email.">
+    {{-- Favicon --}}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.ico') }}">
+
+    {{-- Basic metadata --}}
+    <meta name="application-name" content="Auto Apply Mailer">
+    <meta name="description"
+        content="Auto Apply Mailer adalah aplikasi web untuk membantu pencari kerja mengelola lowongan kerja, dokumen lamaran, email lamaran, dan proses pengiriman lamaran melalui akun email pengguna.">
+    <meta name="author" content="Auto Apply Mailer">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#2563eb">
+
+    {{-- Open Graph --}}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Auto Apply Mailer">
+    <meta property="og:title" content="Auto Apply Mailer — Manajemen Lamaran Kerja">
+    <meta property="og:description"
+        content="Aplikasi web untuk membantu pencari kerja mengelola informasi lowongan, dokumen lamaran, email lamaran, dan proses pengiriman lamaran.">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:image" content="{{ asset('og-image.png') }}">
+
+    {{-- Twitter --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Auto Apply Mailer — Manajemen Lamaran Kerja">
+    <meta name="twitter:description"
+        content="Aplikasi untuk membantu pencari kerja mengelola dan mengirim lamaran kerja.">
+    <meta name="twitter:image" content="{{ asset('og-image.png') }}">
+
+    {{-- Canonical --}}
+    <link rel="canonical" href="{{ url('/') }}">
 
     <style>
         * {
@@ -69,15 +96,11 @@
             font-size: 18px;
         }
 
-        .brand-mark {
+        .brand img {
             width: 36px;
             height: 36px;
+            object-fit: contain;
             border-radius: 10px;
-            display: grid;
-            place-items: center;
-            background: #2563eb;
-            color: white;
-            font-weight: 800;
         }
 
         .nav-links {
@@ -124,14 +147,14 @@
         }
 
         .hero {
-            padding: 86px 0 72px;
+            padding: 30px 0 30px;
             background:
                 radial-gradient(circle at top right, #dbeafe 0, transparent 36%),
                 linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
         }
 
         .hero-content {
-            max-width: 820px;
+            max-width: 850px;
         }
 
         .eyebrow {
@@ -156,7 +179,7 @@
         }
 
         .hero-description {
-            max-width: 760px;
+            max-width: 800px;
             margin: 24px 0 0;
             font-size: 19px;
             color: #475569;
@@ -176,11 +199,11 @@
         }
 
         section {
-            padding: 72px 0;
+            padding: 36px 0;
         }
 
         .section-title {
-            max-width: 720px;
+            max-width: 780px;
             margin-bottom: 36px;
         }
 
@@ -241,7 +264,7 @@
         }
 
         .info-box {
-            max-width: 850px;
+            max-width: 900px;
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 14px;
@@ -254,13 +277,33 @@
         }
 
         .info-box p {
-            margin: 0 0 12px;
+            margin: 0 0 14px;
             color: #475569;
             font-size: 15px;
         }
 
         .info-box p:last-child {
             margin-bottom: 0;
+        }
+
+        .privacy-notice {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+        }
+
+        .privacy-notice strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #1e3a8a;
+        }
+
+        .privacy-notice p {
+            margin: 0;
+            color: #334155;
+            font-size: 14px;
         }
 
         .cta {
@@ -275,7 +318,7 @@
         }
 
         .cta p {
-            max-width: 650px;
+            max-width: 700px;
             margin: 0 auto;
             color: #64748b;
         }
@@ -354,381 +397,555 @@
 
 <body>
 
-    <header>
-        <div class="container nav">
+<header>
+    <div class="container nav">
 
-            <a href="{{ url('/') }}" class="brand">
-                <span class="brand-mark">A</span>
-                <span>Auto Apply Mailer</span>
-            </a>
+        <a href="{{ url('/') }}" class="brand">
+            <img
+                src="{{ asset('favicon.png') }}"
+                alt="Auto Apply Mailer"
+            >
 
-            <nav class="nav-links"> @auth <a href="{{ route('dashboard') }}" class="button button-primary"> Masuk </a> @else <a href="{{ route('login') }}"> Masuk </a> @if (Route::has('register')) <a href="{{ route('register') }}" class="button button-primary"> Daftar </a> @endif @endauth </nav>
-        </div>
-    </header>
+            <span>Auto Apply Mailer</span>
+        </a>
 
-    <main>
+        <nav class="nav-links">
 
-        {{-- PENJELASAN UTAMA UNTUK GOOGLE BRANDING --}}
-        <section class="hero">
+            @auth
 
-            <div class="container">
+                <a href="{{ route('dashboard') }}"
+                   class="button button-primary">
+                    Masuk
+                </a>
 
-                <div class="hero-content">
+            @else
 
-                    <div class="eyebrow">
-                        Manajemen Lamaran Kerja
-                    </div>
+                <a href="{{ route('login') }}">
+                    Masuk
+                </a>
 
-                    <h1>
-                        Kelola dan kirim lamaran kerja yang dipersonalisasi dari satu tempat.
-                    </h1>
+                @if (Route::has('register'))
 
-                    <p class="hero-description">
-                        <strong>Auto Apply Mailer</strong> adalah aplikasi web untuk
-                        pencari kerja yang membantu mengelola informasi lowongan,
-                        menyiapkan dokumen lamaran, membuat email lamaran yang
-                        dipersonalisasi, dan mengirim lamaran melalui akun email
-                        milik pengguna.
-                    </p>
+                    <a href="{{ route('register') }}"
+                       class="button button-primary">
+                        Daftar
+                    </a>
 
-                    <div class="hero-actions">
+                @endif
 
-                        @auth
+            @endauth
 
-                        <a href="{{ route('dashboard') }}" class="button button-primary">
+        </nav>
+
+    </div>
+</header>
+
+
+<main>
+
+    {{-- =========================================================
+         HERO
+    ========================================================== --}}
+    <section class="hero">
+
+        <div class="container">
+
+            <div class="hero-content">
+
+                <div class="eyebrow">
+                    Manajemen Lamaran Kerja
+                </div>
+
+                <h1>
+                    Auto Apply Mailer
+                </h1>
+
+                <p class="hero-description">
+                    <strong>Auto Apply Mailer</strong> adalah aplikasi web
+                    untuk membantu pencari kerja mengelola proses lamaran
+                    kerja dari satu tempat. Pengguna dapat mengelola
+                    informasi lowongan, menyiapkan dokumen lamaran,
+                    membuat email lamaran yang dipersonalisasi, dan
+                    mengirim lamaran menggunakan akun email milik pengguna.
+                </p>
+
+                <div class="hero-actions">
+
+                    @auth
+
+                        <a href="{{ route('dashboard') }}"
+                           class="button button-primary">
                             Buka Dasbor
                         </a>
 
-                        @else
+                    @else
 
-                        <a href="{{ route('login') }}" class="button button-primary">
+                        <a href="{{ route('login') }}"
+                           class="button button-primary">
                             Masuk ke Auto Apply Mailer
                         </a>
 
                         @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="button button-secondary">
-                            Buat Akun
-                        </a>
+
+                            <a href="{{ route('register') }}"
+                               class="button button-secondary">
+                                Buat Akun
+                            </a>
+
                         @endif
-
-                        @endauth
-
-                    </div>
-
-                    <p class="trust-note">
-                        Auto Apply Mailer adalah aplikasi independen dan tidak
-                        berafiliasi, disponsori, atau didukung oleh Google.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        {{-- FUNGSI UTAMA APLIKASI --}}
-        <section id="cara-kerja">
-
-            <div class="container">
-
-                <div class="section-title">
-
-                    <h2>
-                        Apa yang dilakukan Auto Apply Mailer?
-                    </h2>
-
-                    <p>
-                        Auto Apply Mailer membantu pengguna mengelola proses
-                        lamaran kerja secara lebih terorganisir, mulai dari
-                        mencatat lowongan hingga menyiapkan dan mengirim email
-                        lamaran.
-                    </p>
-
-                </div>
-
-
-                <div class="grid">
-
-                    <div class="card">
-
-                        <div class="card-number">
-                            1
-                        </div>
-
-                        <h3>
-                            Mengelola informasi lowongan
-                        </h3>
-
-                        <p>
-                            Pengguna dapat menyimpan informasi perusahaan,
-                            posisi pekerjaan, status lamaran, alamat email
-                            perekrut, dan informasi lain yang diperlukan
-                            untuk mengelola proses pencarian kerja.
-                        </p>
-
-                    </div>
-
-
-                    <div class="card">
-
-                        <div class="card-number">
-                            2
-                        </div>
-
-                        <h3>
-                            Menyiapkan dokumen lamaran
-                        </h3>
-
-                        <p>
-                            Pengguna dapat mengelola informasi dan materi
-                            yang digunakan dalam proses lamaran, termasuk
-                            resume, surat lamaran, dan template email.
-                        </p>
-
-                    </div>
-
-
-                    <div class="card">
-
-                        <div class="card-number">
-                            3
-                        </div>
-
-                        <h3>
-                            Mengirim lamaran melalui email
-                        </h3>
-
-                        <p>
-                            Pengguna dapat menyiapkan email lamaran yang
-                            dipersonalisasi dan mengirimkannya kepada
-                            perusahaan menggunakan akun email yang telah
-                            mereka hubungkan.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        {{-- GOOGLE / GMAIL --}}
-        <section class="google-section" id="google">
-
-            <div class="container">
-
-                <div class="section-title">
-
-                    <h2>
-                        Integrasi Google dan Gmail
-                    </h2>
-
-                    <p>
-                        Auto Apply Mailer menggunakan layanan Google hanya
-                        ketika pengguna memilih untuk menghubungkan akun
-                        Google mereka dengan aplikasi.
-                    </p>
-
-                </div>
-
-
-                <div class="info-box">
-
-                    <h3>
-                        Bagaimana koneksi Google digunakan?
-                    </h3>
-
-                    <p>
-                        Auto Apply Mailer dapat menggunakan autentikasi Google
-                        agar pengguna dapat masuk ke aplikasi menggunakan
-                        akun Google mereka.
-                    </p>
-
-                    <p>
-                        Ketika pengguna mengaktifkan fitur email, aplikasi
-                        dapat menggunakan izin yang diberikan oleh pengguna
-                        untuk mengirim email lamaran kerja melalui akun
-                        Gmail yang telah mereka hubungkan.
-                    </p>
-
-                    <p>
-                        Koneksi ke akun Google dikendalikan oleh pengguna.
-                        Pengguna dapat meninjau atau mencabut akses aplikasi
-                        melalui pengaturan Akun Google mereka.
-                    </p>
-
-                    <p>
-                        Auto Apply Mailer bukan produk Google dan tidak
-                        berafiliasi dengan Google.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        {{-- PENJELASAN TAMBAHAN --}}
-        <section>
-
-            <div class="container">
-
-                <div class="section-title">
-
-                    <h2>
-                        Dibuat untuk membantu pencari kerja
-                    </h2>
-
-                    <p>
-                        Auto Apply Mailer dirancang untuk mengurangi pekerjaan
-                        berulang selama proses pencarian kerja sekaligus tetap
-                        memberikan kendali kepada pengguna atas informasi dan
-                        lamaran yang mereka kirim.
-                    </p>
-
-                </div>
-
-
-                <div class="grid">
-
-                    <div class="card">
-
-                        <h3>
-                            Satu tempat untuk mengelola lamaran
-                        </h3>
-
-                        <p>
-                            Simpan informasi lowongan, data perusahaan,
-                            status lamaran, dan materi lamaran dalam satu
-                            tempat yang terorganisir.
-                        </p>
-
-                    </div>
-
-
-                    <div class="card">
-
-                        <h3>
-                            Komunikasi yang dipersonalisasi
-                        </h3>
-
-                        <p>
-                            Gunakan template email sebagai dasar sambil
-                            menyesuaikan isi lamaran berdasarkan perusahaan
-                            dan posisi pekerjaan yang dituju.
-                        </p>
-
-                    </div>
-
-
-                    <div class="card">
-
-                        <h3>
-                            Email dikendalikan pengguna
-                        </h3>
-
-                        <p>
-                            Fitur pengiriman email menggunakan akun email
-                            yang dihubungkan dan diotorisasi oleh pengguna,
-                            bukan alamat email milik Auto Apply Mailer.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        {{-- CTA --}}
-        <section class="cta">
-
-            <div class="container">
-
-                <h2>
-                    Mulai kelola lamaran kerja Anda
-                </h2>
-
-                <p>
-                    Buat akun atau masuk untuk menggunakan Auto Apply Mailer.
-                    Anda juga dapat membaca Kebijakan Privasi dan Ketentuan
-                    Layanan sebelum menggunakan aplikasi.
-                </p>
-
-                <div
-                    class="hero-actions"
-                    style="justify-content:center;">
-
-                    @auth
-
-                    <a href="{{ route('dashboard') }}" class="button button-primary">
-                        Buka Dasbor
-                    </a>
-
-                    @else
-
-                    <a href="{{ route('login') }}" class="button button-primary">
-                        Masuk
-                    </a>
-
-                    @if (Route::has('register'))
-
-                    <a href="{{ route('register') }}" class="button button-secondary">
-                        Buat Akun
-                    </a>
-
-                    @endif
 
                     @endauth
 
                 </div>
 
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <footer>
-
-        <div class="container footer-inner">
-
-            <div class="footer-copy">
-                © {{ date('Y') }} Auto Apply Mailer
-            </div>
-
-            <div class="footer-links">
-
-                @if (Route::has('privacy-policy'))
-
-                <a href="{{ route('privacy-policy') }}">
-                    Kebijakan Privasi
-                </a>
-
-                @endif
-
-
-                @if (Route::has('terms'))
-
-                <a href="{{ route('terms') }}">
-                    Ketentuan Layanan
-                </a>
-
-                @endif
+                <p class="trust-note">
+                    Auto Apply Mailer adalah aplikasi independen dan
+                    tidak berafiliasi, disponsori, atau didukung oleh Google.
+                </p>
 
             </div>
 
         </div>
 
-    </footer>
+    </section>
+
+
+    {{-- =========================================================
+         PURPOSE
+    ========================================================== --}}
+    <section id="tentang-aplikasi">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>
+                    Tentang Auto Apply Mailer
+                </h2>
+
+                <p>
+                    Auto Apply Mailer dibuat untuk membantu pencari kerja
+                    mengatur dan mengelola proses lamaran kerja dengan lebih
+                    terorganisir.
+                </p>
+
+            </div>
+
+            <div class="info-box">
+
+                <h3>
+                    Tujuan aplikasi
+                </h3>
+
+                <p>
+                    Auto Apply Mailer memungkinkan pengguna menyimpan
+                    informasi lowongan pekerjaan, perusahaan, posisi yang
+                    dilamar, kontak perekrut, serta status proses lamaran.
+                </p>
+
+                <p>
+                    Pengguna juga dapat mengelola materi lamaran seperti
+                    resume, surat lamaran, dan template email yang digunakan
+                    untuk berkomunikasi dengan perusahaan.
+                </p>
+
+                <p>
+                    Aplikasi menyediakan fitur untuk membantu pengguna
+                    membuat email lamaran yang dipersonalisasi dan,
+                    apabila pengguna memberikan izin yang diperlukan,
+                    mengirim email tersebut melalui akun email pengguna.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    {{-- =========================================================
+         FEATURES
+    ========================================================== --}}
+    <section id="cara-kerja">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>
+                    Fitur Auto Apply Mailer
+                </h2>
+
+                <p>
+                    Berikut fungsi utama yang tersedia untuk membantu
+                    pengguna dalam proses pencarian kerja.
+                </p>
+
+            </div>
+
+            <div class="grid">
+
+                <div class="card">
+
+                    <div class="card-number">
+                        1
+                    </div>
+
+                    <h3>
+                        Mengelola informasi lowongan
+                    </h3>
+
+                    <p>
+                        Pengguna dapat menyimpan informasi perusahaan,
+                        posisi pekerjaan, status lamaran, alamat email
+                        perekrut, dan informasi lain yang diperlukan
+                        untuk mengelola proses pencarian kerja.
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-number">
+                        2
+                    </div>
+
+                    <h3>
+                        Menyiapkan dokumen lamaran
+                    </h3>
+
+                    <p>
+                        Pengguna dapat mengelola resume, surat lamaran,
+                        materi lamaran, dan template email yang digunakan
+                        selama proses pencarian kerja.
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-number">
+                        3
+                    </div>
+
+                    <h3>
+                        Membuat dan mengirim email lamaran
+                    </h3>
+
+                    <p>
+                        Pengguna dapat menyiapkan email lamaran yang
+                        dipersonalisasi dan mengirimkannya kepada perusahaan
+                        menggunakan akun email yang telah dihubungkan dan
+                        diotorisasi oleh pengguna.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    {{-- =========================================================
+         GOOGLE DATA USE
+    ========================================================== --}}
+    <section class="google-section" id="google-data">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>
+                    Penggunaan akun Google dan data pengguna
+                </h2>
+
+                <p>
+                    Penjelasan ini membantu pengguna memahami mengapa
+                    Auto Apply Mailer meminta akses ke akun Google.
+                </p>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <h3>
+                    Mengapa Auto Apply Mailer meminta akses Google?
+                </h3>
+
+                <p>
+                    Auto Apply Mailer dapat menggunakan Google OAuth
+                    agar pengguna dapat masuk ke aplikasi menggunakan
+                    akun Google mereka dan, jika fitur email digunakan,
+                    memberikan izin kepada aplikasi untuk melakukan
+                    tindakan email yang diperlukan oleh fitur tersebut.
+                </p>
+
+                <p>
+                    Jika pengguna memberikan izin untuk akses email,
+                    akses tersebut digunakan untuk membantu pengguna
+                    mengirim email lamaran kerja melalui akun email
+                    pengguna sendiri.
+                </p>
+
+                <p>
+                    Auto Apply Mailer tidak menggunakan akses Google
+                    untuk tujuan yang tidak berkaitan dengan fungsi
+                    aplikasi. Akses hanya digunakan untuk menyediakan
+                    fitur yang dipilih dan diotorisasi oleh pengguna.
+                </p>
+
+                <p>
+                    Pengguna tetap mengendalikan akun Google mereka
+                    dan dapat meninjau atau mencabut akses aplikasi
+                    melalui pengaturan Akun Google mereka.
+                </p>
+
+                <div class="privacy-notice">
+
+                    <strong>
+                        Pemberitahuan privasi
+                    </strong>
+
+                    <p>
+                        Auto Apply Mailer adalah aplikasi independen.
+                        Aplikasi ini tidak berafiliasi, disponsori,
+                        atau didukung oleh Google. Informasi mengenai
+                        pengumpulan, penggunaan, penyimpanan, dan
+                        perlindungan data pengguna dijelaskan dalam
+                        Kebijakan Privasi Auto Apply Mailer.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    {{-- =========================================================
+         USER CONTROL
+    ========================================================== --}}
+    <section>
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>
+                    Pengguna tetap memiliki kendali
+                </h2>
+
+                <p>
+                    Auto Apply Mailer dirancang untuk membantu proses
+                    lamaran tanpa mengambil alih kendali pengguna atas
+                    akun dan informasi mereka.
+                </p>
+
+            </div>
+
+
+            <div class="grid">
+
+                <div class="card">
+
+                    <h3>
+                        Informasi lamaran
+                    </h3>
+
+                    <p>
+                        Pengguna menentukan lowongan, perusahaan,
+                        posisi, kontak, dan informasi lamaran yang
+                        mereka kelola di aplikasi.
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Isi email
+                    </h3>
+
+                    <p>
+                        Pengguna dapat menyiapkan dan menyesuaikan
+                        isi email lamaran sebelum menggunakannya
+                        untuk menghubungi perusahaan.
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Akun email
+                    </h3>
+
+                    <p>
+                        Email dikirim melalui akun email yang
+                        dihubungkan dan diotorisasi oleh pengguna,
+                        bukan melalui alamat email milik Auto Apply Mailer.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    {{-- =========================================================
+         PRIVACY + TERMS
+    ========================================================== --}}
+    <section>
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>
+                    Informasi hukum dan privasi
+                </h2>
+
+                <p>
+                    Pengguna dapat membaca informasi lengkap mengenai
+                    penggunaan data dan layanan sebelum menggunakan
+                    aplikasi.
+                </p>
+
+            </div>
+
+            <div class="info-box">
+
+                <h3>
+                    Kebijakan Privasi dan Ketentuan Layanan
+                </h3>
+
+                <p>
+                    Kebijakan Privasi menjelaskan bagaimana Auto Apply
+                    Mailer mengakses, menggunakan, menyimpan, dan
+                    melindungi informasi pengguna, termasuk data yang
+                    diperoleh melalui layanan Google apabila pengguna
+                    memberikan izin.
+                </p>
+
+                <p>
+                    Ketentuan Layanan menjelaskan aturan penggunaan
+                    aplikasi dan layanan yang disediakan oleh
+                    Auto Apply Mailer.
+                </p>
+
+                <div class="hero-actions">
+
+                    <a href="{{ url('/privacy-policy') }}"
+                       class="button button-secondary">
+                        Baca Kebijakan Privasi
+                    </a>
+
+                    <a href="{{ url('/terms') }}"
+                       class="button button-secondary">
+                        Baca Ketentuan Layanan
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    {{-- =========================================================
+         CTA
+    ========================================================== --}}
+    <section class="cta">
+
+        <div class="container">
+
+            <h2>
+                Mulai kelola lamaran kerja Anda
+            </h2>
+
+            <p>
+                Buat akun atau masuk untuk menggunakan
+                Auto Apply Mailer.
+            </p>
+
+            <div
+                class="hero-actions"
+                style="justify-content:center;">
+
+                @auth
+
+                    <a href="{{ route('dashboard') }}"
+                       class="button button-primary">
+                        Buka Dasbor
+                    </a>
+
+                @else
+
+                    <a href="{{ route('login') }}"
+                       class="button button-primary">
+                        Masuk
+                    </a>
+
+                    @if (Route::has('register'))
+
+                        <a href="{{ route('register') }}"
+                           class="button button-secondary">
+                            Buat Akun
+                        </a>
+
+                    @endif
+
+                @endauth
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+{{-- =========================================================
+     FOOTER
+========================================================== --}}
+<footer>
+
+    <div class="container footer-inner">
+
+        <div class="footer-copy">
+            © {{ date('Y') }} Auto Apply Mailer
+        </div>
+
+        <div class="footer-links">
+
+            <a href="{{ url('/privacy-policy') }}">
+                Kebijakan Privasi
+            </a>
+
+            <a href="{{ url('/terms') }}">
+                Ketentuan Layanan
+            </a>
+
+        </div>
+
+    </div>
+
+</footer>
 
 </body>
-
 </html>

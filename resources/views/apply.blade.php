@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout title="Lamaran — Auto Apply Mailer">
 
     {{-- =========================================================
         DATA PROFILE USER YANG SEDANG LOGIN
