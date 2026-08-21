@@ -122,6 +122,3 @@ docs/screenshots/
 └── history.png
 ```
 
-## Lisensi
-
-Silakan sesuaikan bagian lisensi ini dengan lisensi yang digunakan pada repository.
