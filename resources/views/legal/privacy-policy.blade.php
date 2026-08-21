@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Privacy Policy — Auto Apply Mailer">
     <div class="space-y-8">
         {{-- Branding --}}
         <div class="text-center">

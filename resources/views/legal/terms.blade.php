@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Terms — Auto Apply Mailer">
     <div class="space-y-8">
         <div class="text-center">
             <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-200">
