@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplyController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\FeedbackController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +37,12 @@ Route::get('/dashboard', function () {
 */
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
+    Route::get('/feedback/create', [FeedbackController::class, 'create'])->name('feedback.create');
+    Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+    Route::get('/feedback/{feedback}', [FeedbackController::class, 'show'])->name('feedback.show');
+    Route::post('/feedback/{feedback}/reply', [FeedbackController::class, 'reply'])->name('feedback.reply');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])
@@ -112,5 +120,7 @@ Route::view('/privacy-policy', 'legal.privacy-policy')
 
 Route::view('/terms', 'legal.terms')
     ->name('terms');
+
+
 
 require __DIR__ . '/auth.php';

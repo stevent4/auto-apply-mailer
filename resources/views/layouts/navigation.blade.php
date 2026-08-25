@@ -76,18 +76,6 @@
                                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
                         ">
 
-                        <svg
-                            class="h-4.5 w-4.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M3 8.5l8.11 5.41a1.6 1.6 0 001.78 0L21 8.5M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-
                         Apply Job
                     </a>
 
@@ -114,6 +102,34 @@
 
                         Berkas
                     </a>
+
+                    <a
+                        href="{{ route('feedback.index') }}"
+                        class="
+                            inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+                            {{ request()->routeIs('feedback.*')
+                                ? 'bg-indigo-50 text-indigo-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
+                        ">
+
+                        Feedback
+                    </a>
+
+                    @if (auth()->user()->isAdmin())
+                    <a
+                        href="{{ route('admin.dashboard') }}"
+                        class="
+                            inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+                            {{ request()->routeIs('admin.*')
+                                ? 'bg-indigo-50 text-indigo-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
+                        ">
+
+                        Admin Panel
+                    </a>
+                    @endif
 
                 </div>
 
@@ -348,6 +364,38 @@
 
                 Berkas
             </a>
+
+            <a
+                href="{{ route('feedback.index') }}"
+                class="
+                    flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
+                    {{ request()->routeIs('feedback.*')
+                        ? 'bg-indigo-50 text-indigo-700'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
+                ">
+                <span class="text-base">
+                    📁
+                </span>
+
+                Feedback
+            </a>
+
+            @if (auth()->user()->isAdmin())
+            <a
+                href="{{ route('admin.dashboard') }}"
+                class="
+                    flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
+                    {{ request()->routeIs('admin.*')
+                        ? 'bg-indigo-50 text-indigo-700'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
+                ">
+                <span class="text-base">
+                    📁
+                </span>
+
+                Admin Panel
+            </a>
+            @endif
 
         </div>
 

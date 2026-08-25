@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 #[Fillable([
     'name',
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
     'education',
     'address',
     'phone',
+    'status',
     'password',
 ])]
 
@@ -54,5 +56,23 @@ class User extends Authenticatable
     public function applicationHistories(): HasMany
     {
         return $this->hasMany(ApplicationHistory::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function ($user) {
+            // Asumsikan relasi ke lamaran/berkas bernama 'applications' atau 'applicationHistories'
+            // dan kolom penyimpanannya bernama 'file_path' (sesuaikan dengan nama kolom Anda)
+            foreach ($user->applicationHistories as $application) {
+                if ($application->file_path && Storage::disk('public')->exists($application->file_path)) {
+                    Storage::disk('public')->delete($application->file_path);
+                }
+            }
+        });
     }
 }

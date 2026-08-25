@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
+use App\Models\SystemLog;
 
 class ApplyController extends Controller
 {
@@ -183,7 +184,9 @@ class ApplyController extends Controller
                 pdfFilename: $pdfFilename,
                 lampiranFiles: $request->lampiran ?? []
             );
+            SystemLog::log('info', 'application_sent', "Lamaran dikirim ke {$request->hrd_email}", Auth::id());
         } catch (Throwable $e) {
+            SystemLog::log('error', 'gmail_api_failed', $e->getMessage(), Auth::id());
             report($e);
 
             return back()
