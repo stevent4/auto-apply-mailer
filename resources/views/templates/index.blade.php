@@ -60,7 +60,7 @@
                         </div>
                         <div>
                             <label class="text-sm text-gray-600">Subject (khusus Email)</label>
-                            <input type="text" name="subject" placeholder="Lamaran {{'{{'}}position{{'}}'}} - {{'{{'}}applicant_name{{'}}'}}"
+                            <input type="text" name="subject" placeholder="Lamaran @{{position}} - @{{applicant_name}}"
                                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
                         </div>
                     </div>
@@ -189,6 +189,7 @@
         </div>
     </div>
 
+    @verbatim
     <script>
         function insertVariable(textareaId, variableName) {
             const textarea = document.getElementById(textareaId);
@@ -203,4 +204,5 @@
             textarea.selectionStart = textarea.selectionEnd = start + placeholder.length;
         }
     </script>
+    @endverbatim
 </x-app-layout>

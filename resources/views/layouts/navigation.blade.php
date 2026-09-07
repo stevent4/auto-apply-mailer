@@ -116,6 +116,19 @@
                         Feedback
                     </a>
 
+                    <a
+                        href="{{ route('templates.index') }}"
+                        class="
+                            inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+                            {{ request()->routeIs('templates.*')
+                                ? 'bg-indigo-50 text-indigo-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
+                        ">
+
+                        Templates
+                    </a>
+
                     @if (auth()->user()->isAdmin())
                     <a
                         href="{{ route('admin.dashboard') }}"
@@ -378,6 +391,21 @@
                 </span>
 
                 Feedback
+            </a>
+
+            <a
+                href="{{ route('templates.index') }}"
+                class="
+                    flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
+                    {{ request()->routeIs('templates.*')
+                        ? 'bg-indigo-50 text-indigo-700'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
+                ">
+                <span class="text-base">
+                    📁
+                </span>
+
+                Templates
             </a>
 
             @if (auth()->user()->isAdmin())

@@ -25,7 +25,14 @@ class TemplateController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('templates.index', compact('templates'));
+        $variableGroups = [
+            'Pelamar'    => ['nama', 'tempat_lahir', 'tanggal_lahir', 'alamat', 'email', 'phone', 'pendidikan'],
+            'Lowongan'   => ['posisi', 'perusahaan'],
+            'Waktu'      => ['kota', 'tanggal'],
+            // 'Optional'   => ['cv_link', 'hrd_email'],
+        ];
+
+        return view('templates.index', compact('templates', 'variableGroups'));
     }
 
     /**
