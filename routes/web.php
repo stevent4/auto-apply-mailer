@@ -6,6 +6,7 @@ use App\Http\Controllers\ApplyController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\TemplateController;
 
 
 /*
@@ -86,6 +87,13 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/files/{filename}', [FileController::class, 'destroy'])
         ->name('files.destroy');
+
+    // Templates
+    Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
+    Route::post('/templates', [TemplateController::class, 'store'])->name('templates.store');
+    Route::put('/templates/{template}', [TemplateController::class, 'update'])->name('templates.update');
+    Route::delete('/templates/{template}', [TemplateController::class, 'destroy'])->name('templates.destroy');
+    Route::post('/templates/{template}/set-default', [TemplateController::class, 'setDefault'])->name('templates.setDefault');
 
     /*
     |--------------------------------------------------------------------------
