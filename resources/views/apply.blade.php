@@ -1656,111 +1656,55 @@
 
 
     {{-- =========================================================
-        SUMMERNOTE CSS
-    ========================================================== --}}
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css">
-
+    TINYMCE JS (self-hosted, tidak perlu API key)
+========================================================== --}}
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
 
     {{-- =========================================================
-        JQUERY
-    ========================================================== --}}
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-
-
-    {{-- =========================================================
-        SUMMERNOTE JS
-    ========================================================== --}}
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-
-
-    {{-- =========================================================
-        SUMMERNOTE STYLE
-    ========================================================== --}}
+    TINYMCE STYLE
+========================================================== --}}
     <style>
-        .note-editor.note-frame {
+        .tox-tinymce {
             border: 1px solid #e5e7eb !important;
             border-radius: 0.75rem !important;
             overflow: hidden;
             box-shadow: none !important;
         }
 
-
-        .note-toolbar {
-            border-bottom: 1px solid #e5e7eb !important;
+        .tox .tox-toolbar,
+        .tox .tox-toolbar__overflow,
+        .tox .tox-toolbar__primary {
             background: #f9fafb !important;
-            padding: 8px !important;
         }
 
-
-        .note-editable {
-            min-height: 400px !important;
-            padding: 1rem !important;
-            font-size: 0.875rem !important;
-            line-height: 1.7 !important;
-            color: #111827 !important;
-            background: #ffffff !important;
+        .tox .tox-edit-area {
+            border-top: 1px solid #e5e7eb !important;
         }
 
-
-        .note-statusbar {
+        .tox .tox-statusbar {
             border-top: 1px solid #e5e7eb !important;
             background: #f9fafb !important;
         }
 
-
-        .note-btn {
-            border-color: #e5e7eb !important;
-            background: #ffffff !important;
+        .tox-dialog textarea,
+        .tox-textarea {
+            color: #1f2937 !important;
+            background-color: #ffffff !important;
+            -webkit-text-fill-color: #1f2937 !important;
+            opacity: 1 !important;
         }
-
-
-        .note-btn:hover {
-            background: #f3f4f6 !important;
-        }
-
-
-        /*
-         * Tailwind Preflight menghilangkan marker list.
-         * Kembalikan numbering dan bullet di Summernote.
-         */
-
-        .note-editable ol {
-            list-style-type: decimal !important;
-            padding-left: 2rem !important;
-            margin-top: 0.5rem !important;
-            margin-bottom: 1rem !important;
-        }
-
-
-        .note-editable ul {
-            list-style-type: disc !important;
-            padding-left: 2rem !important;
-            margin-top: 0.5rem !important;
-            margin-bottom: 1rem !important;
-        }
-
-
-        .note-editable ol li,
-        .note-editable ul li {
-            display: list-item !important;
-        }
-
 
         @media (max-width: 640px) {
-
-            .note-editable {
+            .tox .tox-edit-area__iframe {
                 min-height: 300px !important;
             }
-
         }
     </style>
 
 
     {{-- =========================================================
-        JAVASCRIPT
-    ========================================================== --}}
+    JAVASCRIPT
+========================================================== --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -1770,30 +1714,16 @@
             |--------------------------------------------------------------------------
             */
 
-            const bodyEmail =
-                document.getElementById('body_email');
+            const bodyEmail = document.getElementById('body_email');
+            const bodyPdf = document.getElementById('body_pdf');
+            const namaPt = document.getElementById('nama_pt');
+            const posisi = document.getElementById('posisi');
+            const emailTemplateSelect = document.getElementById('email_template');
+            const pdfTemplateSelect = document.getElementById('pdf_template');
+            const subjectPreview = document.getElementById('template_subject_preview');
+            const profileElement = document.getElementById('profile-data');
 
-            const bodyPdf =
-                document.getElementById('body_pdf');
-
-            const namaPt =
-                document.getElementById('nama_pt');
-
-            const posisi =
-                document.getElementById('posisi');
-
-            const emailTemplateSelect =
-                document.getElementById('email_template');
-
-            const pdfTemplateSelect =
-                document.getElementById('pdf_template');
-
-            const subjectPreview =
-                document.getElementById('template_subject_preview');
-
-            const profileElement =
-                document.getElementById('profile-data');
-
+            let pdfEditorReady = false; // flag: TinyMCE #body_pdf sudah selesai init atau belum
 
             /*
             |--------------------------------------------------------------------------
@@ -1802,23 +1732,14 @@
             */
 
             const profile = {
-
                 name: profileElement?.dataset.name || '',
-
                 email: profileElement?.dataset.email || '',
-
                 birthPlace: profileElement?.dataset.birthPlace || '',
-
                 birthDate: profileElement?.dataset.birthDate || '',
-
                 education: profileElement?.dataset.education || '',
-
                 address: profileElement?.dataset.address || '',
-
                 phone: profileElement?.dataset.phone || ''
-
             };
-
 
             /*
             |--------------------------------------------------------------------------
@@ -1827,77 +1748,47 @@
             */
 
             function getTemplateValues() {
-
-                const perusahaan =
-                    namaPt?.value?.trim() || '[NAMA_PT]';
-
-                const posisiLamaran =
-                    posisi?.value?.trim() || '[POSISI]';
-
-                const tanggal =
-                    new Intl.DateTimeFormat(
-                        'id-ID', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                        }
-                    ).format(new Date());
+                const perusahaan = namaPt?.value?.trim() || '[NAMA_PT]';
+                const posisiLamaran = posisi?.value?.trim() || '[POSISI]';
+                const tanggal = new Intl.DateTimeFormat('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                }).format(new Date());
 
                 return {
-
                     ['{' + '{nama}' + '}']: profile.name || 'Nama Lengkap',
-
                     ['{' + '{email}' + '}']: profile.email || 'Email',
-
                     ['{' + '{phone}' + '}']: profile.phone || 'Nomor HP',
-
                     ['{' + '{pendidikan}' + '}']: profile.education || 'Pendidikan',
-
                     ['{' + '{alamat}' + '}']: profile.address || 'Alamat',
-
                     ['{' + '{tempat_lahir}' + '}']: profile.birthPlace || 'Tempat Lahir',
-
                     ['{' + '{tanggal_lahir}' + '}']: profile.birthDate || 'Tanggal Lahir',
-
                     ['{' + '{perusahaan}' + '}']: perusahaan,
-
                     ['{' + '{posisi}' + '}']: posisiLamaran,
-
                     ['{' + '{tanggal}' + '}']: tanggal,
-
                     ['{' + '{kota}' + '}']: 'Jombang'
                 };
             }
 
             /*
-|--------------------------------------------------------------------------
-| DECODE PDF TEMPLATE
-|--------------------------------------------------------------------------
-| Template HTML dikirim dari Blade menggunakan Base64.
-| Ini mencegah HTML seperti <table>, <div>, <p>, dll
-| berubah menjadi teks di Summernote.
-*/
+            |--------------------------------------------------------------------------
+            | DECODE PDF TEMPLATE
+            |--------------------------------------------------------------------------
+            | Template HTML dikirim dari Blade menggunakan Base64.
+            | Ini mencegah HTML seperti <table>, <div>, <p>, dll
+            | berubah menjadi teks di editor.
+            */
             function decodeBase64Utf8(base64) {
                 if (!base64) {
                     return '';
                 }
-
                 try {
                     const binary = atob(base64);
-
-                    const bytes = Uint8Array.from(
-                        binary,
-                        char => char.charCodeAt(0)
-                    );
-
+                    const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
                     return new TextDecoder('utf-8').decode(bytes);
-
                 } catch (error) {
-                    console.error(
-                        'Gagal decode template PDF:',
-                        error
-                    );
-
+                    console.error('Gagal decode template PDF:', error);
                     return '';
                 }
             }
@@ -1909,71 +1800,31 @@
             */
 
             function renderTemplate(template) {
+                let result = template || '';
+                const values = getTemplateValues();
 
-                let result =
-                    template || '';
-
-
-                const values =
-                    getTemplateValues();
-
-
-                Object.entries(values).forEach(
-                    function([placeholder, value]) {
-
-                        result =
-                            result
-                            .split(placeholder)
-                            .join(value);
-
-                    }
-                );
-
+                Object.entries(values).forEach(function([placeholder, value]) {
+                    result = result.split(placeholder).join(value);
+                });
 
                 return result;
-
             }
-
 
             /*
             |--------------------------------------------------------------------------
-            | GET SELECTED EMAIL TEMPLATE
+            | GET SELECTED EMAIL / PDF TEMPLATE
             |--------------------------------------------------------------------------
             */
 
             function getSelectedEmailOption() {
-
-                if (!emailTemplateSelect) {
-                    return null;
-                }
-
-
-                return emailTemplateSelect.options[
-                    emailTemplateSelect.selectedIndex
-                ] || null;
-
+                if (!emailTemplateSelect) return null;
+                return emailTemplateSelect.options[emailTemplateSelect.selectedIndex] || null;
             }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | GET SELECTED PDF TEMPLATE
-            |--------------------------------------------------------------------------
-            */
 
             function getSelectedPdfOption() {
-
-                if (!pdfTemplateSelect) {
-                    return null;
-                }
-
-
-                return pdfTemplateSelect.options[
-                    pdfTemplateSelect.selectedIndex
-                ] || null;
-
+                if (!pdfTemplateSelect) return null;
+                return pdfTemplateSelect.options[pdfTemplateSelect.selectedIndex] || null;
             }
-
 
             /*
             |--------------------------------------------------------------------------
@@ -1982,181 +1833,108 @@
             */
 
             function loadEmailTemplate() {
+                if (!bodyEmail) return;
 
-                if (!bodyEmail) {
-                    return;
-                }
+                const option = getSelectedEmailOption();
+                if (!option) return;
 
+                const rawBody = option.getAttribute('data-body') || '';
+                const rawSubject = option.getAttribute('data-subject') || '';
 
-                const option =
-                    getSelectedEmailOption();
-
-
-                if (!option) {
-                    return;
-                }
-
-
-                const rawBody =
-                    option.getAttribute('data-body') || '';
-
-
-                const rawSubject =
-                    option.getAttribute('data-subject') || '';
-
-
-                bodyEmail.value =
-                    renderTemplate(rawBody);
-
+                bodyEmail.value = renderTemplate(rawBody);
 
                 if (subjectPreview) {
-
-                    subjectPreview.value =
-                        renderTemplate(rawSubject);
-
+                    subjectPreview.value = renderTemplate(rawSubject);
                 }
 
+                const manualSubject = document.getElementById('input_subjek_manual');
 
-                /*
-                 * Jika mode subject menggunakan template,
-                 * kita tampilkan hasil subject di input manual
-                 * tanpa mengubah nama field backend.
-                 */
-                const manualSubject =
-                    document.getElementById(
-                        'input_subjek_manual'
-                    );
-
-
-                if (
-                    manualSubject &&
-                    document.getElementById('subjek_auto')?.checked
-                ) {
-
-                    manualSubject.value =
-                        renderTemplate(rawSubject);
-
+                if (manualSubject && document.getElementById('subjek_auto')?.checked) {
+                    manualSubject.value = renderTemplate(rawSubject);
                 }
-
             }
-
-
-            /*
-|--------------------------------------------------------------------------
-| LOAD PDF TEMPLATE
-|--------------------------------------------------------------------------
-*/
-
-            function loadPdfTemplate() {
-
-                if (
-                    !bodyPdf ||
-                    !window.jQuery
-                ) {
-                    return;
-                }
-
-                const option =
-                    getSelectedPdfOption();
-
-                if (!option) {
-                    return;
-                }
-
-                /*
-                 * Ambil template dari Base64.
-                 */
-                const encodedBody =
-                    option.getAttribute(
-                        'data-body-base64'
-                    ) || '';
-
-                /*
-                 * Decode kembali menjadi HTML asli.
-                 */
-                const rawBody =
-                    decodeBase64Utf8(encodedBody);
-
-                /*
-                 * Ganti placeholder.
-                 */
-                const rendered =
-                    renderTemplate(rawBody);
-
-                /*
-                 * Masukkan HTML sebagai HTML,
-                 * bukan sebagai text.
-                 */
-                $('#body_pdf').summernote(
-                    'code',
-                    rendered
-                );
-            }
-
 
             /*
             |--------------------------------------------------------------------------
-            | SUMMERNOTE INITIALIZATION
+            | LOAD PDF TEMPLATE (via TinyMCE)
             |--------------------------------------------------------------------------
             */
 
-            if (
-                window.jQuery &&
-                bodyPdf
-            ) {
+            function loadPdfTemplate() {
+                if (!bodyPdf || !pdfEditorReady) return;
 
-                $('#body_pdf').summernote({
+                const option = getSelectedPdfOption();
+                if (!option) return;
 
-                    height: 400,
+                const encodedBody = option.getAttribute('data-body-base64') || '';
+                const rawBody = decodeBase64Utf8(encodedBody);
+                const rendered = renderTemplate(rawBody);
 
-                    toolbar: [
-                        [
-                            'style',
-                            [
-                                'bold',
-                                'italic',
-                                'underline',
-                                'clear'
-                            ]
-                        ],
-
-                        [
-                            'font',
-                            [
-                                'strikethrough'
-                            ]
-                        ],
-
-                        [
-                            'para',
-                            [
-                                'ul',
-                                'ol',
-                                'paragraph'
-                            ]
-                        ],
-
-                        [
-                            'table',
-                            [
-                                'table'
-                            ]
-                        ],
-
-                        [
-                            'view',
-                            [
-                                'fullscreen',
-                                'codeview'
-                            ]
-                        ]
-
-                    ]
-
-                });
-
+                const editor = tinymce.get('body_pdf');
+                if (editor) {
+                    editor.setContent(rendered);
+                }
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | TINYMCE INITIALIZATION
+            |--------------------------------------------------------------------------
+            */
+
+            if (bodyPdf) {
+                tinymce.init({
+                    selector: '#body_pdf',
+                    license_key: 'gpl',
+                    height: 400,
+                    menubar: false,
+                    branding: false,
+                    plugins: 'lists table code fullscreen',
+                    toolbar: 'bold italic underline strikethrough removeformat | ' +
+                        'bullist numlist | alignleft aligncenter alignright alignjustify | ' +
+                        'table | fullscreen code',
+                    table_resize_bars: true,
+                    table_use_colgroups: true,
+                    table_default_attributes: {
+                        border: '1'
+                    },
+                    table_default_styles: {
+                        'border-collapse': 'collapse',
+                        'width': '100%'
+                    },
+                    content_style: `
+                        body { font-family: sans-serif; font-size: 14px; line-height: 1.7; color: #111827; }
+                        ol { list-style-type: decimal; padding-left: 2rem; }
+                        ul { list-style-type: disc; padding-left: 2rem; }
+
+                        /* Tambahan: rapatkan tinggi baris tabel */
+                        table { border-collapse: collapse; }
+                        table td, table th {
+                            padding: 4px 8px !important;
+                            vertical-align: top;
+                            line-height: 1.4;
+                        }
+                        table td p, table th p {
+                            margin: 0 !important;
+                            padding: 0 !important;
+                        }
+                    `,
+
+                    // Dipanggil sekali setelah editor selesai dimuat
+                    init_instance_callback: function(editor) {
+                        pdfEditorReady = true;
+
+                        const existingPdf = bodyPdf.value.trim();
+
+                        // Kalau datang dari validation error, pertahankan data lama.
+                        if (existingPdf) {
+                            editor.setContent(existingPdf);
+                        } else {
+                            loadPdfTemplate();
+                        }
+                    }
+                });
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -2165,182 +1943,56 @@
             */
 
             if (bodyEmail) {
+                const existingEmail = bodyEmail.value.trim();
 
-                const existingEmail =
-                    bodyEmail.value.trim();
-
-
-                /*
-                 * Kalau datang dari validation error,
-                 * jangan menimpa input lama.
-                 */
+                // Kalau datang dari validation error, jangan menimpa input lama.
                 if (!existingEmail) {
-
                     loadEmailTemplate();
-
                 }
-
             }
-
 
             /*
             |--------------------------------------------------------------------------
-            | INITIAL PDF TEMPLATE
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-                bodyPdf &&
-                window.jQuery
-            ) {
-
-                const existingPdf =
-                    bodyPdf.value.trim();
-
-
-                /*
-                 * Kalau datang dari validation error,
-                 * pertahankan data lama.
-                 */
-                if (existingPdf) {
-
-                    $('#body_pdf').summernote(
-                        'code',
-                        existingPdf
-                    );
-
-                } else {
-
-                    loadPdfTemplate();
-
-                }
-
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | EMAIL TEMPLATE CHANGE
+            | EMAIL / PDF TEMPLATE CHANGE
             |--------------------------------------------------------------------------
             */
 
             if (emailTemplateSelect) {
-
-                emailTemplateSelect.addEventListener(
-                    'change',
-                    function() {
-
-                        loadEmailTemplate();
-
-                    }
-                );
-
+                emailTemplateSelect.addEventListener('change', function() {
+                    loadEmailTemplate();
+                });
             }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | PDF TEMPLATE CHANGE
-            |--------------------------------------------------------------------------
-            */
 
             if (pdfTemplateSelect) {
-
-                pdfTemplateSelect.addEventListener(
-                    'change',
-                    function() {
-
-                        loadPdfTemplate();
-
-                    }
-                );
-
+                pdfTemplateSelect.addEventListener('change', function() {
+                    loadPdfTemplate();
+                });
             }
-
 
             /*
             |--------------------------------------------------------------------------
-            | UPDATE TEMPLATE WHEN COMPANY CHANGES
+            | UPDATE SUBJECT WHEN COMPANY / POSITION CHANGES
             |--------------------------------------------------------------------------
             */
+
+            function refreshSubjectPreview() {
+                const option = getSelectedEmailOption();
+                if (!option) return;
+
+                const rawSubject = option.getAttribute('data-subject') || '';
+
+                if (subjectPreview) {
+                    subjectPreview.value = renderTemplate(rawSubject);
+                }
+            }
 
             if (namaPt) {
-
-                namaPt.addEventListener(
-                    'input',
-                    function() {
-
-                        const option =
-                            getSelectedEmailOption();
-
-
-                        if (!option) {
-                            return;
-                        }
-
-
-                        const rawSubject =
-                            option.getAttribute(
-                                'data-subject'
-                            ) || '';
-
-
-                        if (subjectPreview) {
-
-                            subjectPreview.value =
-                                renderTemplate(
-                                    rawSubject
-                                );
-
-                        }
-
-                    }
-                );
-
+                namaPt.addEventListener('input', refreshSubjectPreview);
             }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | UPDATE TEMPLATE WHEN POSITION CHANGES
-            |--------------------------------------------------------------------------
-            */
 
             if (posisi) {
-
-                posisi.addEventListener(
-                    'input',
-                    function() {
-
-                        const option =
-                            getSelectedEmailOption();
-
-
-                        if (!option) {
-                            return;
-                        }
-
-
-                        const rawSubject =
-                            option.getAttribute(
-                                'data-subject'
-                            ) || '';
-
-
-                        if (subjectPreview) {
-
-                            subjectPreview.value =
-                                renderTemplate(
-                                    rawSubject
-                                );
-
-                        }
-
-                    }
-                );
-
+                posisi.addEventListener('input', refreshSubjectPreview);
             }
-
 
             /*
             |--------------------------------------------------------------------------
@@ -2349,85 +2001,26 @@
             */
 
             window.toggleSubject = function() {
+                const manualRadio = document.getElementById('subjek_manual');
+                const inputManual = document.getElementById('input_subjek_manual');
+                const wrapper = document.getElementById('manual_subject_wrapper');
 
-                const manualRadio =
-                    document.getElementById(
-                        'subjek_manual'
-                    );
-
-
-                const inputManual =
-                    document.getElementById(
-                        'input_subjek_manual'
-                    );
-
-
-                const wrapper =
-                    document.getElementById(
-                        'manual_subject_wrapper'
-                    );
-
-
-                if (
-                    !manualRadio ||
-                    !inputManual ||
-                    !wrapper
-                ) {
-                    return;
-                }
-
+                if (!manualRadio || !inputManual || !wrapper) return;
 
                 if (manualRadio.checked) {
+                    wrapper.classList.remove('hidden');
+                    inputManual.required = true;
 
-                    wrapper.classList.remove(
-                        'hidden'
-                    );
-
-                    inputManual.required =
-                        true;
-
-
-                    /*
-                     * Saat pindah ke manual,
-                     * isi dengan subject template
-                     * sebagai titik awal agar user
-                     * tinggal mengedit.
-                     */
-
-                    if (
-                        !inputManual.value.trim()
-                    ) {
-
-                        const option =
-                            getSelectedEmailOption();
-
-
-                        const rawSubject =
-                            option?.getAttribute(
-                                'data-subject'
-                            ) || '';
-
-
-                        inputManual.value =
-                            renderTemplate(
-                                rawSubject
-                            );
-
+                    if (!inputManual.value.trim()) {
+                        const option = getSelectedEmailOption();
+                        const rawSubject = option?.getAttribute('data-subject') || '';
+                        inputManual.value = renderTemplate(rawSubject);
                     }
-
                 } else {
-
-                    wrapper.classList.add(
-                        'hidden'
-                    );
-
-                    inputManual.required =
-                        false;
-
+                    wrapper.classList.add('hidden');
+                    inputManual.required = false;
                 }
-
             };
-
 
             /*
             |--------------------------------------------------------------------------
@@ -2436,12 +2029,22 @@
             */
 
             window.updateTemplate = function() {
-
                 loadEmailTemplate();
-
                 loadPdfTemplate();
-
             };
+
+            /*
+            |--------------------------------------------------------------------------
+            | PASTIKAN ISI EDITOR TERSINKRON SEBELUM SUBMIT
+            |--------------------------------------------------------------------------
+            */
+
+            const applyForm = document.getElementById('apply-form');
+            if (applyForm) {
+                applyForm.addEventListener('submit', function() {
+                    tinymce.triggerSave();
+                });
+            }
 
         });
     </script>

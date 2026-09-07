@@ -1,5 +1,5 @@
 @props([
-    'title' => 'Auto Apply Mailer'
+'title' => 'Auto Apply Mailer'
 ])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -39,7 +39,7 @@
     <meta name="twitter:image" content="{{ asset('og-image.png') }}"> {{-- Canonical URL --}}
     <link rel="canonical" href="{{ url('/') }}">
 
-    
+
 
     <link rel="preconnect" href="https://fonts.bunny.net">
 
@@ -74,5 +74,116 @@
     </div>
 
 </body>
+
+
+{{-- =========================================================
+        SUMMERNOTE CSS
+    ========================================================== --}}
+<script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    function getTinyMCEConfig(selectorId) {
+        return {
+            selector: '#' + selectorId,
+            license_key: 'gpl',
+            height: 300,
+            menubar: false,
+            branding: false,
+            plugins: 'lists link image media table code fullscreen help charmap',
+            toolbar: 'bold italic underline strikethrough removeformat | ' +
+                'superscript subscript | fontsize fontfamily | forecolor backcolor | ' +
+                'bullist numlist | alignleft aligncenter alignright alignjustify | ' +
+                'lineheight spacebefore spaceafter | table | link image media | fullscreen code help',
+            table_resize_bars: true,
+            table_use_colgroups: true,
+            table_default_attributes: {
+                border: '1'
+            },
+            table_default_styles: {
+                'border-collapse': 'collapse',
+                'width': '100%'
+            },
+            content_style: `
+                body { font-family: sans-serif; font-size: 14px; }
+                p, div, li { margin: 0; padding: 0; }
+                /* Tambahan: rapatkan tinggi baris tabel */
+                        table { border-collapse: collapse; }
+                        table td, table th {
+                            padding: 4px 8px !important;
+                            vertical-align: top;
+                            line-height: 1.4;
+                        }
+                        table td p, table th p {
+                            margin: 0 !important;
+                            padding: 0 !important;
+                        }
+            `,
+            formats: {
+                spacebefore: {
+                    selector: 'p,div,li',
+                    styles: {
+                        marginTop: '1em'
+                    }
+                },
+                nospacebefore: {
+                    selector: 'p,div,li',
+                    styles: {
+                        marginTop: '0'
+                    }
+                },
+                spaceafter: {
+                    selector: 'p,div,li',
+                    styles: {
+                        marginBottom: '1em'
+                    }
+                },
+                nospaceafter: {
+                    selector: 'p,div,li',
+                    styles: {
+                        marginBottom: '0'
+                    }
+                }
+            },
+            setup: function(editor) {
+                editor.ui.registry.addButton('spacebefore', {
+                    icon: 'line-height',
+                    tooltip: 'Add/Remove Space Before Paragraph',
+                    onAction: function() {
+                        const isActive = editor.formatter.match('spacebefore');
+                        if (isActive) {
+                            editor.formatter.remove('spacebefore');
+                            editor.formatter.apply('nospacebefore');
+                        } else {
+                            editor.formatter.remove('nospacebefore');
+                            editor.formatter.apply('spacebefore');
+                        }
+                    }
+                });
+                editor.ui.registry.addButton('spaceafter', {
+                    icon: 'line-height',
+                    tooltip: 'Add/Remove Space After Paragraph',
+                    onAction: function() {
+                        const isActive = editor.formatter.match('spaceafter');
+                        if (isActive) {
+                            editor.formatter.remove('spaceafter');
+                            editor.formatter.apply('nospaceafter');
+                        } else {
+                            editor.formatter.remove('nospaceafter');
+                            editor.formatter.apply('spaceafter');
+                        }
+                    }
+                });
+            }
+        };
+    }
+</script>
+<style>
+    .tox-dialog textarea,
+    .tox-textarea {
+        color: #1f2937 !important;
+        background-color: #ffffff !important;
+        -webkit-text-fill-color: #1f2937 !important;
+        opacity: 1 !important;
+    }
+</style>
 
 </html>
