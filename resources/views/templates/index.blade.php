@@ -1,9 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Template Email & Surat Lamaran
-        </h2>
-    </x-slot>
 
     {{-- =========================================================
         FONT & TOKEN SISTEM HALAMAN INI
@@ -116,6 +111,11 @@
             background: var(--accent-soft);
             color: var(--accent-ink);
             border-color: var(--accent);
+        }
+
+        .tpl-chip--sm {
+            font-size: 0.6875rem;
+            padding: 0.2rem 0.5rem;
         }
 
         .tpl-btn-primary {
@@ -262,19 +262,6 @@
             </div>
             @endif
 
-            {{-- Filter Type --}}
-            <div class="inline-flex gap-1 mb-6 p-1 rounded-xl" style="background: var(--paper-soft); border: 1px solid var(--line)">
-                <a href="{{ route('templates.index') }}" class="tpl-tab {{ !request('type') ? 'is-active' : '' }}">
-                    Semua
-                </a>
-                <a href="{{ route('templates.index', ['type' => 'email']) }}" class="tpl-tab {{ request('type') === 'email' ? 'is-active' : '' }}">
-                    Email
-                </a>
-                <a href="{{ route('templates.index', ['type' => 'pdf']) }}" class="tpl-tab {{ request('type') === 'pdf' ? 'is-active' : '' }}">
-                    Cover letter
-                </a>
-            </div>
-
             {{-- Form Buat Template Baru --}}
             <div class="tpl-compose p-6 mb-10">
                 <h2 class="tpl-serif text-lg font-semibold mb-4" style="color: var(--ink)">
@@ -291,7 +278,8 @@
                         </div>
                         <div>
                             <label class="tpl-label">Tipe</label>
-                            <select name="type" required class="tpl-input">
+                            <select name="type" required class="tpl-input" id="type-select"
+                                onchange="toggleSubjectField(this.value); toggleBodyEditor(this.value)">
                                 <option value="email">Email</option>
                                 <option value="pdf">Cover letter</option>
                             </select>
@@ -303,15 +291,28 @@
                             <label class="tpl-label">Kategori (opsional)</label>
                             <input type="text" name="category" placeholder="mis. Formal, IT" class="tpl-input">
                         </div>
-                        <div>
+                        <div id="subject-field-wrapper">
                             <label class="tpl-label">Subjek (khusus email)</label>
-                            <input type="text" name="subject" placeholder="Lamaran @{{position}} - @{{applicant_name}}" class="tpl-input">
+                            <input type="text" name="subject" id="create-subject" placeholder="Lamaran @{{position}} - @{{applicant_name}}" class="tpl-input">
+
+                            {{-- Variable picker khusus Subjek --}}
+                            <div class="flex flex-wrap gap-1 mt-2">
+                                @foreach ($variableGroups as $group => $vars)
+                                @foreach ($vars as $var)
+                                <button type="button"
+                                    onclick="insertVariable('create-subject', '{{ $var }}')"
+                                    class="tpl-chip tpl-chip--sm">
+                                    {{ $var }}
+                                </button>
+                                @endforeach
+                                @endforeach
+                            </div>
                         </div>
                     </div>
 
-                    {{-- Insert Variable Picker --}}
+                    {{-- Insert Variable Picker (Body) --}}
                     <div class="mb-3">
-                        <label class="tpl-label">Sisipkan variable</label>
+                        <label class="tpl-label">Sisipkan variable (Isi)</label>
                         <div class="flex flex-wrap gap-1.5">
                             @foreach ($variableGroups as $group => $vars)
                             @foreach ($vars as $var)
@@ -325,14 +326,36 @@
                         </div>
                     </div>
 
+                    {{--
+                        Body: textarea polos untuk Email (dikirim sebagai plain text
+                        via nl2br() di controller), TinyMCE hanya untuk Cover Letter
+                        (HTML dibutuhkan untuk generate PDF).
+                    --}}
                     <textarea id="create-body" name="body" rows="6"
                         class="tpl-input font-mono"
                         placeholder="Isi template di sini, gunakan tombol variable di atas..."></textarea>
+
+                    <p id="create-body-hint" class="mt-1 text-xs" style="color: var(--ink-soft)">
+                        Template Email dikirim sebagai teks polos — tanpa formatting bold/italic/tabel.
+                    </p>
 
                     <button type="submit" class="tpl-btn-primary mt-4">
                         Simpan template
                     </button>
                 </form>
+            </div>
+
+            {{-- Filter Type --}}
+            <div class="inline-flex gap-1 mb-6 p-1 rounded-xl" style="background: var(--paper-soft); border: 1px solid var(--line)">
+                <a href="{{ route('templates.index') }}" class="tpl-tab {{ !request('type') ? 'is-active' : '' }}">
+                    Semua
+                </a>
+                <a href="{{ route('templates.index', ['type' => 'email']) }}" class="tpl-tab {{ request('type') === 'email' ? 'is-active' : '' }}">
+                    Email
+                </a>
+                <a href="{{ route('templates.index', ['type' => 'pdf']) }}" class="tpl-tab {{ request('type') === 'pdf' ? 'is-active' : '' }}">
+                    Cover letter
+                </a>
             </div>
 
             {{-- Daftar Template --}}
@@ -380,6 +403,7 @@
                             @endunless
 
                             <button data-template-id="{{ $template->id }}"
+                                data-template-type="{{ $template->type }}"
                                 class="tpl-row-action tpl-row-action--ink js-toggle-edit">Edit</button>
 
                             <form method="POST" action="{{ route('templates.destroy', $template) }}"
@@ -399,18 +423,35 @@
                             @csrf
                             @method('PUT')
 
-                            <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="grid {{ $template->type === 'email' ? 'grid-cols-2' : 'grid-cols-1' }} gap-4 mb-4">
                                 <div>
                                     <label class="tpl-label">Nama template</label>
                                     <input type="text" name="name" value="{{ $template->name }}" required class="tpl-input">
                                 </div>
+
+                                @if ($template->type === 'email')
                                 <div>
                                     <label class="tpl-label">Subjek</label>
-                                    <input type="text" name="subject" value="{{ $template->subject }}" class="tpl-input">
+                                    <input type="text" name="subject" id="edit-subject-{{ $template->id }}" value="{{ $template->subject }}" class="tpl-input">
+
+                                    {{-- Variable picker khusus Subjek (edit) --}}
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        @foreach ($variableGroups as $group => $vars)
+                                        @foreach ($vars as $var)
+                                        <button type="button"
+                                            onclick="insertVariable('edit-subject-{{ $template->id }}', '{{ $var }}')"
+                                            class="tpl-chip tpl-chip--sm">
+                                            {{ $var }}
+                                        </button>
+                                        @endforeach
+                                        @endforeach
+                                    </div>
                                 </div>
+                                @endif
                             </div>
 
                             <div class="mb-3">
+                                <label class="tpl-label">Sisipkan variable (Isi)</label>
                                 <div class="flex flex-wrap gap-1.5">
                                     @foreach ($variableGroups as $group => $vars)
                                     @foreach ($vars as $var)
@@ -424,8 +465,19 @@
                                 </div>
                             </div>
 
+                            {{--
+                                Textarea body: TinyMCE otomatis diinisialisasi lewat JS
+                                HANYA kalau $template->type === 'pdf' (lihat toggleEdit()).
+                                Untuk type email, ini tetap textarea polos.
+                            --}}
                             <textarea id="edit-body-{{ $template->id }}" name="body" rows="6"
                                 class="tpl-input font-mono">{{ $template->body }}</textarea>
+
+                            @if ($template->type === 'email')
+                            <p class="mt-1 text-xs" style="color: var(--ink-soft)">
+                                Template Email dikirim sebagai teks polos — tanpa formatting bold/italic/tabel.
+                            </p>
+                            @endif
 
                             <button type="submit" class="tpl-btn-primary mt-4">
                                 Perbarui template
@@ -488,31 +540,91 @@
             };
         }
 
-        function insertVariable(editorId, variableName) {
+        /**
+         * Insert {{variable}} langsung ke targetId yang diberikan.
+         * Otomatis deteksi apakah targetId adalah editor TinyMCE
+         * (Cover Letter) atau input/textarea polos (Email/Subjek).
+         */
+        function insertVariable(targetId, variableName) {
             const placeholder = '{' + '{' + variableName + '}' + '}';
-            const editor = tinymce.get(editorId);
+
+            const editor = tinymce.get(targetId);
             if (editor) {
                 editor.insertContent(placeholder);
+                return;
+            }
+
+            const input = document.getElementById(targetId);
+            if (!input) return;
+
+            const start = input.selectionStart ?? input.value.length;
+            const end = input.selectionEnd ?? input.value.length;
+            const value = input.value;
+            const scrollTopBefore = input.scrollTop; // simpan posisi scroll sebelum diubah
+
+            input.value = value.substring(0, start) + placeholder + value.substring(end);
+
+            const newCursorPos = start + placeholder.length;
+            input.focus();
+            input.setSelectionRange(newCursorPos, newCursorPos);
+
+            // Browser sering otomatis scroll ke bawah setelah value diubah + focus()
+            // dipanggil — kembalikan scroll ke posisi semula.
+            input.scrollTop = scrollTopBefore;
+        }
+
+        /**
+         * Form CREATE: aktifkan/nonaktifkan TinyMCE pada #create-body
+         * tergantung Tipe yang dipilih. Email = textarea polos,
+         * Cover letter = TinyMCE (butuh HTML untuk generate PDF).
+         */
+        function toggleBodyEditor(type) {
+            const editor = tinymce.get('create-body');
+            const hint = document.getElementById('create-body-hint');
+
+            if (type === 'pdf') {
+                if (!editor) {
+                    tinymce.init(getTinyMCEConfig('create-body'));
+                }
+                if (hint) hint.style.display = 'none';
+            } else {
+                if (editor) {
+                    editor.remove(); // kembalikan jadi textarea polos
+                }
+                if (hint) hint.style.display = 'block';
             }
         }
 
-        function toggleEdit(templateId) {
+        /**
+         * Daftar Template: toggle form edit + init TinyMCE HANYA
+         * kalau template ini bertipe 'pdf' (Cover Letter).
+         */
+        function toggleEdit(templateId, templateType) {
             const container = document.getElementById('edit-' + templateId);
             container.classList.toggle('hidden');
 
-            const editorId = 'edit-body-' + templateId;
-            if (!tinymce.get(editorId)) {
-                tinymce.init(getTinyMCEConfig(editorId));
+            if (templateType === 'pdf') {
+                const editorId = 'edit-body-' + templateId;
+                if (!tinymce.get(editorId)) {
+                    tinymce.init(getTinyMCEConfig(editorId));
+                }
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            tinymce.init(getTinyMCEConfig('create-body'));
+            // Init TinyMCE untuk create-body HANYA kalau default Tipe = pdf
+            const initialType = document.getElementById('type-select')?.value;
+            if (initialType === 'pdf') {
+                tinymce.init(getTinyMCEConfig('create-body'));
+                const hint = document.getElementById('create-body-hint');
+                if (hint) hint.style.display = 'none';
+            }
 
             document.querySelectorAll('.js-toggle-edit').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     const templateId = this.getAttribute('data-template-id');
-                    toggleEdit(templateId);
+                    const templateType = this.getAttribute('data-template-type');
+                    toggleEdit(templateId, templateType);
                 });
             });
 
@@ -521,6 +633,19 @@
                     tinymce.triggerSave();
                 });
             });
+        });
+
+        // Toggle hide subject field for cover letter templates
+        function toggleSubjectField(type) {
+            const wrapper = document.getElementById('subject-field-wrapper');
+            wrapper.style.display = (type === 'email') ? 'block' : 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const typeSelect = document.getElementById('type-select');
+            if (typeSelect) {
+                toggleSubjectField(typeSelect.value);
+            }
         });
     </script>
     @endverbatim

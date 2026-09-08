@@ -525,6 +525,7 @@
 
                                     <input
                                         type="text"
+                                        name="subjek_template"
                                         id="template_subject_preview"
                                         readonly
                                         placeholder="Subjek akan mengikuti template"

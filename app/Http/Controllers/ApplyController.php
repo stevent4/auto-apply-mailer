@@ -113,7 +113,9 @@ class ApplyController extends Controller
          * Subject.
          */
         $subject = $request->tipe_subjek === 'auto'
-            ? "{$request->posisi} - {$namaPelamar} - Jombang"
+            ? ($request->filled('subjek_template')
+                ? $request->subjek_template
+                : "{$request->posisi} - {$namaPelamar} - Jombang")
             : $request->subjek_custom;
 
         /*
