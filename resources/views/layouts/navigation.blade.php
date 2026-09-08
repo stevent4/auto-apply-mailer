@@ -1,6 +1,148 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    .nav-brand {
+        --paper: #FAF7F1;
+        --paper-soft: #F2EDE1;
+        --ink: #23262B;
+        --ink-soft: #83796C;
+        --line: #E4DECE;
+        --accent: #2F6F4E;
+        --accent-ink: #1F4D36;
+        --accent-soft: #E4EEE6;
+        --clay: #9C5A3C;
+        --clay-soft: #F2E5DC;
+        --danger: #B3402E;
+        --danger-soft: #F7E6E2;
+        font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        background: rgba(250, 247, 241, 0.95);
+        border-bottom: 1px solid var(--line);
+    }
+
+    .nav-brand-serif {
+        font-family: 'Lora', Georgia, serif;
+    }
+
+    .nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 0.75rem;
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--ink-soft);
+        transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-link:hover {
+        background: var(--paper-soft);
+        color: var(--ink);
+    }
+
+    .nav-link:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--accent), 0 0 0 4px #fff;
+    }
+
+    .nav-link.is-active {
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+    }
+
+    .nav-mobile-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--ink-soft);
+        transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-mobile-link:hover {
+        background: var(--paper-soft);
+        color: var(--ink);
+    }
+
+    .nav-mobile-link.is-active {
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+    }
+
+    .nav-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+        font-weight: 700;
+        font-family: 'Lora', Georgia, serif;
+    }
+
+    .nav-trigger {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 1rem;
+        border: 1px solid var(--line);
+        background: #fff;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--ink);
+        transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .nav-trigger:hover {
+        border-color: var(--ink-soft);
+        background: var(--paper-soft);
+    }
+
+    .nav-trigger:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--accent), 0 0 0 4px #fff;
+    }
+
+    .nav-burger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.75rem;
+        border: 1px solid var(--line);
+        background: #fff;
+        padding: 0.6rem;
+        color: var(--ink-soft);
+        transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-burger:hover {
+        background: var(--paper-soft);
+        color: var(--ink);
+    }
+
+    .nav-burger:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--accent), 0 0 0 4px #fff;
+    }
+
+    .nav-mobile-panel {
+        background: var(--paper);
+        border-top: 1px solid var(--line);
+    }
+
+    .nav-logout {
+        color: var(--danger);
+    }
+</style>
+
 <nav
     x-data="{ open: false }"
-    class="sticky top-0 z-50 border-b border-gray-200/80 bg-white/95 backdrop-blur">
+    class="nav-brand sticky top-0 z-50 backdrop-blur">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-20 items-center justify-between">
 
@@ -21,11 +163,11 @@
 
                     {{-- Brand name --}}
                     <div class="hidden sm:block">
-                        <div class="text-sm font-bold leading-5 tracking-tight text-gray-900">
+                        <div class="nav-brand-serif text-sm font-semibold leading-5 tracking-tight" style="color: var(--ink)">
                             Auto Apply
                         </div>
 
-                        <div class="text-xs font-medium text-gray-500">
+                        <div class="text-xs font-medium" style="color: var(--ink-soft)">
                             Mailer
                         </div>
                     </div>
@@ -41,13 +183,7 @@
                     {{-- Dashboard --}}
                     <a
                         href="{{ route('dashboard') }}"
-                        class="
-                            inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                            {{ request()->routeIs('dashboard')
-                                ? 'bg-indigo-50 text-indigo-700'
-                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                        ">
+                        class="nav-link {{ request()->routeIs('dashboard') ? 'is-active' : '' }}">
 
                         <svg
                             class="h-4.5 w-4.5"
@@ -68,26 +204,14 @@
                     {{-- Apply Job --}}
                     <a
                         href="{{ route('apply.index') }}"
-                        class="
-                            inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                            {{ request()->routeIs('apply.*')
-                                ? 'bg-indigo-50 text-indigo-700'
-                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                        ">
+                        class="nav-link {{ request()->routeIs('apply.*') ? 'is-active' : '' }}">
 
                         Apply Job
                     </a>
 
                     <a
                         href="{{ route('files.index') }}"
-                        class="
-                            inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                            {{ request()->routeIs('files.*')
-                                ? 'bg-indigo-50 text-indigo-700'
-                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                        ">
+                        class="nav-link {{ request()->routeIs('files.*') ? 'is-active' : '' }}">
                         <svg
                             class="h-4.5 w-4.5"
                             fill="none"
@@ -105,26 +229,14 @@
 
                     <a
                         href="{{ route('templates.index') }}"
-                        class="
-                            inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                            {{ request()->routeIs('templates.*')
-                                ? 'bg-indigo-50 text-indigo-700'
-                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                        ">
+                        class="nav-link {{ request()->routeIs('templates.*') ? 'is-active' : '' }}">
 
                         Templates
                     </a>
 
                     <a
                         href="{{ route('feedback.index') }}"
-                        class="
-                            inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                            {{ request()->routeIs('feedback.*')
-                                ? 'bg-indigo-50 text-indigo-700'
-                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                        ">
+                        class="nav-link {{ request()->routeIs('feedback.*') ? 'is-active' : '' }}">
 
                         Feedback
                     </a>
@@ -132,13 +244,7 @@
                     @if (auth()->user()->isAdmin())
                     <a
                         href="{{ route('admin.dashboard') }}"
-                        class="
-                            inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                            {{ request()->routeIs('admin.*')
-                                ? 'bg-indigo-50 text-indigo-700'
-                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                        ">
+                        class="nav-link {{ request()->routeIs('admin.*') ? 'is-active' : '' }}">
 
                         Admin Panel
                     </a>
@@ -156,11 +262,11 @@
 
                 {{-- User information --}}
                 <div class="hidden text-right md:block">
-                    <p class="text-sm font-bold text-gray-900">
+                    <p class="text-sm font-semibold" style="color: var(--ink)">
                         {{ Auth::user()?->name ?? 'User' }}
                     </p>
 
-                    <p class="mt-0.5 text-xs text-gray-500">
+                    <p class="mt-0.5 text-xs" style="color: var(--ink-soft)">
                         {{ Auth::user()?->email ?? '' }}
                     </p>
                 </div>
@@ -175,17 +281,18 @@
 
                         <button
                             type="button"
-                            class="flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            class="nav-trigger">
 
                             {{-- Avatar --}}
-                            <div class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">
+                            <div class="nav-avatar h-9 w-9 text-sm">
                                 {{ strtoupper(substr(Auth::user()?->name ?? 'U', 0, 1)) }}
                             </div>
 
 
                             {{-- Arrow --}}
                             <svg
-                                class="h-4 w-4 text-gray-400"
+                                class="h-4 w-4"
+                                style="color: var(--ink-soft)"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor">
@@ -208,7 +315,8 @@
                             <div class="flex items-center gap-2">
 
                                 <svg
-                                    class="h-4 w-4 text-gray-400"
+                                    class="h-4 w-4"
+                                    style="color: var(--ink-soft)"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor">
@@ -234,7 +342,7 @@
                             <x-dropdown-link
                                 :href="route('logout')"
                                 onclick="event.preventDefault(); this.closest('form').submit();">
-                                <div class="flex items-center gap-2 text-red-600">
+                                <div class="nav-logout flex items-center gap-2">
 
                                     <svg
                                         class="h-4 w-4"
@@ -270,7 +378,7 @@
                 <button
                     type="button"
                     @click="open = !open"
-                    class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white p-2.5 text-gray-500 shadow-sm transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    class="nav-burger">
 
                     {{-- Hamburger --}}
                     <svg
@@ -322,19 +430,14 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-2"
-        class="border-t border-gray-100 bg-white sm:hidden">
+        class="nav-mobile-panel sm:hidden">
 
         <div class="space-y-1 px-4 py-4">
 
             {{-- Mobile Dashboard --}}
             <a
                 href="{{ route('dashboard') }}"
-                class="
-                    flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
-                    {{ request()->routeIs('dashboard')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                ">
+                class="nav-mobile-link {{ request()->routeIs('dashboard') ? 'is-active' : '' }}">
                 <svg
                     class="h-5 w-5"
                     fill="none"
@@ -355,12 +458,7 @@
             {{-- Mobile Apply --}}
             <a
                 href="{{ route('apply.index') }}"
-                class="
-                    flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
-                    {{ request()->routeIs('apply.*')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                ">
+                class="nav-mobile-link {{ request()->routeIs('apply.*') ? 'is-active' : '' }}">
 
                 <svg
                     class="h-5 w-5"
@@ -380,12 +478,7 @@
 
             <a
                 href="{{ route('files.index') }}"
-                class="
-                    flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
-                    {{ request()->routeIs('files.*')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                ">
+                class="nav-mobile-link {{ request()->routeIs('files.*') ? 'is-active' : '' }}">
                 <svg
                     class="h-5 w-5"
                     fill="none"
@@ -403,12 +496,7 @@
 
             <a
                 href="{{ route('templates.index') }}"
-                class="
-                    flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
-                    {{ request()->routeIs('templates.*')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                ">
+                class="nav-mobile-link {{ request()->routeIs('templates.*') ? 'is-active' : '' }}">
                 <svg
                     class="h-5 w-5"
                     fill="none"
@@ -426,12 +514,7 @@
 
             <a
                 href="{{ route('feedback.index') }}"
-                class="
-                    flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
-                    {{ request()->routeIs('feedback.*')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                ">
+                class="nav-mobile-link {{ request()->routeIs('feedback.*') ? 'is-active' : '' }}">
                 <svg
                     class="h-5 w-5"
                     fill="none"
@@ -450,12 +533,7 @@
             @if (auth()->user()->isAdmin())
             <a
                 href="{{ route('admin.dashboard') }}"
-                class="
-                    flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
-                    {{ request()->routeIs('admin.*')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}
-                ">
+                class="nav-mobile-link {{ request()->routeIs('admin.*') ? 'is-active' : '' }}">
                 <svg
                     class="h-5 w-5"
                     fill="none"
@@ -483,12 +561,12 @@
         {{-- =========================================================
             MOBILE USER AREA
         ========================================================== --}}
-        <div class="border-t border-gray-100 px-4 py-4">
+        <div class="px-4 py-4" style="border-top: 1px solid var(--line)">
 
             <div class="flex items-center gap-3">
 
                 {{-- Avatar --}}
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">
+                <div class="nav-avatar h-10 w-10 shrink-0 text-sm">
                     {{ strtoupper(substr(Auth::user()?->name ?? 'U', 0, 1)) }}
                 </div>
 
@@ -496,11 +574,11 @@
                 {{-- User --}}
                 <div class="min-w-0">
 
-                    <p class="truncate text-sm font-bold text-gray-900">
+                    <p class="truncate text-sm font-semibold" style="color: var(--ink)">
                         {{ Auth::user()?->name ?? 'User' }}
                     </p>
 
-                    <p class="truncate text-xs text-gray-500">
+                    <p class="truncate text-xs" style="color: var(--ink-soft)">
                         {{ Auth::user()?->email ?? '' }}
                     </p>
 
@@ -514,9 +592,10 @@
                 {{-- Profile --}}
                 <a
                     href="{{ route('profile.edit') }}"
-                    class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
+                    class="nav-mobile-link">
                     <svg
-                        class="h-4 w-4 text-gray-400"
+                        class="h-4 w-4"
+                        style="color: var(--ink-soft)"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -539,7 +618,7 @@
 
                     <button
                         type="submit"
-                        class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium text-red-600 transition hover:bg-red-50">
+                        class="nav-mobile-link nav-logout w-full text-left">
 
                         <svg
                             class="h-4 w-4"

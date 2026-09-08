@@ -4,12 +4,152 @@
 
 @section('content')
 
+<style>
+    :root {
+        --warn: #A9781E;
+        --warn-soft: #F5EBD3;
+        --info: #3B6E90;
+        --info-soft: #E3EEF2;
+    }
+
+    .pp-field {
+        border-color: var(--line) !important;
+        background: #fff !important;
+        color: var(--ink) !important;
+        border-radius: 0.75rem !important;
+    }
+
+    .pp-field:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 1px var(--accent) !important;
+        outline: none;
+    }
+
+    .pp-btn-filter {
+        background: var(--accent);
+        color: #fff;
+        border-radius: 0.75rem;
+        transition: background 0.15s ease;
+    }
+
+    .pp-btn-filter:hover,
+    .pp-btn-filter:focus {
+        background: var(--accent-ink);
+    }
+
+    .pp-table-card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .pp-table thead {
+        background: var(--paper-soft);
+        border-bottom: 1px solid var(--line);
+    }
+
+    .pp-table thead th {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--ink-soft);
+    }
+
+    .pp-table tbody tr {
+        border-bottom: 1px solid var(--paper-soft);
+        transition: background 0.15s ease;
+    }
+
+    .pp-table tbody tr:hover {
+        background: var(--paper-soft);
+    }
+
+    .pp-table tbody td {
+        color: var(--ink-soft);
+    }
+
+    .pp-tag-neutral {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 0.5rem;
+        background: var(--paper-soft);
+        color: var(--ink-soft);
+        padding: 0.15rem 0.6rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .pp-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        border-radius: 0.5rem;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .pp-badge--success {
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+    }
+
+    .pp-badge--warn {
+        background: var(--warn-soft);
+        color: var(--warn);
+    }
+
+    .pp-badge--info {
+        background: var(--info-soft);
+        color: var(--info);
+    }
+
+    .pp-badge--neutral {
+        background: var(--paper-soft);
+        color: var(--ink-soft);
+    }
+
+    .pp-dot {
+        height: 0.375rem;
+        width: 0.375rem;
+        border-radius: 9999px;
+    }
+
+    .pp-dot--success {
+        background: var(--accent);
+    }
+
+    .pp-dot--warn {
+        background: var(--warn);
+    }
+
+    .pp-dot--info {
+        background: var(--info);
+    }
+
+    .pp-dot--neutral {
+        background: var(--ink-soft);
+    }
+
+    .pp-action-link {
+        color: var(--accent-ink);
+        font-weight: 500;
+        transition: color 0.15s ease;
+    }
+
+    .pp-action-link:hover {
+        color: var(--accent);
+    }
+</style>
+
 {{-- Form Filter --}}
 <form method="GET" class="mb-6 flex flex-col gap-3 sm:flex-row">
     {{-- Filter Tipe --}}
     <select
         name="type"
-        class="w-full rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 outline-none transition focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:w-48">
+        class="pp-field w-full border px-4 py-2 text-sm sm:w-48">
         <option value="">Semua Tipe</option>
         <option value="feedback" @selected(request('type')=='feedback' )>Feedback</option>
         <option value="report" @selected(request('type')=='report' )>Report</option>
@@ -18,7 +158,7 @@
     {{-- Filter Status --}}
     <select
         name="status"
-        class="w-full rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 outline-none transition focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:w-48">
+        class="pp-field w-full border px-4 py-2 text-sm sm:w-48">
         <option value="">Semua Status</option>
         <option value="open" @selected(request('status')=='open' )>Open</option>
         <option value="in_progress" @selected(request('status')=='in_progress' )>In Progress</option>
@@ -29,16 +169,16 @@
     {{-- Tombol Filter --}}
     <button
         type="submit"
-        class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1">
+        class="pp-btn-filter inline-flex items-center justify-center gap-2 px-5 py-2 text-sm font-medium">
         Filter
     </button>
 </form>
 
 {{-- Container Tabel --}}
-<div class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+<div class="pp-table-card">
     <div class="overflow-x-auto">
-        <table class="w-full whitespace-nowrap text-left text-sm text-gray-600">
-            <thead class="border-b border-gray-100 bg-gray-50/50 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+        <table class="pp-table w-full whitespace-nowrap text-left text-sm">
+            <thead>
                 <tr>
                     <th class="px-6 py-4">User</th>
                     <th class="px-6 py-4">Tipe</th>
@@ -48,16 +188,16 @@
                     <th class="px-6 py-4">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody>
                 @forelse ($feedbacks as $fb)
-                <tr class="transition hover:bg-gray-50/50">
-                    <td class="px-6 py-4 font-medium text-gray-800">{{ $fb->user->name ?? '-' }}</td>
+                <tr>
+                    <td class="px-6 py-4 font-medium" style="color: var(--ink)">{{ $fb->user->name ?? '-' }}</td>
                     <td class="px-6 py-4">
-                        <span class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+                        <span class="pp-tag-neutral">
                             {{ ucfirst($fb->type) }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 font-medium text-gray-700">{{ $fb->title }}</td>
+                    <td class="px-6 py-4 font-medium" style="color: var(--ink)">{{ $fb->title }}</td>
                     <td class="px-6 py-4">
                         {{-- Logika warna berdasarkan status feedback --}}
                         @php
@@ -65,37 +205,37 @@
                         @endphp
 
                         @if($status == 'resolved')
-                        <span class="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                        <span class="pp-badge pp-badge--success">
+                            <span class="pp-dot pp-dot--success"></span>
                             Resolved
                         </span>
                         @elseif($status == 'in_progress')
-                        <span class="inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
-                            <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+                        <span class="pp-badge pp-badge--warn">
+                            <span class="pp-dot pp-dot--warn"></span>
                             In Progress
                         </span>
                         @elseif($status == 'open')
-                        <span class="inline-flex items-center gap-1.5 rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-700 ring-1 ring-inset ring-sky-600/20">
-                            <span class="h-1.5 w-1.5 rounded-full bg-sky-500"></span>
+                        <span class="pp-badge pp-badge--info">
+                            <span class="pp-dot pp-dot--info"></span>
                             Open
                         </span>
                         @else
-                        <span class="inline-flex items-center gap-1.5 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/20">
-                            <span class="h-1.5 w-1.5 rounded-full bg-gray-400"></span>
+                        <span class="pp-badge pp-badge--neutral">
+                            <span class="pp-dot pp-dot--neutral"></span>
                             {{ ucfirst($fb->status) }}
                         </span>
                         @endif
                     </td>
-                    <td class="px-6 py-4 text-gray-400">{{ $fb->created_at->diffForHumans() }}</td>
+                    <td class="px-6 py-4" style="color: var(--ink-soft)">{{ $fb->created_at->diffForHumans() }}</td>
                     <td class="px-6 py-4">
-                        <a href="{{ route('admin.feedback.show', $fb) }}" class="font-medium text-indigo-600 transition-colors hover:text-indigo-800">
+                        <a href="{{ route('admin.feedback.show', $fb) }}" class="pp-action-link">
                             Lihat
                         </a>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-gray-400">
+                    <td colspan="6" class="px-6 py-12 text-center" style="color: var(--ink-soft)">
                         Belum ada data feedback atau laporan yang masuk.
                     </td>
                 </tr>

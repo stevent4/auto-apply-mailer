@@ -1,6 +1,276 @@
 <x-app-layout title="Berkas — Auto Apply Mailer">
 
-    <div class="min-h-[calc(100vh-5rem)] bg-gray-50">
+    {{-- =========================================================
+        FONT & TOKEN SISTEM HALAMAN INI
+        Konsisten dengan halaman Template & Buat Lamaran.
+    ========================================================== --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        .tpl-page {
+            --paper: #FAF7F1;
+            --paper-soft: #F2EDE1;
+            --ink: #23262B;
+            --ink-soft: #83796C;
+            --line: #E4DECE;
+            --accent: #2F6F4E;
+            --accent-ink: #1F4D36;
+            --accent-soft: #E4EEE6;
+            --clay: #9C5A3C;
+            --clay-soft: #F2E5DC;
+            --danger: #B3402E;
+            --danger-soft: #F7E6E2;
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            background: var(--paper);
+        }
+
+        .tpl-serif {
+            font-family: 'Lora', Georgia, serif;
+        }
+
+        .tpl-page ::selection {
+            background: var(--accent-soft);
+        }
+
+        .tpl-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .tpl-card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .tpl-card-body {
+            padding: 1.5rem;
+        }
+
+        .tpl-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+
+        .tpl-icon--meta {
+            background: var(--paper-soft);
+        }
+
+        .tpl-icon--accent {
+            background: var(--accent-soft);
+        }
+
+        .tpl-btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--ink-soft);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            padding: 0.65rem 1.1rem;
+            border-radius: 0.7rem;
+            transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+        }
+
+        .tpl-btn-secondary:hover {
+            border-color: var(--ink-soft);
+            background: var(--paper-soft);
+            color: var(--ink);
+        }
+
+        .tpl-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.75rem 1.35rem;
+            border-radius: 0.7rem;
+            transition: background 0.15s ease;
+        }
+
+        .tpl-btn-primary:hover {
+            background: var(--accent-ink);
+        }
+
+        .tpl-alert {
+            border-radius: 0.85rem;
+            padding: 0.9rem 1.1rem;
+            border: 1px solid var(--line);
+        }
+
+        .tpl-alert--accent {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+        .tpl-alert--danger {
+            background: var(--danger-soft);
+            border-color: var(--danger);
+        }
+
+        .tpl-alert-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .tpl-dropzone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 2px dashed var(--line);
+            background: var(--paper);
+            border-radius: 1rem;
+            padding: 3rem 1.5rem;
+            cursor: pointer;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .tpl-dropzone:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .tpl-dropzone-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 1rem;
+            background: #fff;
+            border: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: transform 0.15s ease;
+        }
+
+        .tpl-dropzone:hover .tpl-dropzone-icon {
+            transform: scale(1.05);
+        }
+
+        .tpl-badge-soft {
+            display: inline-flex;
+            border-radius: 0.55rem;
+            background: var(--paper-soft);
+            border: 1px solid var(--line);
+            color: var(--ink-soft);
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.35rem 0.7rem;
+        }
+
+        .tpl-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-radius: 0.85rem;
+            border: 1px solid var(--line);
+            background: #fff;
+            padding: 0.75rem;
+        }
+
+        .tpl-preview-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.6rem;
+            background: var(--paper-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tpl-file-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            transition: border-color 0.15s ease;
+        }
+
+        .tpl-file-card:hover {
+            border-color: var(--ink-soft);
+        }
+
+        .tpl-file-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.85rem;
+            background: var(--paper-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .tpl-row-action {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.55rem;
+            white-space: nowrap;
+            transition: background 0.15s ease;
+        }
+
+        .tpl-row-action--accent {
+            color: var(--accent-ink);
+            background: var(--accent-soft);
+        }
+
+        .tpl-row-action--accent:hover {
+            background: #d6e6db;
+        }
+
+        .tpl-row-action--danger {
+            color: var(--danger);
+            background: var(--danger-soft);
+        }
+
+        .tpl-row-action--danger:hover {
+            background: #f2d5cd;
+        }
+
+        .tpl-empty {
+            text-align: center;
+            padding: 3.5rem 1.5rem;
+            background: #fff;
+            border: 1px dashed var(--line);
+            border-radius: 1rem;
+            color: var(--ink-soft);
+            font-size: 0.875rem;
+        }
+
+        .tpl-info-box {
+            border-radius: 0.85rem;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent);
+            padding: 1.1rem 1.25rem;
+        }
+    </style>
+
+    <div class="tpl-page min-h-[calc(100vh-5rem)]">
 
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 
@@ -13,13 +283,11 @@
 
                     <div>
 
-
-                        <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                        <h1 class="tpl-serif text-2xl font-semibold sm:text-3xl" style="color: var(--ink)">
                             Kelola Berkas
                         </h1>
 
-
-                        <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base">
+                        <p class="mt-2 max-w-2xl text-sm leading-6 sm:text-base" style="color: var(--ink-soft)">
                             Simpan CV dan dokumen pendukung yang akan digunakan
                             sebagai lampiran saat mengirim lamaran.
                         </p>
@@ -29,7 +297,7 @@
 
                     <a
                         href="{{ route('apply.index') }}"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-50">
+                        class="tpl-btn-secondary">
 
                         <svg
                             class="h-4 w-4"
@@ -57,16 +325,15 @@
             ====================================================== --}}
             @if (session('success'))
 
-            <div
-                class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+            <div class="tpl-alert tpl-alert--accent mb-6">
 
                 <div class="flex items-center gap-3">
 
-                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 font-bold text-emerald-600">
+                    <div class="tpl-alert-icon" style="background: var(--accent-soft); color: var(--accent-ink)">
                         ✓
                     </div>
 
-                    <p class="text-sm font-medium text-emerald-800">
+                    <p class="text-sm font-medium" style="color: var(--accent-ink)">
                         {{ session('success') }}
                     </p>
 
@@ -82,23 +349,23 @@
             ====================================================== --}}
             @if ($errors->any())
 
-            <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4">
+            <div class="tpl-alert tpl-alert--danger mb-6">
 
                 <div class="flex items-start gap-3">
 
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100 font-bold text-red-600">
+                    <div class="tpl-alert-icon" style="background: var(--danger-soft); color: var(--danger)">
                         !
                     </div>
 
 
                     <div>
 
-                        <p class="text-sm font-semibold text-red-800">
+                        <p class="text-sm font-semibold" style="color: var(--danger)">
                             Upload gagal
                         </p>
 
 
-                        <ul class="mt-2 space-y-1 text-sm text-red-700">
+                        <ul class="mt-2 space-y-1 text-sm" style="color: var(--danger)">
 
                             @foreach ($errors->all() as $error)
 
@@ -122,24 +389,24 @@
             {{-- =====================================================
                 UPLOAD CARD
             ====================================================== --}}
-            <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+            <div class="tpl-card">
 
-                <div class="border-b border-gray-100 px-6 py-5">
+                <div class="tpl-card-header">
 
                     <div class="flex items-center gap-3">
 
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-lg">
+                        <div class="tpl-icon tpl-icon--meta">
                             ☁️
                         </div>
 
 
                         <div>
 
-                            <h2 class="text-base font-bold text-gray-900">
+                            <h2 class="tpl-serif text-base font-semibold" style="color: var(--ink)">
                                 Upload Berkas
                             </h2>
 
-                            <p class="mt-1 text-xs text-gray-500">
+                            <p class="mt-1 text-xs" style="color: var(--ink-soft)">
                                 Upload satu atau beberapa file sekaligus.
                             </p>
 
@@ -154,31 +421,31 @@
                     action="{{ route('files.store') }}"
                     method="POST"
                     enctype="multipart/form-data"
-                    class="p-6">
+                    class="tpl-card-body">
 
                     @csrf
 
 
                     <label
                         for="files"
-                        class="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center transition hover:border-indigo-400 hover:bg-indigo-50/40">
+                        class="tpl-dropzone">
 
-                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm transition group-hover:scale-105">
+                        <div class="tpl-dropzone-icon">
                             📄
                         </div>
 
 
-                        <h3 class="mt-4 text-sm font-bold text-gray-900">
+                        <h3 class="mt-4 text-sm font-semibold" style="color: var(--ink)">
                             Pilih berkas untuk diunggah
                         </h3>
 
 
-                        <p class="mt-1 text-sm text-gray-500">
+                        <p class="mt-1 text-sm" style="color: var(--ink-soft)">
                             Klik di sini untuk memilih satu atau beberapa file.
                         </p>
 
 
-                        <span class="mt-3 rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-gray-500 shadow-sm">
+                        <span class="tpl-badge-soft mt-3">
                             PDF · DOC · DOCX · JPG · PNG
                         </span>
 
@@ -200,7 +467,7 @@
                         id="selected-files"
                         class="mt-4 hidden">
 
-                        <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                        <p class="mb-2 text-xs font-semibold uppercase tracking-wide" style="color: var(--ink-soft)">
                             File yang dipilih
                         </p>
 
@@ -214,14 +481,14 @@
 
                     <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
-                        <p class="text-xs leading-5 text-gray-400">
+                        <p class="text-xs leading-5" style="color: var(--ink-soft)">
                             Maksimal 10 MB per file.
                         </p>
 
 
                         <button
                             type="submit"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            class="tpl-btn-primary">
 
                             <svg
                                 class="h-5 w-5"
@@ -261,14 +528,14 @@
                                 📁
                             </span>
 
-                            <h2 class="text-xl font-bold tracking-tight text-gray-900">
+                            <h2 class="tpl-serif text-xl font-semibold" style="color: var(--ink)">
                                 Berkas Tersimpan
                             </h2>
 
                         </div>
 
 
-                        <p class="mt-1 text-sm text-gray-500">
+                        <p class="mt-1 text-sm" style="color: var(--ink-soft)">
                             {{ count($files) }} berkas tersedia untuk digunakan.
                         </p>
 
@@ -304,11 +571,11 @@
                     @endphp
 
 
-                    <div class="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                    <div class="tpl-file-card">
 
                         <div class="flex items-start gap-4">
 
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gray-50 text-xl">
+                            <div class="tpl-file-icon">
                                 {{ $icon }}
                             </div>
 
@@ -316,13 +583,14 @@
                             <div class="min-w-0 flex-1">
 
                                 <p
-                                    class="truncate text-sm font-semibold text-gray-900"
+                                    class="truncate text-sm font-semibold"
+                                    style="color: var(--ink)"
                                     title="{{ $file['name'] }}">
                                     {{ $file['name'] }}
                                 </p>
 
 
-                                <div class="mt-1 flex items-center gap-2 text-xs text-gray-400">
+                                <div class="mt-1 flex items-center gap-2 text-xs" style="color: var(--ink-soft)">
 
                                     <span>
                                         {{ strtoupper($extension) }}
@@ -347,7 +615,7 @@
 
                             <a
                                 href="{{ route('files.download', ['filename' => $file['name']]) }}"
-                                class="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100">
+                                class="tpl-row-action tpl-row-action--accent flex flex-1 items-center justify-center gap-2">
 
                                 ↓
                                 Download
@@ -365,7 +633,7 @@
 
                                 <button
                                     type="submit"
-                                    class="inline-flex items-center justify-center rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100"
+                                    class="tpl-row-action tpl-row-action--danger"
                                     title="Hapus">
                                     🗑
                                 </button>
@@ -382,19 +650,19 @@
 
                 @else
 
-                <div class="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
+                <div class="tpl-empty">
 
-                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-2xl">
+                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl text-2xl" style="background: var(--paper-soft)">
                         📭
                     </div>
 
 
-                    <h3 class="mt-4 text-sm font-bold text-gray-900">
+                    <h3 class="mt-4 text-sm font-semibold" style="color: var(--ink)">
                         Belum ada berkas
                     </h3>
 
 
-                    <p class="mx-auto mt-1 max-w-md text-sm leading-6 text-gray-500">
+                    <p class="mx-auto mt-1 max-w-md text-sm leading-6" style="color: var(--ink-soft)">
                         Upload CV dan dokumen pendukung agar dapat
                         langsung dipilih ketika membuat lamaran.
                     </p>
@@ -409,7 +677,7 @@
             {{-- =====================================================
                 INFORMATION
             ====================================================== --}}
-            <div class="mt-8 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-5">
+            <div class="tpl-info-box mt-8">
 
                 <div class="flex items-start gap-3">
 
@@ -419,11 +687,11 @@
 
                     <div>
 
-                        <h3 class="text-sm font-bold text-indigo-900">
+                        <h3 class="text-sm font-semibold" style="color: var(--accent-ink)">
                             Bagaimana cara kerjanya?
                         </h3>
 
-                        <p class="mt-1 text-sm leading-6 text-indigo-700">
+                        <p class="mt-1 text-sm leading-6" style="color: var(--accent-ink)">
                             File yang kamu upload ke halaman ini akan otomatis
                             muncul di bagian <strong>Lampiran</strong> pada halaman
                             <strong>Apply Job</strong>. Jadi kamu cukup mengelola
@@ -484,21 +752,20 @@
                     const item =
                         document.createElement('div');
 
-                    item.className =
-                        'flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3';
+                    item.className = 'tpl-preview-item';
 
 
                     item.innerHTML = `
-                        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50">
+                        <div class="tpl-preview-icon">
                             📄
                         </div>
 
                         <div class="min-w-0 flex-1">
-                            <p class="truncate text-sm font-medium text-gray-700">
+                            <p class="truncate text-sm font-medium" style="color: var(--ink)">
                                 ${file.name}
                             </p>
 
-                            <p class="text-xs text-gray-400">
+                            <p class="text-xs" style="color: var(--ink-soft)">
                                 ${(file.size / 1024).toFixed(1)} KB
                             </p>
                         </div>

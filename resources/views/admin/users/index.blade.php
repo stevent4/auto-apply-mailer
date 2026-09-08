@@ -4,10 +4,101 @@
 
 @section('content')
 
-<div class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+<style>
+    .pp-table-card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .pp-table thead {
+        background: var(--paper-soft);
+        border-bottom: 1px solid var(--line);
+    }
+
+    .pp-table thead th {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--ink-soft);
+    }
+
+    .pp-table tbody tr {
+        border-bottom: 1px solid var(--paper-soft);
+        transition: background 0.15s ease;
+    }
+
+    .pp-table tbody tr:hover {
+        background: var(--paper-soft);
+    }
+
+    .pp-table tbody td {
+        color: var(--ink-soft);
+    }
+
+    .pp-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        border-radius: 0.5rem;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .pp-badge--success {
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+    }
+
+    .pp-badge--danger {
+        background: var(--danger-soft);
+        color: var(--danger);
+    }
+
+    .pp-dot {
+        height: 0.375rem;
+        width: 0.375rem;
+        border-radius: 9999px;
+    }
+
+    .pp-dot--success {
+        background: var(--accent);
+    }
+
+    .pp-dot--danger {
+        background: var(--danger);
+    }
+
+    .pp-action-link {
+        font-weight: 500;
+        transition: color 0.15s ease;
+    }
+
+    .pp-action-link--accent {
+        color: var(--accent-ink);
+    }
+
+    .pp-action-link--accent:hover {
+        color: var(--accent);
+    }
+
+    .pp-action-link--danger {
+        color: var(--danger);
+    }
+
+    .pp-action-link--danger:hover {
+        color: var(--accent-ink);
+        opacity: 0.8;
+    }
+</style>
+
+<div class="pp-table-card">
     <div class="overflow-x-auto">
-        <table class="w-full whitespace-nowrap text-left text-sm text-gray-600">
-            <thead class="border-b border-gray-100 bg-gray-50/50 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+        <table class="pp-table w-full whitespace-nowrap text-left text-sm">
+            <thead>
                 <tr>
                     <th class="px-6 py-4">Nama</th>
                     <th class="px-6 py-4">Email</th>
@@ -17,42 +108,42 @@
                     <th class="px-6 py-4">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody>
                 {{-- Menggunakan forelse agar ada tampilan khusus jika data kosong --}}
                 @forelse ($users as $user)
-                <tr class="transition hover:bg-gray-50/50">
-                    <td class="px-6 py-4 font-medium text-gray-700">{{ $user->name }}</td>
-                    <td class="px-6 py-4 text-gray-500">{{ $user->email }}</td>
-                    <td class="px-6 py-4 text-gray-500">{{ $user->created_at->format('d M Y') }}</td>
-                    <td class="px-6 py-4 text-gray-500">{{ $user->application_histories_count ?? 0 }}</td>
+                <tr>
+                    <td class="px-6 py-4 font-medium" style="color: var(--ink)">{{ $user->name }}</td>
+                    <td class="px-6 py-4">{{ $user->email }}</td>
+                    <td class="px-6 py-4">{{ $user->created_at->format('d M Y') }}</td>
+                    <td class="px-6 py-4">{{ $user->application_histories_count ?? 0 }}</td>
                     <td class="px-6 py-4">
                         @if($user->status == 'suspended')
-                        <span class="inline-flex items-center gap-1.5 rounded-md bg-rose-50 px-2 py-1 text-xs font-medium text-rose-700">
-                            <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span> Suspended
+                        <span class="pp-badge pp-badge--danger">
+                            <span class="pp-dot pp-dot--danger"></span> Suspended
                         </span>
                         @else
-                        <span class="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
-                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Active
+                        <span class="pp-badge pp-badge--success">
+                            <span class="pp-dot pp-dot--success"></span> Active
                         </span>
                         @endif
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-4">
-                            <a href="{{ route('admin.users.show', $user) }}" class="font-medium text-indigo-600 transition-colors hover:text-indigo-800">
+                            <a href="{{ route('admin.users.show', $user) }}" class="pp-action-link pp-action-link--accent">
                                 Detail
                             </a>
 
                             @if (($user->status ?? 'active') === 'active')
                             <form method="POST" action="{{ route('admin.users.suspend', $user) }}" class="inline">
                                 @csrf @method('PATCH')
-                                <button type="submit" class="font-medium text-rose-500 transition-colors hover:text-rose-700">
+                                <button type="submit" class="pp-action-link pp-action-link--danger">
                                     Suspend
                                 </button>
                             </form>
                             @else
                             <form method="POST" action="{{ route('admin.users.activate', $user) }}" class="inline">
                                 @csrf @method('PATCH')
-                                <button type="submit" class="font-medium text-emerald-600 transition-colors hover:text-emerald-800">
+                                <button type="submit" class="pp-action-link pp-action-link--accent">
                                     Aktifkan
                                 </button>
                             </form>
@@ -60,7 +151,7 @@
                             <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna ini beserta seluruh berkasnya?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="font-medium text-rose-500 transition-colors hover:text-rose-700">
+                                <button type="submit" class="pp-action-link pp-action-link--danger">
                                     Hapus
                                 </button>
                             </form>
@@ -69,7 +160,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-gray-400">
+                    <td colspan="6" class="px-6 py-12 text-center" style="color: var(--ink-soft)">
                         Belum ada data pengguna.
                     </td>
                 </tr>

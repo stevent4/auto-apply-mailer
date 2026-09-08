@@ -1,6 +1,139 @@
 <x-app-layout title="Kirim Feedback — Auto Apply Mailer">
 
-    <div class="min-h-screen bg-gray-50">
+    {{-- =========================================================
+        FONT & TOKEN SISTEM HALAMAN INI
+        Konsisten dengan halaman Template, Buat Lamaran, Kelola Berkas
+        & Feedback list/detail.
+    ========================================================== --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        .tpl-page {
+            --paper: #FAF7F1;
+            --paper-soft: #F2EDE1;
+            --ink: #23262B;
+            --ink-soft: #83796C;
+            --line: #E4DECE;
+            --accent: #2F6F4E;
+            --accent-ink: #1F4D36;
+            --accent-soft: #E4EEE6;
+            --clay: #9C5A3C;
+            --clay-soft: #F2E5DC;
+            --danger: #B3402E;
+            --danger-soft: #F7E6E2;
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            background: var(--paper);
+        }
+
+        .tpl-serif {
+            font-family: 'Lora', Georgia, serif;
+        }
+
+        .tpl-page ::selection {
+            background: var(--accent-soft);
+        }
+
+        .tpl-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 1rem;
+        }
+
+        .tpl-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--ink);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .tpl-input {
+            width: 100%;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            border-radius: 0.65rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            color: var(--ink);
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .tpl-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        textarea.tpl-input {
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .tpl-input-file {
+            display: block;
+            width: 100%;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            border-radius: 0.65rem;
+            padding: 0.55rem 1rem;
+            font-size: 0.875rem;
+            color: var(--ink-soft);
+        }
+
+        .tpl-input-file::file-selector-button {
+            margin-right: 0.75rem;
+            border-radius: 0.5rem;
+            border: none;
+            background: var(--paper-soft);
+            padding: 0.5rem 1rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--ink);
+            transition: background 0.15s ease;
+        }
+
+        .tpl-input-file:hover::file-selector-button {
+            background: var(--line);
+        }
+
+        .tpl-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.65rem 1.25rem;
+            border-radius: 0.7rem;
+            transition: background 0.15s ease;
+        }
+
+        .tpl-btn-primary:hover {
+            background: var(--accent-ink);
+        }
+
+        .tpl-btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.7rem;
+            padding: 0.65rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--ink-soft);
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .tpl-btn-ghost:hover {
+            background: var(--paper-soft);
+            color: var(--ink);
+        }
+    </style>
+
+    <div class="tpl-page min-h-screen">
         <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
 
             {{-- Header --}}
@@ -8,18 +141,19 @@
                 <div class="flex items-center justify-between gap-4">
 
                     <div>
-                        <h1 class="text-2xl font-semibold tracking-tight text-gray-900">
+                        <h1 class="tpl-serif text-2xl font-semibold" style="color: var(--ink)">
                             Kirim Feedback
                         </h1>
 
-                        <p class="mt-1 text-sm text-gray-500">
+                        <p class="mt-1 text-sm" style="color: var(--ink-soft)">
                             Sampaikan saran atau laporkan masalah yang kamu temui.
                         </p>
                     </div>
 
                     <a
                         href="{{ route('feedback.index') }}"
-                        class="text-sm font-medium text-gray-500 transition hover:text-gray-900">
+                        class="text-sm font-medium transition"
+                        style="color: var(--ink-soft)">
                         Kembali
                     </a>
 
@@ -28,7 +162,7 @@
 
 
             {{-- Form --}}
-            <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
+            <div class="tpl-card">
 
                 <form
                     method="POST"
@@ -43,7 +177,7 @@
                         <div>
                             <label
                                 for="type"
-                                class="mb-2 block text-sm font-medium text-gray-800">
+                                class="tpl-label">
                                 Jenis
                             </label>
 
@@ -51,7 +185,7 @@
                                 id="type"
                                 name="type"
                                 required
-                                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10">
+                                class="tpl-input">
 
                                 <option value="feedback" @selected(old('type', 'feedback' )==='feedback' )>
                                     Feedback / Saran
@@ -64,7 +198,7 @@
                             </select>
 
                             @error('type')
-                            <p class="mt-1.5 text-xs text-red-600">
+                            <p class="mt-1.5 text-xs" style="color: var(--danger)">
                                 {{ $message }}
                             </p>
                             @enderror
@@ -75,9 +209,9 @@
                         <div>
                             <label
                                 for="category"
-                                class="mb-2 block text-sm font-medium text-gray-800">
+                                class="tpl-label">
                                 Kategori
-                                <span class="font-normal text-gray-400">(opsional)</span>
+                                <span class="font-normal" style="color: var(--ink-soft)">(opsional)</span>
                             </label>
 
                             <input
@@ -86,10 +220,10 @@
                                 name="category"
                                 value="{{ old('category') }}"
                                 placeholder="Contoh: Email, CV, UI"
-                                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10">
+                                class="tpl-input">
 
                             @error('category')
-                            <p class="mt-1.5 text-xs text-red-600">
+                            <p class="mt-1.5 text-xs" style="color: var(--danger)">
                                 {{ $message }}
                             </p>
                             @enderror
@@ -100,7 +234,7 @@
                         <div>
                             <label
                                 for="title"
-                                class="mb-2 block text-sm font-medium text-gray-800">
+                                class="tpl-label">
                                 Judul
                             </label>
 
@@ -111,10 +245,10 @@
                                 value="{{ old('title') }}"
                                 required
                                 placeholder="Tulis judul feedback"
-                                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10">
+                                class="tpl-input">
 
                             @error('title')
-                            <p class="mt-1.5 text-xs text-red-600">
+                            <p class="mt-1.5 text-xs" style="color: var(--danger)">
                                 {{ $message }}
                             </p>
                             @enderror
@@ -125,7 +259,7 @@
                         <div>
                             <label
                                 for="description"
-                                class="mb-2 block text-sm font-medium text-gray-800">
+                                class="tpl-label">
                                 Deskripsi
                             </label>
 
@@ -135,10 +269,10 @@
                                 rows="6"
                                 required
                                 placeholder="Jelaskan feedback atau masalah yang kamu alami..."
-                                class="w-full resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm leading-6 text-gray-900 placeholder-gray-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10">{{ old('description') }}</textarea>
+                                class="tpl-input">{{ old('description') }}</textarea>
 
                             @error('description')
-                            <p class="mt-1.5 text-xs text-red-600">
+                            <p class="mt-1.5 text-xs" style="color: var(--danger)">
                                 {{ $message }}
                             </p>
                             @enderror
@@ -151,15 +285,15 @@
                         <div>
                             <label
                                 for="related_application_id"
-                                class="mb-2 block text-sm font-medium text-gray-800">
+                                class="tpl-label">
                                 Lamaran terkait
-                                <span class="font-normal text-gray-400">(opsional)</span>
+                                <span class="font-normal" style="color: var(--ink-soft)">(opsional)</span>
                             </label>
 
                             <select
                                 id="related_application_id"
                                 name="related_application_id"
-                                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10">
+                                class="tpl-input">
 
                                 <option value="">
                                     Tidak ada
@@ -178,7 +312,7 @@
                             </select>
 
                             @error('related_application_id')
-                            <p class="mt-1.5 text-xs text-red-600">
+                            <p class="mt-1.5 text-xs" style="color: var(--danger)">
                                 {{ $message }}
                             </p>
                             @enderror
@@ -191,9 +325,9 @@
                         <div>
                             <label
                                 for="screenshot"
-                                class="mb-2 block text-sm font-medium text-gray-800">
+                                class="tpl-label">
                                 Screenshot
-                                <span class="font-normal text-gray-400">(opsional)</span>
+                                <span class="font-normal" style="color: var(--ink-soft)">(opsional)</span>
                             </label>
 
                             <input
@@ -201,18 +335,15 @@
                                 type="file"
                                 name="screenshot"
                                 accept="image/*"
-                                class="block w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-500
-                                file:mr-3 file:rounded-lg file:border-0 file:bg-gray-100
-                                file:px-4 file:py-2 file:text-sm file:font-medium file:text-gray-700
-                                hover:file:bg-gray-200">
+                                class="tpl-input-file">
 
                             @error('screenshot')
-                            <p class="mt-1.5 text-xs text-red-600">
+                            <p class="mt-1.5 text-xs" style="color: var(--danger)">
                                 {{ $message }}
                             </p>
                             @enderror
 
-                            <p class="mt-1.5 text-xs text-gray-400">
+                            <p class="mt-1.5 text-xs" style="color: var(--ink-soft)">
                                 Maksimal 2MB.
                             </p>
                         </div>
@@ -221,17 +352,17 @@
 
 
                     {{-- Footer --}}
-                    <div class="flex flex-col-reverse gap-3 border-t border-gray-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-end sm:px-8">
+                    <div class="flex flex-col-reverse gap-3 px-6 py-5 sm:flex-row sm:items-center sm:justify-end sm:px-8" style="border-top: 1px solid var(--line)">
 
                         <a
                             href="{{ route('feedback.index') }}"
-                            class="inline-flex justify-center rounded-xl px-5 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900">
+                            class="tpl-btn-ghost">
                             Batal
                         </a>
 
                         <button
                             type="submit"
-                            class="inline-flex justify-center rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            class="tpl-btn-primary">
                             Kirim Feedback
                         </button>
 

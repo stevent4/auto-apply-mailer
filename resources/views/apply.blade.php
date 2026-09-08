@@ -1,6 +1,392 @@
 <x-app-layout title="Lamaran — Auto Apply Mailer">
 
     {{-- =========================================================
+        FONT & TOKEN SISTEM HALAMAN INI
+        Mengikuti gaya halaman Template: Lora untuk judul (kesan surat),
+        Inter untuk UI. Warna dikendalikan lewat CSS variable, bukan
+        palet Tailwind bawaan, supaya konsisten dengan halaman Template.
+    ========================================================== --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        .tpl-page {
+            --paper: #FAF7F1;
+            --paper-soft: #F2EDE1;
+            --ink: #23262B;
+            --ink-soft: #83796C;
+            --line: #E4DECE;
+            --accent: #2F6F4E;
+            --accent-ink: #1F4D36;
+            --accent-soft: #E4EEE6;
+            --clay: #9C5A3C;
+            --clay-soft: #F2E5DC;
+            --danger: #B3402E;
+            --danger-soft: #F7E6E2;
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            background: var(--paper);
+        }
+
+        .tpl-serif {
+            font-family: 'Lora', Georgia, serif;
+        }
+
+        .tpl-page ::selection {
+            background: var(--accent-soft);
+        }
+
+        /* Kartu generik pengganti bg-white + border + shadow */
+        .tpl-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .tpl-card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .tpl-card-body {
+            padding: 1.5rem;
+        }
+
+        .tpl-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+
+        .tpl-icon--meta {
+            background: var(--paper-soft);
+        }
+
+        .tpl-icon--accent {
+            background: var(--accent-soft);
+        }
+
+        .tpl-icon--clay {
+            background: var(--clay-soft);
+        }
+
+        .tpl-icon--danger {
+            background: var(--danger-soft);
+        }
+
+        .tpl-label {
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--ink-soft);
+            margin-bottom: 0.375rem;
+            display: block;
+        }
+
+        .tpl-input {
+            width: 100%;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            border-radius: 0.65rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            color: var(--ink);
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .tpl-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        .tpl-input[readonly] {
+            background: var(--paper-soft);
+            color: var(--ink-soft);
+        }
+
+        .tpl-input--icon {
+            padding-left: 2.75rem;
+        }
+
+        textarea.tpl-input {
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .tpl-chip {
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.45rem 0.8rem;
+            border-radius: 0.55rem;
+            background: #fff;
+            color: var(--ink-soft);
+            border: 1px solid var(--line);
+            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .tpl-chip:hover {
+            background: var(--paper-soft);
+            color: var(--ink);
+            border-color: var(--ink-soft);
+        }
+
+        .tpl-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.7rem 1.35rem;
+            border-radius: 0.7rem;
+            transition: background 0.15s ease;
+        }
+
+        .tpl-btn-primary:hover {
+            background: var(--accent-ink);
+        }
+
+        .tpl-btn-primary--clay {
+            background: var(--clay);
+        }
+
+        .tpl-btn-primary--clay:hover {
+            background: #7d4830;
+        }
+
+        .tpl-btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--ink-soft);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            padding: 0.65rem 1.1rem;
+            border-radius: 0.7rem;
+            transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+        }
+
+        .tpl-btn-secondary:hover {
+            border-color: var(--ink-soft);
+            background: var(--paper-soft);
+            color: var(--ink);
+        }
+
+        .tpl-tag {
+            display: inline-flex;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.45rem;
+            letter-spacing: 0.01em;
+        }
+
+        .tpl-tag--accent {
+            background: var(--accent-soft);
+            color: var(--accent-ink);
+        }
+
+        .tpl-tag--clay {
+            background: var(--clay-soft);
+            color: var(--clay);
+        }
+
+        .tpl-tag--meta {
+            background: var(--paper-soft);
+            color: var(--ink-soft);
+        }
+
+        .tpl-alert {
+            border-radius: 0.85rem;
+            padding: 0.9rem 1.1rem;
+            border: 1px solid var(--line);
+        }
+
+        .tpl-alert--accent {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+        .tpl-alert--clay {
+            background: var(--clay-soft);
+            border-color: var(--clay);
+        }
+
+        .tpl-alert--danger {
+            background: var(--danger-soft);
+            border-color: var(--danger);
+        }
+
+        .tpl-alert-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .tpl-option {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            padding: 1rem;
+            border-radius: 0.85rem;
+            border: 1px solid var(--line);
+            background: #fff;
+            cursor: pointer;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .tpl-option:hover {
+            border-color: var(--ink-soft);
+        }
+
+        .tpl-option--selected {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .tpl-attachment-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem;
+            border-radius: 0.85rem;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            cursor: pointer;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .tpl-attachment-row:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .tpl-row-action {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.45rem 0.75rem;
+            border-radius: 0.55rem;
+            white-space: nowrap;
+            transition: background 0.15s ease;
+        }
+
+        .tpl-row-action--accent {
+            color: var(--accent-ink);
+        }
+
+        .tpl-row-action--accent:hover {
+            background: var(--accent-soft);
+        }
+
+        .tpl-row-action--clay {
+            color: var(--clay);
+        }
+
+        .tpl-row-action--clay:hover {
+            background: var(--clay-soft);
+        }
+
+        .tpl-row-action--danger {
+            color: var(--danger);
+        }
+
+        .tpl-row-action--danger:hover {
+            background: var(--danger-soft);
+        }
+
+        .tpl-empty {
+            text-align: center;
+            padding: 3.5rem 1.5rem;
+            background: var(--paper-soft);
+            color: var(--ink-soft);
+            font-size: 0.875rem;
+        }
+
+        .tpl-table thead {
+            background: var(--paper-soft);
+        }
+
+        .tpl-table th {
+            font-size: 0.6875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--ink-soft);
+            padding: 0.9rem 1.1rem;
+            text-align: left;
+        }
+
+        .tpl-table td {
+            padding: 1rem 1.1rem;
+            border-top: 1px solid var(--line);
+        }
+
+        .tpl-table tbody tr {
+            transition: background 0.15s ease;
+        }
+
+        .tpl-table tbody tr:hover {
+            background: var(--paper-soft);
+        }
+
+        .tpl-history-card {
+            padding: 1.25rem;
+            border-top: 1px solid var(--line);
+        }
+
+        .tpl-history-card:first-child {
+            border-top: none;
+        }
+
+        .tpl-cta {
+            background: var(--ink);
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tpl-cta::after {
+            content: '';
+            position: absolute;
+            right: -2.5rem;
+            top: -2.5rem;
+            height: 9rem;
+            width: 9rem;
+            border-radius: 9999px;
+            background: rgba(47, 111, 78, 0.35);
+            filter: blur(40px);
+        }
+
+        .tpl-eyebrow {
+            display: inline-flex;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-soft);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.3rem 0.75rem;
+        }
+    </style>
+
+    {{-- =========================================================
         DATA PROFILE USER YANG SEDANG LOGIN
 
         Sengaja menggunakan data-* attribute agar tidak memakai
@@ -21,7 +407,7 @@
     {{-- =========================================================
         PAGE
     ========================================================== --}}
-    <div class="min-h-[calc(100vh-5rem)] bg-gray-50">
+    <div class="tpl-page min-h-[calc(100vh-5rem)]">
 
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 
@@ -35,13 +421,11 @@
 
                     <div>
 
-
-                        <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                        <h1 class="tpl-serif text-2xl font-semibold sm:text-3xl" style="color: var(--ink)">
                             Buat Lamaran Baru
                         </h1>
 
-
-                        <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base">
+                        <p class="mt-2 max-w-2xl text-sm leading-6 sm:text-base" style="color: var(--ink-soft)">
                             Isi informasi perusahaan, pilih template,
                             sesuaikan isi lamaran, lalu kirim.
                         </p>
@@ -51,7 +435,7 @@
 
                     <a
                         href="{{ route('dashboard') }}"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-50">
+                        class="tpl-btn-secondary">
 
                         <svg
                             class="h-4 w-4"
@@ -85,23 +469,23 @@
             !Auth::user()->phone
             )
 
-            <div class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+            <div class="tpl-alert tpl-alert--clay mb-6">
 
                 <div class="flex items-start gap-3">
 
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 font-bold text-amber-600">
+                    <div class="tpl-alert-icon" style="background: var(--clay-soft); color: var(--clay)">
                         !
                     </div>
 
 
                     <div class="min-w-0 flex-1">
 
-                        <p class="text-sm font-semibold text-amber-800">
+                        <p class="text-sm font-semibold" style="color: var(--clay)">
                             Biodata belum lengkap
                         </p>
 
 
-                        <p class="mt-1 text-sm leading-5 text-amber-700">
+                        <p class="mt-1 text-sm leading-5" style="color: var(--ink-soft)">
                             Lengkapi biodata profil agar template email
                             dan surat lamaran dapat terisi otomatis.
                         </p>
@@ -109,7 +493,7 @@
 
                         <a
                             href="{{ route('profile.edit') }}"
-                            class="mt-3 inline-flex items-center gap-2 rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-amber-700">
+                            class="tpl-btn-primary tpl-btn-primary--clay mt-3 text-xs">
                             Lengkapi Profil
                             <span>→</span>
                         </a>
@@ -128,23 +512,23 @@
             ====================================================== --}}
             @if ($errors->any())
 
-            <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm">
+            <div class="tpl-alert tpl-alert--danger mb-6">
 
                 <div class="flex items-start gap-3">
 
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100 font-bold text-red-600">
+                    <div class="tpl-alert-icon" style="background: var(--danger-soft); color: var(--danger)">
                         !
                     </div>
 
 
                     <div>
 
-                        <p class="text-sm font-semibold text-red-800">
+                        <p class="text-sm font-semibold" style="color: var(--danger)">
                             Ada data yang perlu diperiksa
                         </p>
 
 
-                        <ul class="mt-2 space-y-1 text-sm text-red-700">
+                        <ul class="mt-2 space-y-1 text-sm" style="color: var(--danger)">
 
                             @foreach ($errors->all() as $error)
 
@@ -174,23 +558,23 @@
                 x-data="{ show: true }"
                 x-show="show"
                 x-transition
-                class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
+                class="tpl-alert tpl-alert--accent mb-6">
 
                 <div class="flex items-start gap-3">
 
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-bold text-emerald-600">
+                    <div class="tpl-alert-icon" style="background: var(--accent-soft); color: var(--accent-ink)">
                         ✓
                     </div>
 
 
                     <div class="min-w-0 flex-1">
 
-                        <p class="text-sm font-semibold text-emerald-800">
+                        <p class="text-sm font-semibold" style="color: var(--accent-ink)">
                             Lamaran berhasil dikirim
                         </p>
 
 
-                        <p class="mt-1 text-sm text-emerald-700">
+                        <p class="mt-1 text-sm" style="color: var(--accent-ink)">
                             {{ session('success') }}
                         </p>
 
@@ -200,7 +584,8 @@
                     <button
                         type="button"
                         @click="show = false"
-                        class="rounded-lg p-1 text-emerald-600 transition hover:bg-emerald-100">
+                        class="rounded-lg p-1 transition"
+                        style="color: var(--accent-ink)">
 
                         <svg
                             class="h-5 w-5"
@@ -232,23 +617,23 @@
                 x-data="{ show: true }"
                 x-show="show"
                 x-transition
-                class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm">
+                class="tpl-alert tpl-alert--danger mb-6">
 
                 <div class="flex items-start gap-3">
 
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100 font-bold text-red-600">
+                    <div class="tpl-alert-icon" style="background: var(--danger-soft); color: var(--danger)">
                         !
                     </div>
 
 
                     <div class="min-w-0 flex-1">
 
-                        <p class="text-sm font-semibold text-red-800">
+                        <p class="text-sm font-semibold" style="color: var(--danger)">
                             Lamaran gagal dikirim
                         </p>
 
 
-                        <p class="mt-1 text-sm text-red-700">
+                        <p class="mt-1 text-sm" style="color: var(--danger)">
                             {{ session('error') }}
                         </p>
 
@@ -258,7 +643,8 @@
                     <button
                         type="button"
                         @click="show = false"
-                        class="rounded-lg p-1 text-red-600 transition hover:bg-red-100">
+                        class="rounded-lg p-1 transition"
+                        style="color: var(--danger)">
 
                         <svg
                             class="h-5 w-5"
@@ -304,25 +690,25 @@
                         {{-- =================================================
                             INFORMASI LOWONGAN
                         ================================================== --}}
-                        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                        <div class="tpl-card">
 
-                            <div class="border-b border-gray-100 px-6 py-5">
+                            <div class="tpl-card-header">
 
                                 <div class="flex items-center gap-3">
 
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-lg">
+                                    <div class="tpl-icon tpl-icon--meta">
                                         🏢
                                     </div>
 
 
                                     <div>
 
-                                        <h2 class="text-base font-bold text-gray-900">
+                                        <h2 class="tpl-serif text-base font-semibold" style="color: var(--ink)">
                                             Informasi Lowongan
                                         </h2>
 
 
-                                        <p class="mt-1 text-xs text-gray-500">
+                                        <p class="mt-1 text-xs" style="color: var(--ink-soft)">
                                             Masukkan informasi perusahaan dan posisi yang dilamar.
                                         </p>
 
@@ -333,14 +719,14 @@
                             </div>
 
 
-                            <div class="space-y-5 p-6">
+                            <div class="tpl-card-body space-y-5">
 
                                 {{-- Email HRD --}}
                                 <div>
 
                                     <label
                                         for="email_hrd"
-                                        class="mb-2 block text-sm font-semibold text-gray-700">
+                                        class="tpl-label">
                                         Email HRD Tujuan
                                     </label>
 
@@ -350,7 +736,8 @@
                                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
 
                                             <svg
-                                                class="h-5 w-5 text-gray-400"
+                                                class="h-5 w-5"
+                                                style="color: var(--ink-soft)"
                                                 fill="none"
                                                 viewBox="0 0 24 24"
                                                 stroke="currentColor">
@@ -371,7 +758,7 @@
                                             required
                                             value="{{ old('email_hrd', $selectedHistory->email_hrd ?? '') }}"
                                             placeholder="hrd@perusahaan.com"
-                                            class="block w-full rounded-xl border-gray-200 bg-gray-50 py-3 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">
+                                            class="tpl-input tpl-input--icon">
 
                                     </div>
 
@@ -385,7 +772,7 @@
 
                                         <label
                                             for="nama_pt"
-                                            class="mb-2 block text-sm font-semibold text-gray-700">
+                                            class="tpl-label">
                                             Nama Perusahaan
                                         </label>
 
@@ -397,7 +784,7 @@
                                             required
                                             value="{{ old('nama_pt', $selectedHistory->nama_pt ?? '') }}"
                                             placeholder="PT Maju Mundur"
-                                            class="block w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">
+                                            class="tpl-input">
 
                                     </div>
 
@@ -406,7 +793,7 @@
 
                                         <label
                                             for="posisi"
-                                            class="mb-2 block text-sm font-semibold text-gray-700">
+                                            class="tpl-label">
                                             Posisi yang Dilamar
                                         </label>
 
@@ -418,7 +805,7 @@
                                             required
                                             value="{{ old('posisi', $selectedHistory->posisi ?? '') }}"
                                             placeholder="Backend Developer"
-                                            class="block w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">
+                                            class="tpl-input">
 
                                     </div>
 
@@ -432,27 +819,27 @@
                         {{-- =================================================
                             TEMPLATE EMAIL
                         ================================================== --}}
-                        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                        <div class="tpl-card">
 
-                            <div class="border-b border-gray-100 px-6 py-5">
+                            <div class="tpl-card-header">
 
                                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
                                     <div class="flex items-center gap-3">
 
-                                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-lg">
+                                        <div class="tpl-icon tpl-icon--accent">
                                             📝
                                         </div>
 
 
                                         <div>
 
-                                            <h2 class="text-base font-bold text-gray-900">
+                                            <h2 class="tpl-serif text-base font-semibold" style="color: var(--ink)">
                                                 Isi Email
                                             </h2>
 
 
-                                            <p class="mt-1 text-xs text-gray-500">
+                                            <p class="mt-1 text-xs" style="color: var(--ink-soft)">
                                                 Pilih template lalu sesuaikan isinya sebelum dikirim.
                                             </p>
 
@@ -464,7 +851,7 @@
                                     <button
                                         type="button"
                                         onclick="updateTemplate()"
-                                        class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50">
+                                        class="tpl-chip shrink-0">
 
                                         ↻
                                         Reset Template
@@ -479,14 +866,14 @@
 
                                     <label
                                         for="email_template"
-                                        class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-500">
+                                        class="tpl-label text-xs font-bold uppercase tracking-wide">
                                         Template Email
                                     </label>
 
 
                                     <select
                                         id="email_template"
-                                        class="block w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">
+                                        class="tpl-input font-medium">
 
                                         @forelse($emailTemplates as $template)
 
@@ -518,7 +905,7 @@
 
                                     <label
                                         for="template_subject_preview"
-                                        class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-500">
+                                        class="tpl-label text-xs font-bold uppercase tracking-wide">
                                         Subjek Template
                                     </label>
 
@@ -529,14 +916,14 @@
                                         id="template_subject_preview"
                                         readonly
                                         placeholder="Subjek akan mengikuti template"
-                                        class="block w-full rounded-xl border-gray-200 bg-gray-100 px-4 py-3 text-sm text-gray-600">
+                                        class="tpl-input">
 
                                 </div>
 
                             </div>
 
 
-                            <div class="p-6">
+                            <div class="tpl-card-body">
 
                                 <textarea
                                     name="body_email"
@@ -544,10 +931,10 @@
                                     rows="17"
                                     required
                                     placeholder="Isi email lamaran..."
-                                    class="block w-full resize-y rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm leading-6 text-gray-900 placeholder-gray-400 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">{{ old('body_email') }}</textarea>
+                                    class="tpl-input">{{ old('body_email') }}</textarea>
 
 
-                                <p class="mt-2 text-xs leading-5 text-gray-400">
+                                <p class="mt-2 text-xs leading-5" style="color: var(--ink-soft)">
                                     Placeholder template akan otomatis diganti dengan
                                     biodata akun dan informasi lowongan.
                                 </p>
@@ -560,25 +947,25 @@
                         {{-- =================================================
                             SUBJEK EMAIL
                         ================================================== --}}
-                        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                        <div class="tpl-card">
 
-                            <div class="border-b border-gray-100 px-6 py-5">
+                            <div class="tpl-card-header">
 
                                 <div class="flex items-center gap-3">
 
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-lg">
+                                    <div class="tpl-icon tpl-icon--meta">
                                         ✉️
                                     </div>
 
 
                                     <div>
 
-                                        <h2 class="text-base font-bold text-gray-900">
+                                        <h2 class="tpl-serif text-base font-semibold" style="color: var(--ink)">
                                             Pengaturan Subjek
                                         </h2>
 
 
-                                        <p class="mt-1 text-xs text-gray-500">
+                                        <p class="mt-1 text-xs" style="color: var(--ink-soft)">
                                             Gunakan subjek template atau tentukan sendiri.
                                         </p>
 
@@ -589,12 +976,12 @@
                             </div>
 
 
-                            <div class="space-y-4 p-6">
+                            <div class="tpl-card-body space-y-4">
 
                                 {{-- Auto --}}
                                 <label
                                     for="subjek_auto"
-                                    class="flex cursor-pointer items-start gap-3 rounded-xl border border-indigo-200 bg-indigo-50/60 p-4 transition hover:bg-indigo-50">
+                                    class="tpl-option tpl-option--selected">
 
                                     <input
                                         type="radio"
@@ -603,17 +990,18 @@
                                         value="auto"
                                         checked
                                         onchange="toggleSubject()"
-                                        class="mt-0.5 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                        class="mt-0.5 h-4 w-4"
+                                        style="accent-color: var(--accent)">
 
 
                                     <span>
 
-                                        <span class="block text-sm font-semibold text-gray-900">
+                                        <span class="block text-sm font-semibold" style="color: var(--ink)">
                                             Gunakan Subjek Template
                                         </span>
 
 
-                                        <span class="mt-1 block text-xs leading-5 text-gray-500">
+                                        <span class="mt-1 block text-xs leading-5" style="color: var(--ink-soft)">
                                             Subjek akan mengikuti template email yang dipilih.
                                         </span>
 
@@ -625,7 +1013,7 @@
                                 {{-- Manual --}}
                                 <label
                                     for="subjek_manual"
-                                    class="flex cursor-pointer items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 transition hover:border-gray-300 hover:bg-gray-50">
+                                    class="tpl-option">
 
                                     <input
                                         type="radio"
@@ -633,17 +1021,18 @@
                                         id="subjek_manual"
                                         value="manual"
                                         onchange="toggleSubject()"
-                                        class="mt-0.5 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                        class="mt-0.5 h-4 w-4"
+                                        style="accent-color: var(--accent)">
 
 
                                     <span>
 
-                                        <span class="block text-sm font-semibold text-gray-900">
+                                        <span class="block text-sm font-semibold" style="color: var(--ink)">
                                             Manual
                                         </span>
 
 
-                                        <span class="mt-1 block text-xs leading-5 text-gray-500">
+                                        <span class="mt-1 block text-xs leading-5" style="color: var(--ink-soft)">
                                             Tentukan sendiri subjek email.
                                         </span>
 
@@ -659,7 +1048,7 @@
 
                                     <label
                                         for="input_subjek_manual"
-                                        class="mb-2 block text-sm font-semibold text-gray-700">
+                                        class="tpl-label">
                                         Subjek Custom
                                     </label>
 
@@ -670,7 +1059,7 @@
                                         id="input_subjek_manual"
                                         value="{{ old('subjek_custom') }}"
                                         placeholder="Lamaran Staff Administrasi - Nama Lengkap"
-                                        class="block w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">
+                                        class="tpl-input">
 
                                 </div>
 
@@ -682,27 +1071,27 @@
                         {{-- =================================================
                             SURAT LAMARAN PDF
                         ================================================== --}}
-                        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                        <div class="tpl-card">
 
-                            <div class="border-b border-gray-100 px-6 py-5">
+                            <div class="tpl-card-header">
 
                                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
                                     <div class="flex items-center gap-3">
 
-                                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-lg">
+                                        <div class="tpl-icon tpl-icon--clay">
                                             📄
                                         </div>
 
 
                                         <div>
 
-                                            <h2 class="text-base font-bold text-gray-900">
+                                            <h2 class="tpl-serif text-base font-semibold" style="color: var(--ink)">
                                                 Surat Lamaran PDF
                                             </h2>
 
 
-                                            <p class="mt-1 text-xs text-gray-500">
+                                            <p class="mt-1 text-xs" style="color: var(--ink-soft)">
                                                 Pilih template surat dan sesuaikan sebelum dikirim.
                                             </p>
 
@@ -718,14 +1107,14 @@
 
                                     <label
                                         for="pdf_template"
-                                        class="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-500">
+                                        class="tpl-label text-xs font-bold uppercase tracking-wide">
                                         Template Surat
                                     </label>
 
 
                                     <select
                                         id="pdf_template"
-                                        class="block w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 transition focus:border-indigo-500 focus:bg-white focus:ring-indigo-500">
+                                        class="tpl-input font-medium">
 
                                         @forelse($pdfTemplates as $template)
                                         <option
@@ -751,14 +1140,14 @@
                             </div>
 
 
-                            <div class="p-6">
+                            <div class="tpl-card-body">
 
                                 <textarea
                                     name="body_pdf"
                                     id="body_pdf">{{ old('body_pdf') }}</textarea>
 
 
-                                <p class="mt-3 text-xs leading-5 text-gray-400">
+                                <p class="mt-3 text-xs leading-5" style="color: var(--ink-soft)">
                                     Data biodata dan informasi lowongan akan otomatis
                                     mengikuti profil serta form Apply.
                                 </p>
@@ -779,25 +1168,25 @@
                         {{-- =================================================
                             LAMPIRAN
                         ================================================== --}}
-                        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                        <div class="tpl-card">
 
-                            <div class="border-b border-gray-100 px-5 py-5">
+                            <div class="tpl-card-header">
 
                                 <div class="flex items-center gap-3">
 
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-lg">
+                                    <div class="tpl-icon tpl-icon--meta">
                                         📎
                                     </div>
 
 
                                     <div>
 
-                                        <h2 class="text-base font-bold text-gray-900">
+                                        <h2 class="tpl-serif text-base font-semibold" style="color: var(--ink)">
                                             Lampiran
                                         </h2>
 
 
-                                        <p class="mt-1 text-xs text-gray-500">
+                                        <p class="mt-1 text-xs" style="color: var(--ink-soft)">
                                             Pilih dokumen yang akan dikirim.
                                         </p>
 
@@ -814,7 +1203,7 @@
 
                                 <label
                                     for="file_{{ $loop->index }}"
-                                    class="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3.5 transition hover:border-indigo-200 hover:bg-indigo-50/50">
+                                    class="tpl-attachment-row">
 
                                     <input
                                         type="checkbox"
@@ -822,18 +1211,20 @@
                                         value="{{ $file }}"
                                         id="file_{{ $loop->index }}"
                                         checked
-                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                        class="h-4 w-4 rounded"
+                                        style="accent-color: var(--accent)">
 
 
                                     <div class="flex min-w-0 flex-1 items-center gap-3">
 
-                                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-lg shadow-sm">
+                                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg" style="background: #fff; border: 1px solid var(--line)">
                                             📄
                                         </div>
 
 
                                         <span
-                                            class="truncate text-sm font-medium text-gray-700"
+                                            class="truncate text-sm font-medium"
+                                            style="color: var(--ink)"
                                             title="{{ $file }}">
                                             {{ $file }}
                                         </span>
@@ -844,7 +1235,7 @@
 
                                 @empty
 
-                                <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                                <div class="tpl-alert tpl-alert--clay">
 
                                     <div class="flex gap-3">
 
@@ -855,12 +1246,12 @@
 
                                         <div>
 
-                                            <p class="text-sm font-semibold text-amber-800">
+                                            <p class="text-sm font-semibold" style="color: var(--clay)">
                                                 Belum ada berkas
                                             </p>
 
 
-                                            <p class="mt-1 text-xs leading-5 text-amber-700">
+                                            <p class="mt-1 text-xs leading-5" style="color: var(--ink-soft)">
                                                 Upload CV atau dokumen pendukung
                                                 melalui menu Berkas.
                                             </p>
@@ -876,11 +1267,11 @@
                             </div>
 
 
-                            <div class="border-t border-gray-100 px-5 py-4">
+                            <div class="p-5" style="border-top: 1px solid var(--line)">
 
                                 <a
                                     href="{{ route('files.index') }}"
-                                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-semibold text-gray-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
+                                    class="tpl-btn-secondary w-full text-xs">
                                     📁
                                     Kelola Berkas
                                 </a>
@@ -893,18 +1284,18 @@
                         {{-- =================================================
                             PROFILE SUMMARY
                         ================================================== --}}
-                        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                        <div class="tpl-card p-5">
 
                             <div class="flex items-start justify-between gap-3">
 
                                 <div>
 
-                                    <h3 class="text-sm font-bold text-gray-900">
+                                    <h3 class="tpl-serif text-sm font-semibold" style="color: var(--ink)">
                                         Profil Pelamar
                                     </h3>
 
 
-                                    <p class="mt-1 text-xs text-gray-500">
+                                    <p class="mt-1 text-xs" style="color: var(--ink-soft)">
                                         Data yang digunakan oleh template.
                                     </p>
 
@@ -913,7 +1304,8 @@
 
                                 <a
                                     href="{{ route('profile.edit') }}"
-                                    class="text-xs font-semibold text-indigo-600 transition hover:text-indigo-700">
+                                    class="text-xs font-semibold"
+                                    style="color: var(--accent-ink)">
                                     Edit
                                 </a>
 
@@ -924,12 +1316,12 @@
 
                                 <div>
 
-                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide" style="color: var(--ink-soft)">
                                         Nama
                                     </p>
 
 
-                                    <p class="mt-1 text-sm font-semibold text-gray-800">
+                                    <p class="mt-1 text-sm font-semibold" style="color: var(--ink)">
                                         {{ Auth::user()->name }}
                                     </p>
 
@@ -938,12 +1330,12 @@
 
                                 <div>
 
-                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide" style="color: var(--ink-soft)">
                                         Pendidikan
                                     </p>
 
 
-                                    <p class="mt-1 text-sm text-gray-600">
+                                    <p class="mt-1 text-sm" style="color: var(--ink-soft)">
                                         {{ Auth::user()->education ?: 'Belum diisi' }}
                                     </p>
 
@@ -952,12 +1344,12 @@
 
                                 <div>
 
-                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide" style="color: var(--ink-soft)">
                                         Email
                                     </p>
 
 
-                                    <p class="mt-1 truncate text-sm text-gray-600">
+                                    <p class="mt-1 truncate text-sm" style="color: var(--ink-soft)">
                                         {{ Auth::user()->email }}
                                     </p>
 
@@ -966,12 +1358,12 @@
 
                                 <div>
 
-                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide" style="color: var(--ink-soft)">
                                         Nomor HP
                                     </p>
 
 
-                                    <p class="mt-1 text-sm text-gray-600">
+                                    <p class="mt-1 text-sm" style="color: var(--ink-soft)">
                                         {{ Auth::user()->phone ?: 'Belum diisi' }}
                                     </p>
 
@@ -985,23 +1377,23 @@
                         {{-- =================================================
                             SEND CARD
                         ================================================== --}}
-                        <div class="overflow-hidden rounded-2xl bg-gray-900 shadow-sm">
+                        <div class="tpl-cta">
 
                             <div class="relative p-6">
 
                                 <div class="relative z-10">
 
-                                    <span class="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-indigo-200">
+                                    <span class="tpl-eyebrow">
                                         Siap dikirim?
                                     </span>
 
 
-                                    <h2 class="mt-4 text-xl font-bold text-white">
+                                    <h2 class="tpl-serif mt-4 text-xl font-semibold text-white">
                                         Periksa kembali
                                     </h2>
 
 
-                                    <p class="mt-2 text-sm leading-6 text-gray-400">
+                                    <p class="mt-2 text-sm leading-6" style="color: #C9C2B4">
                                         Pastikan informasi HRD, posisi,
                                         template, isi email, surat,
                                         dan lampiran sudah benar.
@@ -1010,7 +1402,7 @@
 
                                     <button
                                         type="submit"
-                                        class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-500 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                        class="tpl-btn-primary mt-6 w-full py-3.5 text-sm">
 
                                         <svg
                                             class="h-5 w-5"
@@ -1031,9 +1423,6 @@
 
                                 </div>
 
-
-                                <div class="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-indigo-500/20 blur-3xl"></div>
-
                             </div>
 
                         </div>
@@ -1042,9 +1431,9 @@
                         {{-- =================================================
                             TIPS
                         ================================================== --}}
-                        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                        <div class="tpl-card p-5">
 
-                            <h3 class="text-sm font-bold text-gray-900">
+                            <h3 class="tpl-serif text-sm font-semibold" style="color: var(--ink)">
                                 Tips sebelum mengirim
                             </h3>
 
@@ -1053,12 +1442,12 @@
 
                                 <div class="flex gap-3">
 
-                                    <span class="text-sm text-emerald-600">
+                                    <span class="text-sm" style="color: var(--accent-ink)">
                                         ✓
                                     </span>
 
 
-                                    <p class="text-xs leading-5 text-gray-500">
+                                    <p class="text-xs leading-5" style="color: var(--ink-soft)">
                                         Pastikan email HRD sudah benar.
                                     </p>
 
@@ -1067,12 +1456,12 @@
 
                                 <div class="flex gap-3">
 
-                                    <span class="text-sm text-emerald-600">
+                                    <span class="text-sm" style="color: var(--accent-ink)">
                                         ✓
                                     </span>
 
 
-                                    <p class="text-xs leading-5 text-gray-500">
+                                    <p class="text-xs leading-5" style="color: var(--ink-soft)">
                                         Pilih template yang paling sesuai.
                                     </p>
 
@@ -1081,12 +1470,12 @@
 
                                 <div class="flex gap-3">
 
-                                    <span class="text-sm text-emerald-600">
+                                    <span class="text-sm" style="color: var(--accent-ink)">
                                         ✓
                                     </span>
 
 
-                                    <p class="text-xs leading-5 text-gray-500">
+                                    <p class="text-xs leading-5" style="color: var(--ink-soft)">
                                         Pastikan biodata profil sudah lengkap.
                                     </p>
 
@@ -1095,12 +1484,12 @@
 
                                 <div class="flex gap-3">
 
-                                    <span class="text-sm text-emerald-600">
+                                    <span class="text-sm" style="color: var(--accent-ink)">
                                         ✓
                                     </span>
 
 
-                                    <p class="text-xs leading-5 text-gray-500">
+                                    <p class="text-xs leading-5" style="color: var(--ink-soft)">
                                         Periksa kembali CV dan dokumen pendukung.
                                     </p>
 
@@ -1109,12 +1498,12 @@
 
                                 <div class="flex gap-3">
 
-                                    <span class="text-sm text-emerald-600">
+                                    <span class="text-sm" style="color: var(--accent-ink)">
                                         ✓
                                     </span>
 
 
-                                    <p class="text-xs leading-5 text-gray-500">
+                                    <p class="text-xs leading-5" style="color: var(--ink-soft)">
                                         Baca kembali isi email sebelum dikirim.
                                     </p>
 
@@ -1145,21 +1534,21 @@
                         </span>
 
 
-                        <h2 class="text-xl font-bold tracking-tight text-gray-900">
+                        <h2 class="tpl-serif text-xl font-semibold" style="color: var(--ink)">
                             Riwayat Lamaran
                         </h2>
 
                     </div>
 
 
-                    <p class="mt-1 text-sm text-gray-500">
+                    <p class="mt-1 text-sm" style="color: var(--ink-soft)">
                         Daftar lamaran yang telah kamu kirim.
                     </p>
 
                 </div>
 
 
-                <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                <div class="tpl-card">
 
 
                     {{-- =================================================
@@ -1167,53 +1556,53 @@
                     ================================================== --}}
                     <div class="hidden overflow-x-auto xl:block">
 
-                        <table class="min-w-full divide-y divide-gray-100">
+                        <table class="tpl-table min-w-full">
 
-                            <thead class="bg-gray-50">
+                            <thead>
 
                                 <tr>
 
-                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    <th>
                                         No
                                     </th>
 
 
-                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    <th>
                                         Waktu
                                     </th>
 
 
-                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    <th>
                                         Perusahaan
                                     </th>
 
 
-                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    <th>
                                         Posisi
                                     </th>
 
 
-                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    <th>
                                         Email HRD
                                     </th>
 
 
-                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    <th>
                                         Status
                                     </th>
 
 
-                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    <th>
                                         Subjek
                                     </th>
 
 
-                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    <th>
                                         Waktu Berlalu
                                     </th>
 
 
-                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    <th>
                                         Aksi
                                     </th>
 
@@ -1222,7 +1611,7 @@
                             </thead>
 
 
-                            <tbody class="divide-y divide-gray-100">
+                            <tbody>
 
                                 @forelse($histories as $history)
 
@@ -1231,55 +1620,55 @@
                                 @endphp
 
 
-                                <tr class="transition hover:bg-gray-50">
+                                <tr>
 
-                                    <td class="whitespace-nowrap px-5 py-4 text-sm text-gray-500">
+                                    <td class="whitespace-nowrap text-sm" style="color: var(--ink-soft)">
                                         {{ $loop->iteration }}
                                     </td>
 
 
-                                    <td class="whitespace-nowrap px-5 py-4">
+                                    <td class="whitespace-nowrap">
 
-                                        <p class="text-sm font-medium text-gray-900">
+                                        <p class="text-sm font-medium" style="color: var(--ink)">
                                             {{ $history->created_at->format('d/m/Y') }}
                                         </p>
 
 
-                                        <p class="text-xs text-gray-400">
+                                        <p class="text-xs" style="color: var(--ink-soft)">
                                             {{ $history->created_at->format('H:i') }}
                                         </p>
 
                                     </td>
 
 
-                                    <td class="px-5 py-4">
+                                    <td>
 
-                                        <p class="max-w-[180px] truncate text-sm font-semibold text-gray-900">
+                                        <p class="max-w-[180px] truncate text-sm font-semibold" style="color: var(--ink)">
                                             {{ $history->nama_pt }}
                                         </p>
 
                                     </td>
 
 
-                                    <td class="px-5 py-4">
+                                    <td>
 
-                                        <span class="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                                        <span class="tpl-tag tpl-tag--accent">
                                             {{ $history->posisi }}
                                         </span>
 
                                     </td>
 
 
-                                    <td class="px-5 py-4">
+                                    <td>
 
-                                        <p class="max-w-[200px] truncate text-sm text-gray-600">
+                                        <p class="max-w-[200px] truncate text-sm" style="color: var(--ink-soft)">
                                             {{ $history->email_hrd }}
                                         </p>
 
                                     </td>
 
 
-                                    <td class="px-5 py-4">
+                                    <td>
 
                                         <form
                                             action="{{ route('history.update-status', $history->id) }}"
@@ -1292,7 +1681,7 @@
                                             <select
                                                 name="status"
                                                 onchange="this.form.submit()"
-                                                class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                class="tpl-input py-2 text-xs font-semibold">
 
                                                 <option
                                                     value="Terkirim"
@@ -1328,10 +1717,11 @@
                                     </td>
 
 
-                                    <td class="px-5 py-4">
+                                    <td>
 
                                         <p
-                                            class="max-w-[220px] truncate text-sm text-gray-600"
+                                            class="max-w-[220px] truncate text-sm"
+                                            style="color: var(--ink-soft)"
                                             title="{{ $history->subjek }}">
                                             {{ $history->subjek }}
                                         </p>
@@ -1339,23 +1729,23 @@
                                     </td>
 
 
-                                    <td class="whitespace-nowrap px-5 py-4">
+                                    <td class="whitespace-nowrap">
 
                                         @if($days === 0)
 
-                                        <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                        <span class="tpl-tag tpl-tag--accent">
                                             Hari ini
                                         </span>
 
                                         @elseif($days === 1)
 
-                                        <span class="inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
+                                        <span class="tpl-tag tpl-tag--clay">
                                             1 hari lalu
                                         </span>
 
                                         @else
 
-                                        <span class="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+                                        <span class="tpl-tag tpl-tag--meta">
                                             {{ $days }} hari lalu
                                         </span>
 
@@ -1364,13 +1754,13 @@
                                     </td>
 
 
-                                    <td class="px-5 py-4">
+                                    <td>
 
                                         <div class="flex items-center gap-2">
 
                                             <a
                                                 href="{{ route('history.resend', $history->id) }}"
-                                                class="inline-flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700 transition hover:bg-amber-100">
+                                                class="tpl-row-action tpl-row-action--clay" style="background: var(--clay-soft)">
                                                 ↻ Kirim Ulang
                                             </a>
 
@@ -1386,7 +1776,7 @@
 
                                                 <button
                                                     type="submit"
-                                                    class="inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100">
+                                                    class="tpl-row-action tpl-row-action--danger" style="background: var(--danger-soft)">
                                                     🗑 Hapus
                                                 </button>
 
@@ -1405,21 +1795,21 @@
 
                                     <td
                                         colspan="9"
-                                        class="px-5 py-16 text-center">
+                                        class="!border-t-0">
 
-                                        <div class="mx-auto max-w-sm">
+                                        <div class="tpl-empty">
 
-                                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-2xl">
+                                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl text-2xl" style="background: #fff; border: 1px solid var(--line)">
                                                 📭
                                             </div>
 
 
-                                            <h3 class="mt-4 text-sm font-bold text-gray-900">
+                                            <h3 class="mt-4 text-sm font-semibold" style="color: var(--ink)">
                                                 Belum ada riwayat
                                             </h3>
 
 
-                                            <p class="mt-1 text-sm leading-6 text-gray-500">
+                                            <p class="mt-1 text-sm leading-6" style="color: var(--ink-soft)">
                                                 Lamaran yang berhasil dikirim akan muncul di sini.
                                             </p>
 
@@ -1441,7 +1831,7 @@
                     {{-- =================================================
                         MOBILE / TABLET
                     ================================================== --}}
-                    <div class="divide-y divide-gray-100 xl:hidden">
+                    <div class="xl:hidden">
 
                         @forelse($histories as $history)
 
@@ -1450,18 +1840,18 @@
                         @endphp
 
 
-                        <div class="space-y-4 p-5">
+                        <div class="tpl-history-card space-y-4">
 
                             <div class="flex items-start justify-between gap-4">
 
                                 <div class="min-w-0">
 
-                                    <p class="truncate text-sm font-bold text-gray-900">
+                                    <p class="truncate text-sm font-semibold" style="color: var(--ink)">
                                         {{ $history->nama_pt }}
                                     </p>
 
 
-                                    <p class="mt-1 text-xs text-gray-500">
+                                    <p class="mt-1 text-xs" style="color: var(--ink-soft)">
                                         {{ $history->created_at->format('d/m/Y H:i') }}
                                     </p>
 
@@ -1470,19 +1860,19 @@
 
                                 @if($days === 0)
 
-                                <span class="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                                <span class="tpl-tag tpl-tag--accent shrink-0">
                                     Hari ini
                                 </span>
 
                                 @elseif($days === 1)
 
-                                <span class="shrink-0 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-sky-700">
+                                <span class="tpl-tag tpl-tag--clay shrink-0">
                                     1 hari lalu
                                 </span>
 
                                 @else
 
-                                <span class="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-600">
+                                <span class="tpl-tag tpl-tag--meta shrink-0">
                                     {{ $days }} hari lalu
                                 </span>
 
@@ -1495,12 +1885,12 @@
 
                                 <div>
 
-                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide" style="color: var(--ink-soft)">
                                         Posisi
                                     </p>
 
 
-                                    <span class="mt-1 inline-flex rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
+                                    <span class="tpl-tag tpl-tag--accent mt-1 inline-flex">
                                         {{ $history->posisi }}
                                     </span>
 
@@ -1509,12 +1899,12 @@
 
                                 <div>
 
-                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide" style="color: var(--ink-soft)">
                                         Email HRD
                                     </p>
 
 
-                                    <p class="mt-1 truncate text-sm text-gray-600">
+                                    <p class="mt-1 truncate text-sm" style="color: var(--ink-soft)">
                                         {{ $history->email_hrd }}
                                     </p>
 
@@ -1525,12 +1915,12 @@
 
                             <div>
 
-                                <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                <p class="text-[11px] font-semibold uppercase tracking-wide" style="color: var(--ink-soft)">
                                     Subjek
                                 </p>
 
 
-                                <p class="mt-1 text-sm leading-5 text-gray-600">
+                                <p class="mt-1 text-sm leading-5" style="color: var(--ink-soft)">
                                     {{ $history->subjek }}
                                 </p>
 
@@ -1539,7 +1929,7 @@
 
                             <div>
 
-                                <p class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                <p class="tpl-label mb-2">
                                     Status
                                 </p>
 
@@ -1555,7 +1945,7 @@
                                     <select
                                         name="status"
                                         onchange="this.form.submit()"
-                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm font-semibold text-gray-700 focus:border-indigo-500 focus:ring-indigo-500">
+                                        class="tpl-input font-semibold">
 
                                         <option
                                             value="Terkirim"
@@ -1595,7 +1985,7 @@
 
                                 <a
                                     href="{{ route('history.resend', $history->id) }}"
-                                    class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-50 px-4 py-2.5 text-xs font-semibold text-amber-700 transition hover:bg-amber-100">
+                                    class="tpl-row-action tpl-row-action--clay flex-1 text-center" style="background: var(--clay-soft)">
                                     ↻ Kirim Ulang
                                 </a>
 
@@ -1612,7 +2002,7 @@
 
                                     <button
                                         type="submit"
-                                        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-4 py-2.5 text-xs font-semibold text-red-600 transition hover:bg-red-100">
+                                        class="tpl-row-action tpl-row-action--danger w-full" style="background: var(--danger-soft)">
                                         🗑 Hapus
                                     </button>
 
@@ -1625,19 +2015,19 @@
 
                         @empty
 
-                        <div class="px-5 py-16 text-center">
+                        <div class="tpl-empty">
 
-                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-2xl">
+                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl text-2xl" style="background: #fff; border: 1px solid var(--line)">
                                 📭
                             </div>
 
 
-                            <h3 class="mt-4 text-sm font-bold text-gray-900">
+                            <h3 class="mt-4 text-sm font-semibold" style="color: var(--ink)">
                                 Belum ada riwayat
                             </h3>
 
 
-                            <p class="mt-1 text-sm leading-6 text-gray-500">
+                            <p class="mt-1 text-sm leading-6" style="color: var(--ink-soft)">
                                 Lamaran yang berhasil dikirim akan muncul di sini.
                             </p>
 
@@ -1666,7 +2056,7 @@
 ========================================================== --}}
     <style>
         .tox-tinymce {
-            border: 1px solid #e5e7eb !important;
+            border: 1px solid #E4DECE !important;
             border-radius: 0.75rem !important;
             overflow: hidden;
             box-shadow: none !important;
@@ -1675,23 +2065,23 @@
         .tox .tox-toolbar,
         .tox .tox-toolbar__overflow,
         .tox .tox-toolbar__primary {
-            background: #f9fafb !important;
+            background: #F2EDE1 !important;
         }
 
         .tox .tox-edit-area {
-            border-top: 1px solid #e5e7eb !important;
+            border-top: 1px solid #E4DECE !important;
         }
 
         .tox .tox-statusbar {
-            border-top: 1px solid #e5e7eb !important;
-            background: #f9fafb !important;
+            border-top: 1px solid #E4DECE !important;
+            background: #F2EDE1 !important;
         }
 
         .tox-dialog textarea,
         .tox-textarea {
-            color: #1f2937 !important;
+            color: #23262B !important;
             background-color: #ffffff !important;
-            -webkit-text-fill-color: #1f2937 !important;
+            -webkit-text-fill-color: #23262B !important;
             opacity: 1 !important;
         }
 
@@ -1904,7 +2294,7 @@
                         'width': '100%'
                     },
                     content_style: `
-                        body { font-family: sans-serif; font-size: 14px; line-height: 1.7; color: #111827; }
+                        body { font-family: sans-serif; font-size: 14px; line-height: 1.7; color: #23262B; }
                         ol { list-style-type: decimal; padding-left: 2rem; }
                         ul { list-style-type: disc; padding-left: 2rem; }
 

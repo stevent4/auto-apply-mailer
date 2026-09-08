@@ -1,6 +1,183 @@
 <x-app-layout title="Feedback — Auto Apply Mailer">
 
-    <div class="min-h-[calc(100vh-5rem)] bg-gray-50">
+    {{-- =========================================================
+        FONT & TOKEN SISTEM HALAMAN INI
+        Konsisten dengan halaman Template, Buat Lamaran & Kelola Berkas.
+    ========================================================== --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        .tpl-page {
+            --paper: #FAF7F1;
+            --paper-soft: #F2EDE1;
+            --ink: #23262B;
+            --ink-soft: #83796C;
+            --line: #E4DECE;
+            --accent: #2F6F4E;
+            --accent-ink: #1F4D36;
+            --accent-soft: #E4EEE6;
+            --clay: #9C5A3C;
+            --clay-soft: #F2E5DC;
+            --danger: #B3402E;
+            --danger-soft: #F7E6E2;
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            background: var(--paper);
+        }
+
+        .tpl-serif {
+            font-family: 'Lora', Georgia, serif;
+        }
+
+        .tpl-page ::selection {
+            background: var(--accent-soft);
+        }
+
+        .tpl-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .tpl-card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .tpl-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+
+        .tpl-icon--meta {
+            background: var(--paper-soft);
+        }
+
+        .tpl-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.7rem 1.15rem;
+            border-radius: 0.7rem;
+            transition: background 0.15s ease;
+        }
+
+        .tpl-btn-primary:hover {
+            background: var(--accent-ink);
+        }
+
+        .tpl-btn-primary--sm {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.5rem 0.9rem;
+        }
+
+        .tpl-alert {
+            border-radius: 0.85rem;
+            padding: 0.9rem 1.1rem;
+            border: 1px solid var(--line);
+        }
+
+        .tpl-alert--accent {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+        .tpl-alert-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .tpl-ticket-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 0.85rem;
+            background: var(--paper-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+
+        .tpl-ticket-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--line);
+            transition: background 0.15s ease;
+        }
+
+        .tpl-ticket-row:first-of-type {
+            border-top: none;
+        }
+
+        .tpl-ticket-row:hover {
+            background: var(--paper-soft);
+        }
+
+        .tpl-status-tag {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 9999px;
+            border: 1px solid;
+            padding: 0.15rem 0.65rem;
+            font-size: 0.6875rem;
+            font-weight: 600;
+        }
+
+        .tpl-status-tag--open {
+            background: var(--paper-soft);
+            color: var(--ink-soft);
+            border-color: var(--line);
+        }
+
+        .tpl-status-tag--progress {
+            background: var(--clay-soft);
+            color: var(--clay);
+            border-color: var(--clay);
+        }
+
+        .tpl-status-tag--resolved {
+            background: var(--accent-soft);
+            color: var(--accent-ink);
+            border-color: var(--accent);
+        }
+
+        .tpl-status-tag--closed {
+            background: var(--paper-soft);
+            color: var(--ink-soft);
+            border-color: var(--line);
+        }
+
+        .tpl-empty {
+            text-align: center;
+            padding: 3.5rem 1.5rem;
+            color: var(--ink-soft);
+            font-size: 0.875rem;
+        }
+    </style>
+
+    <div class="tpl-page min-h-[calc(100vh-5rem)]">
 
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 
@@ -14,11 +191,11 @@
 
                     <div>
 
-                        <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                        <h1 class="tpl-serif text-2xl font-semibold sm:text-3xl" style="color: var(--ink)">
                             Feedback & Laporan Saya
                         </h1>
 
-                        <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base">
+                        <p class="mt-2 max-w-2xl text-sm leading-6 sm:text-base" style="color: var(--ink-soft)">
                             Sampaikan masukan atau laporkan kendala yang kamu
                             temui saat menggunakan aplikasi.
                         </p>
@@ -28,7 +205,7 @@
 
                     <a
                         href="{{ route('feedback.create') }}"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        class="tpl-btn-primary">
 
                         <svg
                             class="h-4 w-4"
@@ -60,22 +237,23 @@
                 x-data="{ show: true }"
                 x-show="show"
                 x-transition
-                class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                class="tpl-alert tpl-alert--accent mb-6">
 
                 <div class="flex items-center gap-3">
 
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-bold text-emerald-600">
+                    <div class="tpl-alert-icon" style="background: var(--accent-soft); color: var(--accent-ink)">
                         ✓
                     </div>
 
-                    <p class="min-w-0 flex-1 text-sm font-medium text-emerald-800">
+                    <p class="min-w-0 flex-1 text-sm font-medium" style="color: var(--accent-ink)">
                         {{ session('success') }}
                     </p>
 
                     <button
                         type="button"
                         @click="show = false"
-                        class="rounded-lg p-1 text-emerald-600 transition hover:bg-emerald-100">
+                        class="rounded-lg p-1 transition"
+                        style="color: var(--accent-ink)">
 
                         <svg
                             class="h-5 w-5"
@@ -101,24 +279,24 @@
             {{-- =====================================================
                 FEEDBACK LIST
             ====================================================== --}}
-            <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+            <div class="tpl-card">
 
-                <div class="border-b border-gray-100 px-6 py-5">
+                <div class="tpl-card-header">
 
                     <div class="flex items-center gap-3">
 
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-lg">
+                        <div class="tpl-icon tpl-icon--meta">
                             💬
                         </div>
 
 
                         <div>
 
-                            <h2 class="text-base font-bold text-gray-900">
+                            <h2 class="tpl-serif text-base font-semibold" style="color: var(--ink)">
                                 Riwayat Feedback & Laporan
                             </h2>
 
-                            <p class="mt-1 text-xs text-gray-500">
+                            <p class="mt-1 text-xs" style="color: var(--ink-soft)">
                                 {{ $feedbacks->total() }} tiket ditemukan.
                             </p>
 
@@ -137,19 +315,19 @@
                 : ['icon' => '💡', 'label' => 'Feedback'];
 
                 $statusMeta = match ($fb->status) {
-                'open' => ['label' => 'Open', 'class' => 'bg-blue-50 text-blue-700 border-blue-100'],
-                'in_progress' => ['label' => 'Diproses', 'class' => 'bg-amber-50 text-amber-700 border-amber-100'],
-                'resolved' => ['label' => 'Selesai', 'class' => 'bg-emerald-50 text-emerald-700 border-emerald-100'],
-                'closed' => ['label' => 'Closed', 'class' => 'bg-gray-100 text-gray-600 border-gray-200'],
-                default => ['label' => ucfirst(str_replace('_', ' ', $fb->status)), 'class' => 'bg-gray-100 text-gray-600 border-gray-200'],
+                'open' => ['label' => 'Open', 'class' => 'tpl-status-tag--open'],
+                'in_progress' => ['label' => 'Diproses', 'class' => 'tpl-status-tag--progress'],
+                'resolved' => ['label' => 'Selesai', 'class' => 'tpl-status-tag--resolved'],
+                'closed' => ['label' => 'Closed', 'class' => 'tpl-status-tag--closed'],
+                default => ['label' => ucfirst(str_replace('_', ' ', $fb->status)), 'class' => 'tpl-status-tag--closed'],
                 };
                 @endphp
 
                 <a
                     href="{{ route('feedback.show', $fb) }}"
-                    class="group flex items-start gap-4 border-b border-gray-100 px-6 py-5 transition last:border-b-0 hover:bg-gray-50">
+                    class="tpl-ticket-row group">
 
-                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gray-50 text-lg">
+                    <div class="tpl-ticket-icon">
                         {{ $typeMeta['icon'] }}
                     </div>
 
@@ -158,19 +336,19 @@
 
                         <div class="flex flex-wrap items-center gap-2">
 
-                            <p class="truncate text-sm font-semibold text-gray-900 group-hover:text-indigo-700">
+                            <p class="truncate text-sm font-semibold" style="color: var(--ink)">
                                 {{ $fb->title }}
                             </p>
 
-                            <span class="inline-flex shrink-0 items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ $statusMeta['class'] }}">
+                            <span class="tpl-status-tag {{ $statusMeta['class'] }}">
                                 {{ $statusMeta['label'] }}
                             </span>
 
                         </div>
 
-                        <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-400">
+                        <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs" style="color: var(--ink-soft)">
 
-                            <span class="font-medium text-gray-500">
+                            <span class="font-medium" style="color: var(--ink-soft)">
                                 {{ $typeMeta['label'] }}
                             </span>
 
@@ -200,7 +378,8 @@
 
 
                     <svg
-                        class="mt-1 h-4 w-4 shrink-0 text-gray-300 transition group-hover:translate-x-0.5 group-hover:text-indigo-500"
+                        class="mt-1 h-4 w-4 shrink-0 transition group-hover:translate-x-0.5"
+                        style="color: var(--ink-soft)"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -215,24 +394,24 @@
 
                 @empty
 
-                <div class="px-6 py-16 text-center">
+                <div class="tpl-empty">
 
-                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-2xl">
+                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl text-2xl" style="background: var(--paper-soft)">
                         📭
                     </div>
 
-                    <h3 class="mt-4 text-sm font-bold text-gray-900">
+                    <h3 class="mt-4 text-sm font-semibold" style="color: var(--ink)">
                         Belum ada feedback/laporan
                     </h3>
 
-                    <p class="mx-auto mt-1 max-w-md text-sm leading-6 text-gray-500">
+                    <p class="mx-auto mt-1 max-w-md text-sm leading-6" style="color: var(--ink-soft)">
                         Ada masukan atau menemukan kendala? Buat tiket baru
                         agar tim kami bisa membantu.
                     </p>
 
                     <a
                         href="{{ route('feedback.create') }}"
-                        class="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700">
+                        class="tpl-btn-primary tpl-btn-primary--sm mt-4">
                         + Buat Baru
                     </a>
 

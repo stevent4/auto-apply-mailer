@@ -11,10 +11,131 @@
         @yield('title', 'Admin Panel') — Auto Apply Mailer
     </title>
 
+    {{-- =========================================================
+        FONT & TOKEN SISTEM ADMIN PANEL
+        Disamakan dengan halaman Template, Login, Register,
+        Kebijakan Privasi, dan Ketentuan Layanan.
+    ========================================================== --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        :root {
+            --paper: #FAF7F1;
+            --paper-soft: #F2EDE1;
+            --ink: #23262B;
+            --ink-soft: #83796C;
+            --line: #E4DECE;
+            --accent: #2F6F4E;
+            --accent-ink: #1F4D36;
+            --accent-soft: #E4EEE6;
+            --clay: #9C5A3C;
+            --clay-soft: #F2E5DC;
+            --danger: #B3402E;
+            --danger-soft: #F7E6E2;
+        }
+
+        body {
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+        }
+
+        .pp-serif {
+            font-family: 'Lora', Georgia, serif;
+        }
+
+        ::selection {
+            background: var(--accent-soft);
+        }
+
+        /* Sidebar */
+        .pp-sidebar {
+            background: #fff;
+            border-color: var(--line) !important;
+        }
+
+        .pp-brand-badge {
+            background: var(--accent);
+        }
+
+        .pp-nav-section-label {
+            color: var(--ink-soft);
+        }
+
+        .pp-nav-link {
+            color: var(--ink-soft);
+        }
+
+        .pp-nav-link:hover {
+            background: var(--paper-soft);
+            color: var(--ink);
+        }
+
+        .pp-nav-link svg {
+            color: var(--ink-soft);
+        }
+
+        .pp-nav-link:hover svg {
+            color: var(--ink);
+        }
+
+        .pp-nav-link.is-active {
+            background: var(--accent-soft);
+            color: var(--accent-ink);
+        }
+
+        .pp-nav-link.is-active svg {
+            color: var(--accent);
+        }
+
+        .pp-sidebar-footer-link {
+            color: var(--ink-soft);
+        }
+
+        .pp-sidebar-footer-link:hover {
+            background: var(--paper-soft);
+            color: var(--ink);
+        }
+
+        /* Topbar */
+        .pp-topbar {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: var(--line) !important;
+        }
+
+        .pp-menu-btn {
+            color: var(--ink-soft);
+        }
+
+        .pp-menu-btn:hover {
+            background: var(--paper-soft);
+            color: var(--ink);
+        }
+
+        .pp-avatar {
+            background: var(--accent-soft);
+            color: var(--accent-ink);
+        }
+
+        /* Flash messages */
+        .pp-flash-success {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent-ink);
+        }
+
+        .pp-flash-error {
+            background: var(--danger-soft);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+    </style>
 </head>
 
-<body class="min-h-screen bg-gray-50 text-gray-900 antialiased">
+<body class="min-h-screen antialiased">
 
     <!-- Ubah min-h-screen biasa menjadi layout block karena kita akan memakai padding kiri -->
     <div>
@@ -34,16 +155,16 @@
         <!-- Hapus lg:static agar sidebar konsisten berada di posisi fixed -->
         <aside
             id="admin-sidebar"
-            class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r border-gray-200 bg-white transition-transform duration-200 lg:translate-x-0">
+            class="pp-sidebar fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r transition-transform duration-200 lg:translate-x-0">
 
             {{-- Brand --}}
-            <div class="flex h-20 items-center border-b border-gray-100 px-6 shrink-0">
+            <div class="flex h-20 items-center border-b px-6 shrink-0" style="border-color: var(--line)">
 
                 <a
                     href="{{ route('admin.dashboard') }}"
                     class="flex items-center gap-3">
 
-                    <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
+                    <div class="pp-brand-badge flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-sm">
                         <svg
                             class="h-5 w-5"
                             fill="none"
@@ -58,11 +179,11 @@
                     </div>
 
                     <div>
-                        <div class="text-sm font-bold leading-tight text-gray-900">
+                        <div class="pp-serif text-sm font-semibold leading-tight" style="color: var(--ink)">
                             Auto Apply
                         </div>
 
-                        <div class="text-xs text-gray-400">
+                        <div class="text-xs" style="color: var(--ink-soft)">
                             Admin Panel
                         </div>
                     </div>
@@ -75,7 +196,7 @@
             {{-- Navigation --}}
             <nav class="flex-1 overflow-y-auto px-3 py-5">
 
-                <p class="mb-3 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                <p class="pp-nav-section-label mb-3 px-3 text-[11px] font-semibold uppercase tracking-wider">
                     Overview
                 </p>
 
@@ -83,13 +204,11 @@
                 {{-- Dashboard --}}
                 <a
                     href="{{ route('admin.dashboard') }}"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
-                    {{ request()->routeIs('admin.dashboard')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    class="pp-nav-link mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
+                    {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}">
 
                     <svg
-                        class="h-5 w-5 shrink-0 {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600' : 'text-gray-400' }}"
+                        class="h-5 w-5 shrink-0"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -107,7 +226,7 @@
                 </a>
 
 
-                <p class="mb-3 mt-7 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                <p class="pp-nav-section-label mb-3 mt-7 px-3 text-[11px] font-semibold uppercase tracking-wider">
                     Management
                 </p>
 
@@ -115,13 +234,11 @@
                 {{-- Users --}}
                 <a
                     href="{{ route('admin.users.index') }}"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
-                    {{ request()->routeIs('admin.users.*')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    class="pp-nav-link mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
+                    {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}">
 
                     <svg
-                        class="h-5 w-5 shrink-0 {{ request()->routeIs('admin.users.*') ? 'text-indigo-600' : 'text-gray-400' }}"
+                        class="h-5 w-5 shrink-0"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -142,13 +259,11 @@
                 {{-- Applications --}}
                 <a
                     href="{{ route('admin.applications.index') }}"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
-                    {{ request()->routeIs('admin.applications.*')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    class="pp-nav-link mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
+                    {{ request()->routeIs('admin.applications.*') ? 'is-active' : '' }}">
 
                     <svg
-                        class="h-5 w-5 shrink-0 {{ request()->routeIs('admin.applications.*') ? 'text-indigo-600' : 'text-gray-400' }}"
+                        class="h-5 w-5 shrink-0"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -169,13 +284,11 @@
                 {{-- Email Activity --}}
                 <a
                     href="{{ route('admin.email-activity.index') }}"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
-                    {{ request()->routeIs('admin.email-activity.*')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    class="pp-nav-link mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
+                    {{ request()->routeIs('admin.email-activity.*') ? 'is-active' : '' }}">
 
                     <svg
-                        class="h-5 w-5 shrink-0 {{ request()->routeIs('admin.email-activity.*') ? 'text-indigo-600' : 'text-gray-400' }}"
+                        class="h-5 w-5 shrink-0"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -196,13 +309,11 @@
                 {{-- Feedback --}}
                 <a
                     href="{{ route('admin.feedback.index') }}"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
-                    {{ request()->routeIs('admin.feedback.*')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    class="pp-nav-link mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
+                    {{ request()->routeIs('admin.feedback.*') ? 'is-active' : '' }}">
 
                     <svg
-                        class="h-5 w-5 shrink-0 {{ request()->routeIs('admin.feedback.*') ? 'text-indigo-600' : 'text-gray-400' }}"
+                        class="h-5 w-5 shrink-0"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -223,13 +334,11 @@
                 {{-- Logs --}}
                 <a
                     href="{{ route('admin.logs.index') }}"
-                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
-                    {{ request()->routeIs('admin.logs.*')
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    class="pp-nav-link mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
+                    {{ request()->routeIs('admin.logs.*') ? 'is-active' : '' }}">
 
                     <svg
-                        class="h-5 w-5 shrink-0 {{ request()->routeIs('admin.logs.*') ? 'text-indigo-600' : 'text-gray-400' }}"
+                        class="h-5 w-5 shrink-0"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -250,14 +359,14 @@
 
 
             {{-- Bottom --}}
-            <div class="border-t border-gray-100 p-3 shrink-0">
+            <div class="border-t p-3 shrink-0" style="border-color: var(--line)">
 
                 <a
                     href="{{ route('dashboard') }}"
-                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
+                    class="pp-sidebar-footer-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition">
 
                     <svg
-                        class="h-5 w-5 text-gray-400"
+                        class="h-5 w-5"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -286,7 +395,7 @@
         <div class="flex flex-col min-h-screen transition-all duration-200 lg:pl-64">
 
             {{-- Topbar --}}
-            <header class="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-gray-200 bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-8">
+            <header class="pp-topbar sticky top-0 z-30 flex h-20 items-center justify-between border-b px-4 backdrop-blur sm:px-6 lg:px-8">
 
                 <div class="flex items-center gap-3">
 
@@ -294,7 +403,7 @@
                     <button
                         type="button"
                         id="admin-menu-button"
-                        class="inline-flex h-10 w-10 items-center justify-center rounded-xl text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 lg:hidden">
+                        class="pp-menu-btn inline-flex h-10 w-10 items-center justify-center rounded-xl transition lg:hidden">
 
                         <svg
                             class="h-5 w-5"
@@ -314,11 +423,11 @@
 
 
                     <div>
-                        <p class="text-xs text-gray-400">
+                        <p class="text-xs" style="color: var(--ink-soft)">
                             Auto Apply Mailer
                         </p>
 
-                        <h1 class="text-base font-semibold text-gray-900 sm:text-lg">
+                        <h1 class="pp-serif text-base font-semibold sm:text-lg" style="color: var(--ink)">
                             @yield('page-title', 'Admin Panel')
                         </h1>
                     </div>
@@ -332,17 +441,17 @@
                     <div class="hidden text-right sm:block">
 
                         <!-- Tambahkan pengecekan null dengan ?? agar tidak error jika auth kosong -->
-                        <p class="text-sm font-semibold text-gray-900">
+                        <p class="text-sm font-semibold" style="color: var(--ink)">
                             {{ auth()->user()->name ?? 'Admin' }}
                         </p>
 
-                        <p class="text-xs text-gray-400">
+                        <p class="text-xs" style="color: var(--ink-soft)">
                             Administrator
                         </p>
 
                     </div>
 
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-sm font-semibold text-indigo-700">
+                    <div class="pp-avatar flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold">
                         {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
                     </div>
 
@@ -356,7 +465,7 @@
 
             <div class="px-4 pt-5 sm:px-6 lg:px-8">
 
-                <div class="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                <div class="pp-flash-success rounded-xl border px-4 py-3 text-sm">
                     {{ session('success') }}
                 </div>
 
@@ -370,7 +479,7 @@
 
             <div class="px-4 pt-5 sm:px-6 lg:px-8">
 
-                <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <div class="pp-flash-error rounded-xl border px-4 py-3 text-sm">
                     {{ session('error') }}
                 </div>
 
