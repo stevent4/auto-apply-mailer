@@ -1,8 +1,8 @@
 # Auto Apply Mailer
 
-**Auto Apply Mailer** adalah aplikasi web untuk membantu pencari kerja mengelola proses lamaran kerja dari satu tempat.
+**Auto Apply Mailer** adalah aplikasi web berbasis Laravel untuk membantu pencari kerja mengelola proses lamaran kerja dari satu tempat.
 
-Pengguna dapat mengelola profil dan biodata, menyimpan dokumen lamaran, menyiapkan email lamaran, mengirim lamaran melalui akun Gmail yang terhubung, serta melihat riwayat lamaran yang telah dikirim.
+Pengguna dapat mengelola profil dan biodata, menyimpan dokumen lamaran, menyiapkan email lamaran, mengirim lamaran melalui akun Gmail yang terhubung (via Google/Gmail API), serta memantau riwayat lamaran yang telah dikirim.
 
 ## Fitur Utama
 
@@ -12,10 +12,22 @@ Pengguna dapat mengelola profil dan biodata, menyimpan dokumen lamaran, menyiapk
 - Pengelolaan berkas/CV dan dokumen pendukung
 - Form pembuatan lamaran baru
 - Pemilihan lampiran saat mengirim lamaran
-- Template dan isi email lamaran
-- Pengiriman lamaran menggunakan Gmail pengirim yang terhubung
+- Pengelolaan template body email dan isi surat lamaran, sehingga dapat digunakan berulang kali
+- Pengiriman lamaran menggunakan Gmail pengirim yang terhubung (Google OAuth + Gmail API, bukan SMTP)
 - Riwayat lamaran yang telah dikirim
 - Status dan informasi pengiriman lamaran
+- Admin panel untuk memantau aktivitas platform (jumlah pengguna, penggunaan storage, statistik pengiriman email harian, dll.)
+
+## Teknologi yang Digunakan
+
+- **Backend:** Laravel 13 (PHP 8.3+)
+- **Autentikasi:** Laravel Breeze
+- **Database:** MySQL
+- **Frontend build tools:** Vite, Tailwind CSS
+- **Pengiriman email:** Google API Client (Gmail API) dengan OAuth 2.0
+- **Pembuatan dokumen:** barryvdh/laravel-dompdf
+- **Testing:** Pest (pestphp/pest, pestphp/pest-plugin-laravel)
+- **Tooling pengembangan:** Laravel Sail, Laravel Pail, Laravel Pint
 
 ## Tampilan Aplikasi
 
@@ -67,6 +79,18 @@ Riwayat menampilkan daftar lamaran yang telah dikirim, termasuk waktu, perusahaa
 
 <img src="docs/screenshots/history.png" alt="Riwayat Lamaran" width="100%">
 
+### Templates
+
+Halaman Templates menampilkan daftar template yang telah dibuat, termasuk body email dan isi surat lamaran pekerjaan yang nantinya digunakan saat mengirim lamaran. Template ini dapat dibuat, diedit, dan dipilih kembali agar pengguna tidak perlu menulis ulang isi lamaran setiap kali melamar.
+
+<img src="docs/screenshots/templates.png" alt="Halaman Templates" width="100%">
+
+### Admin Panel
+
+Admin panel menampilkan gambaran umum aktivitas pada aplikasi Auto Apply Mailer, meliputi daftar pengguna terdaftar, total besaran file/dokumen yang terakumulasi di sistem, jumlah pengiriman email per hari, serta metrik operasional lainnya untuk keperluan pemantauan platform.
+
+<img src="docs/screenshots/admin.png" alt="Halaman Admin Panel" width="100%">
+
 ## Alur Penggunaan
 
 ```text
@@ -75,6 +99,10 @@ Buat Akun
 Lengkapi Profil
    ↓
 Upload CV / Dokumen
+   ↓
+Hubungkan Akun Gmail Pengirim
+   ↓
+(Opsional) Buat/Pilih Template Email & Surat Lamaran
    ↓
 Buat Lamaran
    ↓
@@ -99,12 +127,95 @@ Pantau Riwayat & Status
 | Profile | Biodata dan informasi akun pelamar |
 | Berkas | Upload dan pengelolaan dokumen |
 | Apply Job | Membuat dan mengirim lamaran |
-| Gmail Pengirim | Akun Gmail yang digunakan untuk pengiriman |
+| Templates | Membuat, mengedit, dan memilih template body email serta surat lamaran |
+| Gmail Pengirim | Akun Gmail yang digunakan untuk pengiriman (Google OAuth) |
 | Riwayat Lamaran | Melihat dan mengelola lamaran yang telah dikirim |
+| Admin Panel | Monitoring platform: daftar pengguna, akumulasi ukuran file, statistik pengiriman email per hari |
+
+## Instalasi & Menjalankan Proyek
+
+### Prasyarat
+
+- PHP >= 8.3
+- Composer
+- Node.js & npm
+- MySQL
+- Akun Google Cloud dengan Gmail API diaktifkan (untuk fitur pengiriman lamaran)
+
+### Langkah Instalasi
+
+1. Clone repository
+
+   ```bash
+   git clone https://github.com/stevent4/auto-apply-mailer.git
+   cd auto-apply-mailer
+   ```
+
+2. Install dependency PHP dan JavaScript
+
+   ```bash
+   composer install
+   npm install
+   ```
+
+3. Siapkan file environment
+
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. Konfigurasikan koneksi database pada `.env` (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`), lalu jalankan migrasi
+
+   ```bash
+   php artisan migrate
+   ```
+
+5. Konfigurasikan kredensial Google OAuth / Gmail API pada `.env`
+
+   ```env
+   GOOGLE_CLIENT_ID=
+   GOOGLE_CLIENT_SECRET=
+   GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
+   ```
+
+   Kredensial ini diperoleh dari [Google Cloud Console](https://console.cloud.google.com/) dengan mengaktifkan Gmail API dan membuat OAuth Client ID bertipe Web Application.
+
+6. Build asset frontend
+
+   ```bash
+   npm run build
+   ```
+
+   atau untuk mode pengembangan:
+
+   ```bash
+   npm run dev
+   ```
+
+7. Jalankan server aplikasi
+
+   ```bash
+   php artisan serve
+   ```
+
+   Aplikasi dapat diakses melalui `http://localhost:8000`.
+
+### Menjalankan Test
+
+Proyek ini menggunakan Pest untuk pengujian.
+
+```bash
+php artisan test
+```
 
 ## Catatan
 
-Auto Apply Mailer menggunakan akun email pengguna untuk proses pengiriman lamaran. Pastikan akun pengirim dan konfigurasi yang diperlukan sudah disiapkan sebelum melakukan pengiriman.
+- Auto Apply Mailer menggunakan akun Gmail pengguna (melalui Google OAuth dan Gmail API) untuk proses pengiriman lamaran, bukan konfigurasi SMTP biasa.
+- Pastikan akun Gmail pengirim sudah terhubung dan kredensial Google OAuth pada `.env` sudah diisi dengan benar sebelum melakukan pengiriman lamaran.
+- Dokumen lamaran (seperti surat lamaran) dapat dihasilkan dalam format PDF menggunakan `barryvdh/laravel-dompdf`.
+- Template email dan surat lamaran yang dibuat pada halaman Templates dapat digunakan kembali pada saat membuat lamaran baru (Apply Job).
+- Admin panel ditujukan untuk pemantauan operasional aplikasi (pengguna, storage, dan volume pengiriman email) dan umumnya hanya dapat diakses oleh akun dengan peran admin.
 
 ## Screenshot
 
@@ -119,6 +230,7 @@ docs/screenshots/
 ├── profil.png
 ├── apply.png
 ├── file-manager.png
-└── history.png
+├── history.png
+├── templates.png
+└── admin.png
 ```
-
