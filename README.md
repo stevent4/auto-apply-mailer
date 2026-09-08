@@ -78,6 +78,12 @@ Riwayat menampilkan daftar lamaran yang telah dikirim, termasuk waktu, perusahaa
 
 <img src="docs/screenshots/history.png" alt="Riwayat Lamaran" width="100%">
 
+### Templates
+
+Templates menampilkan daftar template yang telah dibuat, termasuk body email dan isi surat lamaran pekerjaan yang nantinya dikirim.
+
+<img src="docs/screenshots/templates.png" alt="Halaman Templates" width="100%">
+
 ## Alur Penggunaan
 
 ```text
