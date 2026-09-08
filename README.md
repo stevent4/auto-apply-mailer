@@ -84,6 +84,12 @@ Templates menampilkan daftar template yang telah dibuat, termasuk body email dan
 
 <img src="docs/screenshots/templates.png" alt="Halaman Templates" width="100%">
 
+### Admin Panel
+
+Admin panel menampilkan segala hal yang terjadi pada website auto apply yang telah meliputi daftar user, besaran file yang terakumulasi, berapa kiriman email per-day, dll.
+
+<img src="docs/screenshots/admin.png" alt="Halaman Templates" width="100%">
+
 ## Alur Penggunaan
 
 ```text
